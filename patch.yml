@@ -1,0 +1,61 @@
+---
+- name: Linux Patching | Install python3-pip
+  ansible.builtin.raw: apt-get update && apt-get install -y python3-pip
+  register: vault_mono_install_python_pip_result_raw
+  changed_when: "'0 upgraded, 0 newly installed' not in vault_mono_install_python_pip_result_raw.stdout_lines | last"
+
+- name: Linux Patching | Users | Create wheel and sudo groups
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - wheel
+    - sudo
+
+- name: Linux Patching | Users | Create Sudoers directory
+  ansible.builtin.file:
+    path: /etc/sudoers.d
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Linux Patching | Users | Allow group permissions
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ item.file_loc }}"
+    content: "{{ item.rule }}"
+    mode: "0644"
+    owner: root
+    group: root
+  loop:
+    - file_loc: 1000-root
+      rule: "root ALL=(ALL:ALL) ALL"
+    - file_loc: 1100-sudo
+      rule: "%sudo ALL=(ALL:ALL) ALL"
+    - file_loc: 1200-wheel
+      rule: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL"
+
+- name: Linux Patching | Users | Add new user
+  ansible.builtin.user:
+    name: "{{ vault_mono_server_username }}"
+    groups: wheel
+    append: true
+    shell: /bin/bash
+
+- name: Linux Patching | Users | Set authorized key
+  ansible.posix.authorized_key:
+    user: "{{ vault_mono_server_username }}"
+    state: present
+    key: "{{ vault_mono_bw_secrets.OPENSSH_PUBLIC_KEY }}"
+
+- name: SSHD Hardening | Disable Password Authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    # - regexp: "^PermitRootLogin"
+    #   line: "PermitRootLogin no"

@@ -1,0 +1,45 @@
+---
+- name: Playbook
+  hosts: localhost
+  vars:
+    vault_mono_server_username: vmuser
+    vault_mono_private_key_file: ssh_private_key
+    vault_mono_bw_export_file: secrets.auto.tfvars.json
+  tasks:
+    - name: Setup Vault | Get bitwarden secrets
+      ansible.builtin.set_fact:
+        vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_bw_export_file) | from_json }}"
+
+    - name: Wirte Private key to file
+      ansible.builtin.copy:
+        content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
+        dest: "{{ vault_mono_private_key_file }}"
+        mode: "600"
+
+    - name: Setup Vault | Create a new linode
+      linode_v4:
+        label: "vault_server"
+        access_token: "{{ vault_mono_bw_secrets.LINODE_CLI_PROD_TOKEN }}"
+        type: g6-nanode-1
+        region: us-east
+        image: linode/debian11
+        # root_pass: "Durent@1234"
+        authorized_keys: "{{ vault_mono_bw_secrets.OPENSSH_PUBLIC_KEY }}"
+        state: present
+      register: vault_mono_linode
+
+    - name: Patch new system
+      block:
+        - name: Adding dynamic host
+          ansible.builtin.add_host:
+            hostname: vault_mono_temp_host_to_be_patched
+            ansible_host: "{{ vault_mono_linode.instance.ipv4[0] }}"
+            ansible_connection: "ssh"
+            ansible_port: 22
+            ansible_user: root
+            # ansible_password: "Durent@1234"
+            ansible_ssh_private_key_file: "{{ vault_mono_private_key_file }}"
+        - name: Patch with new host
+          delegate_to: vault_mono_temp_host_to_be_patched
+          become: true
+          ansible.builtin.import_tasks: patch.yml
