@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-__json_file="secrets.json"
+__json_file="tmp_files/secrets.json"
 ## Get Bitwarden Info
 __bw_organization_name='Password Organization'
 __bw_organization_collection_name='arpanrec/gitlab_master_control'
