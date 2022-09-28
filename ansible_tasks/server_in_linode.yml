@@ -1,0 +1,16 @@
+---
+- name: Setup Vault | Server in linode | Create a new linode
+  linode_v4:
+    label: "vault_server"
+    access_token: "{{ vault_mono_bw_secrets.LINODE_CLI_PROD_TOKEN }}"
+    type: g6-nanode-1
+    region: us-east
+    image: linode/debian11
+    # root_pass: "Durent@1234"
+    authorized_keys: "{{ vault_mono_bw_secrets.OPENSSH_PUBLIC_KEY }}"
+    state: present
+  register: vault_mono_linode
+
+- name: Setup Vault | Server in linode | Set new IP address
+  ansible.builtin.set_fact:
+    vault_mono_vault_public_ip:
