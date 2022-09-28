@@ -1,12 +1,9 @@
 #!/bin/bash
 set -e
 
-__terraform_secret_var_file_loc="secrets.auto.tfvars.json"
-
+__json_file="secrets.json"
 ## Get Bitwarden Info
-
 __bw_organization_name='Password Organization'
-
 __bw_organization_collection_name='arpanrec/gitlab_master_control'
 
 __bw_organization_id=$(bw list organizations --raw | jq --arg BW_ORG_NAME "$__bw_organization_name" \
@@ -75,15 +72,19 @@ rm -rf openssh_4113da7ba2fdc5b2f27121ed0fa3c3a8
 
 ## Create JSON and Write to file
 
-echo '{}' | jq \
+#  Why line break in some variables, like OPENPGP_PRIVATE_KEY?? https://askubuntu.com/questions/121866/why-does-bash-remove-n-in-cat-file
+jq --null-input \
     --arg GH_PROD_API_TOKEN "${__gh_prod_api_token}" \
     --arg GL_PROD_API_KEY "${__gl_prod_api_key}" \
     --arg GALAXY_API_KEY "${__galaxy_api_key}" \
     --arg TF_PROD_TOKEN "${__tf_prod_token}" \
-    --arg OPENPGP_PRIVATE_KEY "${__openpgp_private_key}" \
+    --arg OPENPGP_PRIVATE_KEY "${__openpgp_private_key}"'
+' \
     --arg OPENPGP_PRIVATE_KEY_PASSWORD "${__openpgp_private_key_password}" \
-    --arg OPENPGP_PUBLIC_KEY "${__openpgp_public_key}" \
-    --arg OPENSSH_PRIVATE_KEY "${__openssh_private_key}" \
+    --arg OPENPGP_PUBLIC_KEY "${__openpgp_public_key}"'
+' \
+    --arg OPENSSH_PRIVATE_KEY "${__openssh_private_key}"'
+' \
     --arg OPENSSH_PRIVATE_KEY_PASSPHRASE "${__openssh_private_key_passphrase}" \
     --arg OPENSSH_PUBLIC_KEY "${__openssh_public_key}" \
     --arg LINODE_CLI_PROD_TOKEN "${__linode_cli_prod_token}" \
@@ -99,4 +100,4 @@ echo '{}' | jq \
     + {OPENSSH_PRIVATE_KEY_PASSPHRASE: $OPENSSH_PRIVATE_KEY_PASSPHRASE}
     + {OPENSSH_PUBLIC_KEY: $OPENSSH_PUBLIC_KEY}
     + {LINODE_CLI_PROD_TOKEN: $LINODE_CLI_PROD_TOKEN}' \
-     >"${__terraform_secret_var_file_loc}"
+    >"${__json_file}"
