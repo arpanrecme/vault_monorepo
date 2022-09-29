@@ -1,3 +1,1 @@
-secrets.auto.tfvars.json
-secrets.json
-tmp_files/*
+secrets*

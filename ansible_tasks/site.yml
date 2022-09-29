@@ -1,33 +1,29 @@
 ---
 - name: Playbook
   hosts: localhost
+  gather_facts: true
   vars:
-    vault_mono_server_username: vmuser
-    vault_mono_private_key_file: tmp_files/ssh_private_key
-    vault_mono_bw_export_file: tmp_files/secrets.auto.tfvars.json
+    vault_mono_server_username: vault_mono
+    vault_mono_private_key_file: "{{ playbook_dir }}/../secrets.openssh_rsa_id"
+    vault_mono_bw_export_file: "{{ playbook_dir }}/../secrets.json"
+    vault_mono_debug_no_log: false
+    vault_mono_server_ansible_inventory_name: vault_mono_temp_host_to_be_patched
   tasks:
-    - name: Setup Vault | Get bitwarden secrets
+    - name: Vault Monorepo | Get bitwarden secrets
+      no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.set_fact:
         vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_bw_export_file) | from_json }}"
 
-    - name: Wirte Private key to file
+    - name: Vault Monorepo | Wirte Private key to file
       ansible.builtin.copy:
         content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
         dest: "{{ vault_mono_private_key_file }}"
         mode: "600"
 
-    - name: Patch new system
-      block:
-        - name: Adding dynamic host
-          ansible.builtin.add_host:
-            hostname: vault_mono_temp_host_to_be_patched
-            ansible_host: "{{ vault_mono_linode.instance.ipv4[0] }}"
-            ansible_connection: "ssh"
-            ansible_port: 22
-            ansible_user: root
-            # ansible_password: "Durent@1234"
-            ansible_ssh_private_key_file: "{{ vault_mono_private_key_file }}"
-        - name: Patch with new host
-          delegate_to: vault_mono_temp_host_to_be_patched
-          become: true
-          ansible.builtin.import_tasks: patch.yml
+    - name: Vault Monorepo | Create serevr
+      ansible.builtin.import_tasks: server_in_linode.yml
+
+    - name: Vault Monorepo | Patch System
+      delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
+      become: true
+      ansible.builtin.import_tasks: patch_system.yml

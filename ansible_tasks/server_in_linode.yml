@@ -6,11 +6,35 @@
     type: g6-nanode-1
     region: us-east
     image: linode/debian11
-    # root_pass: "Durent@1234"
     authorized_keys: "{{ vault_mono_bw_secrets.OPENSSH_PUBLIC_KEY }}"
     state: present
   register: vault_mono_linode
 
 - name: Setup Vault | Server in linode | Set new IP address
   ansible.builtin.set_fact:
-    vault_mono_vault_public_ip:
+    vault_mono_vault_server_public_ip: "{{ vault_mono_linode.instance.ipv4[0] }}"
+
+- name: Vault Monorepo | Adding dynamic host
+  ansible.builtin.add_host:
+    hostname: "{{ vault_mono_server_ansible_inventory_name }}"
+    ansible_host: "{{ vault_mono_vault_server_public_ip }}"
+    ansible_connection: "ssh"
+    ansible_port: 22
+    ansible_user: root
+    ansible_ssh_private_key_file: "{{ vault_mono_private_key_file }}"
+
+- name: Vault Monorepo | Verify dynamic host
+  delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
+  ansible.builtin.ping:
+  ignore_unreachable: true
+  register: vault_mono_dynamic_host_ping
+
+- name: Vault Monorepo | Adding dynamic host with new user
+  ansible.builtin.add_host:
+    hostname: "{{ vault_mono_server_ansible_inventory_name }}"
+    ansible_host: "{{ vault_mono_vault_server_public_ip }}"
+    ansible_connection: "ssh"
+    ansible_port: 22
+    ansible_user: "{{ vault_mono_server_username }}"
+    ansible_ssh_private_key_file: "{{ vault_mono_private_key_file }}"
+  when: vault_mono_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_dynamic_host_ping.msg'

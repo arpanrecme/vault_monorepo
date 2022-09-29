@@ -3,6 +3,7 @@
         "arpanrec",
         "bitwarden",
         "lineinfile",
+        "nanode",
         "NOPASSWD",
         "posix"
     ]

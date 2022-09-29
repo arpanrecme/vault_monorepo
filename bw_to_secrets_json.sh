@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-__json_file="tmp_files/secrets.json"
+__vault_mono_bw_export_file="secrets.json"
+
 ## Get Bitwarden Info
 __bw_organization_name='Password Organization'
 __bw_organization_collection_name='arpanrec/gitlab_master_control'
@@ -29,7 +30,7 @@ __galaxy_api_key=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "An
 __tf_prod_token=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "HashiCorp Terraform cloud - arpanrec") | .fields |
     .[] | select(.name == "TF_PROD_TOKEN") | .value' -r)
 
-__linode_cli_prod_token=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "Linode - arpanr") | .fields |
+__linode_cli_prod_token=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "Linode - arpan9rec") | .fields |
     .[] | select(.name == "LINODE_CLI_PROD_TOKEN") | .value' -r)
 
 ## Keys
@@ -100,4 +101,4 @@ jq --null-input \
     + {OPENSSH_PRIVATE_KEY_PASSPHRASE: $OPENSSH_PRIVATE_KEY_PASSPHRASE}
     + {OPENSSH_PUBLIC_KEY: $OPENSSH_PUBLIC_KEY}
     + {LINODE_CLI_PROD_TOKEN: $LINODE_CLI_PROD_TOKEN}' \
-    >"${__json_file}"
+    >"${__vault_mono_bw_export_file}"
