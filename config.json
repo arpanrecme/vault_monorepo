@@ -1,4 +1,4 @@
 {
-    "VAULT_ADDR": "https://vault.arpanrec.com:8200",
-    "VAULT_DOMAIN_NAME": "vault.arpanrec.com"
+    "VAULT_ADDR_DOMAIN_NAME": "vault.arpanrec.com",
+    "VAULT_ADDR_PORT": 8200
 }

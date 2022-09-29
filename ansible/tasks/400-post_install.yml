@@ -37,13 +37,19 @@
       vault_mono_server_vault_x509_certificate_info.valid_at is defined
       and
       (
-        not vault_mono_server_vault_x509_certificate_info.valid_at.point_1
+        (
+          not vault_mono_server_vault_x509_certificate_info.valid_at.point_1
+        )
+        or
+        (
+          vault_mono_server_vault_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+        )
       )
     )
   community.crypto.openssl_csr_pipe:
     privatekey_path: /opt/vault/tls/tls.key
-    common_name: "{{ vault_mono_global_config.VAULT_DOMAIN_NAME }}"
-    subject_alt_name: "DNS:{{ vault_mono_global_config.VAULT_DOMAIN_NAME }}"
+    common_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+    subject_alt_name: "DNS:{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
     basic_constraints: CA:FALSE
     basic_constraints_critical: true
     key_usage:
@@ -62,7 +68,6 @@
 - name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL certificate signed with your own CA certificate
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
-    content: "{{ lookup('ansible.builtin.file', '/opt/vault/tls/tls.crt', errors='ignore') | default(omit) }}"
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
     ownca_content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
     ownca_privatekey_content: "{{ vault_mono_bw_secrets.RSA_PRIVATE_KEY }}"
