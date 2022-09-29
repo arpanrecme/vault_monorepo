@@ -7,6 +7,14 @@
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
 
+- name: Vault Monorepo | Configure Hashicorp Vault | Write Client Cert To File
+  ansible.builtin.copy:
+    content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
+    dest: "/opt/vault/tls/root.crt"
+    owner: "{{ vault_mono_server_vault_user }}"
+    group: "{{ vault_mono_server_vault_user }}"
+    mode: "0600"
+
 - name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL private key with the default values (4096 bits, RSA)
   community.crypto.openssl_privatekey:
     path: /opt/vault/tls/tls.key
