@@ -1,0 +1,6 @@
+---
+vault_mono_server_username: vault_mono
+vault_mono_private_key_file: "{{ playbook_dir }}/../secrets.openssh_rsa_id"
+vault_mono_bw_export_file: "{{ playbook_dir }}/../secrets.json"
+vault_mono_debug_no_log: false
+vault_mono_global_config_file: "{{ playbook_dir }}/../config.json"

@@ -3,7 +3,7 @@
   linode_v4:
     label: "vault_server"
     access_token: "{{ vault_mono_bw_secrets.LINODE_CLI_PROD_TOKEN }}"
-    type: g6-nanode-1
+    type: g6-standard-4
     region: us-east
     image: linode/debian11
     authorized_keys: "{{ vault_mono_bw_secrets.OPENSSH_PUBLIC_KEY }}"
@@ -22,6 +22,7 @@
     ansible_port: 22
     ansible_user: root
     ansible_ssh_private_key_file: "{{ vault_mono_private_key_file }}"
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
 - name: Vault Monorepo | Verify dynamic host
   delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
@@ -37,4 +38,5 @@
     ansible_port: 22
     ansible_user: "{{ vault_mono_server_username }}"
     ansible_ssh_private_key_file: "{{ vault_mono_private_key_file }}"
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   when: vault_mono_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_dynamic_host_ping.msg'

@@ -1,0 +1,17 @@
+---
+- name: Vault Monorepo | Configure Hashicorp Vault | Install packages
+  ansible.builtin.uri:
+    url: "{{ rv_hashicorp_vault_post_install_action_api_addr }}/v1/sys/health"
+    method: GET
+    body_format: json
+    validate_certs: false
+    status_code: [501, 503, 200]
+  register: pv_vault_health_status
+  retries: 3
+  delay: 5
+  until:
+    - pv_vault_health_status.status in [501, 503, 200]
+
+- name: Vault Post Install Steps | Include Initialize Tasks
+  include_tasks: initialize.yml
+  when: rv_hashicorp_vault_post_install_action_initialize

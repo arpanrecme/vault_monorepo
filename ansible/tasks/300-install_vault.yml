@@ -1,0 +1,31 @@
+---
+# tasks file for hashicorp_vault
+- name: Vault Monorepo | Install Hashicorp Vault | Install packages
+  ansible.builtin.apt:
+    name: gpg
+
+- name: Vault Monorepo | Install Hashicorp Vault | Download GPG key
+  ansible.builtin.get_url:
+    url: https://apt.releases.hashicorp.com/gpg
+    dest: /usr/share/keyrings/hashicorp-archive-keyring.asc
+    mode: "0644"
+    force: true
+
+- name: Vault Monorepo | Install Hashicorp Vault | Add APT Repository
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.asc]
+      https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
+    state: present
+    filename: hashicorp
+
+- name: Vault Monorepo | Install Hashicorp Vault | Install Vault
+  ansible.builtin.apt:
+    name: vault
+    state: present
+
+- name: Vault Monorepo | Install Hashicorp Vault | Enable Service
+  ansible.builtin.service:
+    name: vault
+    enabled: true
+    state: started

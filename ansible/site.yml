@@ -1,0 +1,49 @@
+---
+- name: Get Server Info
+  hosts: localhost
+  gather_facts: true
+  vars:
+    vault_mono_server_ansible_inventory_name: vault_mono_server_ansible_inventory
+  vars_files:
+    - "{{ playbook_dir }}/vars/main.yml"
+  tasks:
+    - name: Vault Monorepo | Get bitwarden secrets
+      no_log: "{{ vault_mono_debug_no_log }}"
+      ansible.builtin.set_fact:
+        vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_bw_export_file) | from_json }}"
+
+    - name: Vault Monorepo | Wirte Private key to file
+      ansible.builtin.copy:
+        content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
+        dest: "{{ vault_mono_private_key_file }}"
+        mode: "600"
+
+    - name: Vault Monorepo | Create serevr
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/server_in_linode.yml"
+
+- name: Get Server Info
+  hosts: vault_mono_server_ansible_inventory
+  gather_facts: true
+  vars:
+    vault_mono_server_username: vault_mono
+    vault_mono_private_key_file: "{{ playbook_dir }}/../secrets.openssh_rsa_id"
+    vault_mono_bw_export_file: "{{ playbook_dir }}/../secrets.json"
+    vault_mono_debug_no_log: false
+  tasks:
+    - name: Vault Monorepo | Get bitwarden secrets
+      no_log: "{{ vault_mono_debug_no_log }}"
+      ansible.builtin.set_fact:
+        vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_bw_export_file) | from_json }}"
+
+    - name: Vault Monorepo | Get Global Config
+      ansible.builtin.set_fact:
+        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_global_config_file) | from_json }}"
+
+    - name: Vault Monorepo | Patch System
+      become: true
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/patch_system.yml"
+      when: false
+
+    - name: Vault Monorepo | Setup Hashicorp Vault
+      become: true
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/install_vault.yml"
