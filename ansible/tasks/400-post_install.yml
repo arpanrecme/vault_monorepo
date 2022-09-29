@@ -1,17 +1,89 @@
 ---
-- name: Vault Monorepo | Configure Hashicorp Vault | Install packages
-  ansible.builtin.uri:
-    url: "{{ rv_hashicorp_vault_post_install_action_api_addr }}/v1/sys/health"
-    method: GET
-    body_format: json
-    validate_certs: false
-    status_code: [501, 503, 200]
-  register: pv_vault_health_status
-  retries: 3
-  delay: 5
-  until:
-    - pv_vault_health_status.status in [501, 503, 200]
+- name: Vault Monorepo | Configure Hashicorp Vault | Configure
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/vault.hcl"
+    dest: /etc/vault.d/vault.hcl
+    mode: "0644"
+    owner: "{{ vault_mono_server_vault_user }}"
+    group: "{{ vault_mono_server_vault_user }}"
 
-- name: Vault Post Install Steps | Include Initialize Tasks
-  include_tasks: initialize.yml
-  when: rv_hashicorp_vault_post_install_action_initialize
+- name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL private key with the default values (4096 bits, RSA)
+  community.crypto.openssl_privatekey:
+    path: /opt/vault/tls/tls.key
+    owner: "{{ vault_mono_server_vault_user }}"
+    group: "{{ vault_mono_server_vault_user }}"
+    mode: "0600"
+
+- name: Vault Monorepo | Configure Hashicorp Vault | Check existing certificate file
+  ansible.builtin.stat:
+    path: /opt/vault/tls/tls.crt
+  register: vault_mono_server_vault_certificate_file_stat
+
+- name: Vault Monorepo | Configure Hashicorp Vault | Get information on generated certificate
+  when: vault_mono_server_vault_certificate_file_stat.stat.exists
+  community.crypto.x509_certificate_info:
+    path: /opt/vault/tls/tls.crt
+    valid_at:
+      point_1: "+1d"
+  register: vault_mono_server_vault_x509_certificate_info
+
+- name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL Certificate Signing Request
+  when: >
+    (
+      not vault_mono_server_vault_certificate_file_stat.stat.exists
+    )
+    or
+    (
+      vault_mono_server_vault_x509_certificate_info.valid_at is defined
+      and
+      (
+        not vault_mono_server_vault_x509_certificate_info.valid_at.point_1
+      )
+    )
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /opt/vault/tls/tls.key
+    common_name: "{{ vault_mono_global_config.VAULT_DOMAIN_NAME }}"
+    subject_alt_name: "DNS:{{ vault_mono_global_config.VAULT_DOMAIN_NAME }}"
+    basic_constraints: CA:FALSE
+    basic_constraints_critical: true
+    key_usage:
+      - digitalSignature
+      - nonRepudiation
+      - keyEncipherment
+      - dataEncipherment
+      - keyCertSign
+      - cRLSign
+    key_usage_critical: true
+    extended_key_usage:
+      - serverAuth
+    extended_key_usage_critical: true
+  register: vault_mono_server_vault_openssl_csr_pipe
+
+- name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL certificate signed with your own CA certificate
+  when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
+  community.crypto.x509_certificate_pipe:
+    content: "{{ lookup('ansible.builtin.file', '/opt/vault/tls/tls.crt', errors='ignore') | default(omit) }}"
+    csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
+    ownca_content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
+    ownca_privatekey_content: "{{ vault_mono_bw_secrets.RSA_PRIVATE_KEY }}"
+    ownca_privatekey_passphrase: "{{ vault_mono_bw_secrets.RSA_PRIVATE_KEY_PASSPHRASE }}"
+    provider: ownca
+    ownca_not_after: "+30d"
+  register: vault_mono_server_vault_x509_certificate_pipe
+
+- name: Vault Monorepo | Configure Hashicorp Vault | Write Cert To File
+  when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
+  ansible.builtin.copy:
+    content: |+
+      {{ vault_mono_server_vault_x509_certificate_pipe.certificate }}
+      {{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}
+    dest: /opt/vault/tls/tls.crt
+    owner: "{{ vault_mono_server_vault_user }}"
+    group: "{{ vault_mono_server_vault_user }}"
+    mode: "0600"
+
+- name: Vault Monorepo | Install Hashicorp Vault | Enable Service
+  ansible.builtin.service:
+    name: vault
+    enabled: true
+    state: restarted

@@ -71,9 +71,27 @@ __openssh_public_key=$(ssh-keygen -y -P "${__openssh_private_key_passphrase}" \
 
 rm -rf openssh_4113da7ba2fdc5b2f27121ed0fa3c3a8
 
+### RSA PRIVATE KEY - arpanrec ROOT CA V1
+
+__bw_rsa_private_key_item=$(echo "${__bw_all_items_list}" | jq '.[] |
+    select(.name == "RSA PRIVATE KEY - arpanrec ROOT CA V1")' -r)
+
+__rsa_private_key=$(echo "${__bw_rsa_private_key_item}" | jq .notes -r)
+
+__rsa_private_key_passphrase=$(echo \
+    "${__bw_rsa_private_key_item}" |
+    jq '.fields | .[] | select(.name == "passphrase") | .value' -r)
+
+### CERTIFICATE - arpanrec ROOT CA V1
+
+__bw_root_certificate_item=$(echo "${__bw_all_items_list}" | jq '.[] |
+    select(.name == "CERTIFICATE - arpanrec ROOT CA V1")' -r)
+
+__root_certificate=$(echo "${__bw_root_certificate_item}" | jq .notes -r)
+
 ## Create JSON and Write to file
 
-#  Why line break in some variables, like OPENPGP_PRIVATE_KEY?? https://askubuntu.com/questions/121866/why-does-bash-remove-n-in-cat-file
+###  Why line break in some variables, like OPENPGP_PRIVATE_KEY?? https://askubuntu.com/questions/121866/why-does-bash-remove-n-in-cat-file
 jq --null-input \
     --arg GH_PROD_API_TOKEN "${__gh_prod_api_token}" \
     --arg GL_PROD_API_KEY "${__gl_prod_api_key}" \
@@ -89,6 +107,11 @@ jq --null-input \
     --arg OPENSSH_PRIVATE_KEY_PASSPHRASE "${__openssh_private_key_passphrase}" \
     --arg OPENSSH_PUBLIC_KEY "${__openssh_public_key}" \
     --arg LINODE_CLI_PROD_TOKEN "${__linode_cli_prod_token}" \
+    --arg RSA_PRIVATE_KEY "${__rsa_private_key}"'
+' \
+    --arg RSA_PRIVATE_KEY_PASSPHRASE "${__rsa_private_key_passphrase}" \
+    --arg ROOT_CERTIFICATE "${__root_certificate}"'
+' \
     '.
     + {GH_PROD_API_TOKEN: $GH_PROD_API_TOKEN}
     + {GL_PROD_API_KEY: $GL_PROD_API_KEY}
@@ -100,5 +123,9 @@ jq --null-input \
     + {OPENSSH_PRIVATE_KEY: $OPENSSH_PRIVATE_KEY}
     + {OPENSSH_PRIVATE_KEY_PASSPHRASE: $OPENSSH_PRIVATE_KEY_PASSPHRASE}
     + {OPENSSH_PUBLIC_KEY: $OPENSSH_PUBLIC_KEY}
-    + {LINODE_CLI_PROD_TOKEN: $LINODE_CLI_PROD_TOKEN}' \
+    + {LINODE_CLI_PROD_TOKEN: $LINODE_CLI_PROD_TOKEN}
+    + {RSA_PRIVATE_KEY: $RSA_PRIVATE_KEY}
+    + {RSA_PRIVATE_KEY_PASSPHRASE: $RSA_PRIVATE_KEY_PASSPHRASE}
+    + {ROOT_CERTIFICATE: $ROOT_CERTIFICATE}
+    ' \
     >"${__vault_mono_bw_export_file}"

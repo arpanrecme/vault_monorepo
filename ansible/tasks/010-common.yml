@@ -1,0 +1,12 @@
+---
+- name: Vault Monorepo | Get bitwarden secrets
+  no_log: "{{ vault_mono_debug_no_log }}"
+  run_once: true
+  ansible.builtin.set_fact:
+    vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_bw_export_file) | from_json }}"
+
+- name: Vault Monorepo | Get Vault Config
+  no_log: "{{ vault_mono_debug_no_log }}"
+  run_once: true
+  ansible.builtin.set_fact:
+    vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_global_config_file) | from_json }}"

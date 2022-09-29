@@ -7,10 +7,8 @@
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
   tasks:
-    - name: Vault Monorepo | Get bitwarden secrets
-      no_log: "{{ vault_mono_debug_no_log }}"
-      ansible.builtin.set_fact:
-        vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_bw_export_file) | from_json }}"
+    - name: Vault Monorepo | Common Tasks
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
 
     - name: Vault Monorepo | Wirte Private key to file
       ansible.builtin.copy:
@@ -19,31 +17,26 @@
         mode: "600"
 
     - name: Vault Monorepo | Create serevr
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/server_in_linode.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-server_in_linode.yml"
 
 - name: Get Server Info
   hosts: vault_mono_server_ansible_inventory
   gather_facts: true
-  vars:
-    vault_mono_server_username: vault_mono
-    vault_mono_private_key_file: "{{ playbook_dir }}/../secrets.openssh_rsa_id"
-    vault_mono_bw_export_file: "{{ playbook_dir }}/../secrets.json"
-    vault_mono_debug_no_log: false
+  become: true
+  vars_files:
+    - "{{ playbook_dir }}/vars/main.yml"
   tasks:
-    - name: Vault Monorepo | Get bitwarden secrets
-      no_log: "{{ vault_mono_debug_no_log }}"
-      ansible.builtin.set_fact:
-        vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_bw_export_file) | from_json }}"
-
-    - name: Vault Monorepo | Get Global Config
-      ansible.builtin.set_fact:
-        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_global_config_file) | from_json }}"
+    - name: Vault Monorepo | Common Tasks
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
+      delegate_to: localhost
 
     - name: Vault Monorepo | Patch System
-      become: true
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/patch_system.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
+      when: false
+
+    - name: Vault Monorepo | Install Hashicorp Vault
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/300-install_vault.yml"
       when: false
 
     - name: Vault Monorepo | Setup Hashicorp Vault
-      become: true
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/install_vault.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-post_install.yml"
