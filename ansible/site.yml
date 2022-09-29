@@ -32,11 +32,9 @@
 
     - name: Vault Monorepo | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
-      when: false
 
     - name: Vault Monorepo | Install Hashicorp Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/300-install_vault.yml"
-      when: false
 
     - name: Vault Monorepo | Setup Hashicorp Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-post_install.yml"
