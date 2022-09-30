@@ -99,10 +99,17 @@
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/600-init.yml"
       tags:
         - vault_init
+        - codified_vault
 
     - name: Vault Monorepo | terraform_codified_vault
       community.general.terraform:
         project_path: "{{ playbook_dir }}/../terraform"
         state: present
+      environment:
+        TF_VAR_vault_mono_vault_root_token: "{{ vault_mono_init_secrets.root_token }}"
+        TF_VAR_vault_mono_local_file_global_config: "{{ vault_mono_local_file_global_config }}"
+        TF_VAR_vault_mono_local_file_root_certificate: "{{ vault_mono_local_file_root_certificate }}"
+        TF_VAR_vault_mono_local_file_client_private_key: "{{ vault_mono_local_file_client_private_key }}"
+        TF_VAR_vault_mono_local_file_client_certificate: "{{ vault_mono_local_file_client_certificate }}"
       tags:
         - codified_vault

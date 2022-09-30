@@ -9,7 +9,7 @@ terraform {
 
 provider "vault" {
   address      = local.vault_mono_vault_addr
-  token        = local.vault_mono_vault_root_token
+  token        = var.vault_mono_vault_root_token
   ca_cert_file = var.vault_mono_local_file_root_certificate
   client_auth {
     cert_file = var.vault_mono_local_file_client_certificate
