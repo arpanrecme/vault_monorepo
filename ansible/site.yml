@@ -14,6 +14,7 @@
       with_items:
         - terraform
         - bw
+        - jq
       tags:
         - always
 
@@ -24,7 +25,7 @@
         - install_vault
         - vault_tls
 
-    - name: Vault Monorepo | Wirte Private key to file
+    - name: Vault Monorepo | Wirte Openssh Private key to file
       ansible.builtin.copy:
         content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
         dest: "{{ vault_mono_local_file_openssh_private_key }}"
@@ -98,8 +99,9 @@
     - name: Vault Monorepo | Read init secrets from File
       no_log: "{{ vault_mono_debug_no_log }}"
       run_once: true
+      ignore_errors: true
       ansible.builtin.set_fact:
-        vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_init_secrets) | from_json }}"
+        vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_init_secrets, errors='ignore') | default(omit) | from_json }}"
       tags:
         - vault_init_unseal
         - codified_vault

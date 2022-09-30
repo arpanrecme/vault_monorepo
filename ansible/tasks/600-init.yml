@@ -30,11 +30,12 @@
       secret_shares: 5
       secret_threshold: 3
   register: vault_mono_sys_init
+  changed_when: true
 
 - name: Vault Monorepo | Initialize | Reset init secret
   when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
   ansible.builtin.set_fact:
-    vault_mono_init_secrets: vault_mono_sys_init.json
+    vault_mono_init_secrets: "{{ vault_mono_sys_init.json }}"
 
 - name: Vault Monorepo | Initialize | Write init secrets To File
   when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
