@@ -28,7 +28,7 @@ __galaxy_api_key=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "An
 __tf_prod_token=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "HashiCorp Terraform cloud - arpanrec") | .fields |
     .[] | select(.name == "TF_PROD_TOKEN") | .value' -r)
 
-__linode_cli_prod_token=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "Linode - arpan9rec") | .fields |
+__linode_cli_prod_token=$(echo "${__bw_all_items_list}" | jq '.[] | select(.name == "Linode - arpanr") | .fields |
     .[] | select(.name == "LINODE_CLI_PROD_TOKEN") | .value' -r)
 
 ## Keys
