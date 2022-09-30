@@ -86,20 +86,28 @@
     - name: Vault Monorepo | Common Tasks
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
       tags:
-        - vault_init
+        - vault_init_unseal
         - codified_vault
 
     - name: Vault Monorepo | Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
       tags:
-        - vault_init
+        - vault_init_unseal
+        - codified_vault
+
+    - name: Vault Monorepo | Read init secrets from File
+      no_log: "{{ vault_mono_debug_no_log }}"
+      run_once: true
+      ansible.builtin.set_fact:
+        vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_init_secrets) | from_json }}"
+      tags:
+        - vault_init_unseal
         - codified_vault
 
     - name: Vault Monorepo | Initialize
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/600-init.yml"
       tags:
-        - vault_init
-        - codified_vault
+        - vault_init_unseal
 
     - name: Vault Monorepo | terraform_codified_vault
       community.general.terraform:
