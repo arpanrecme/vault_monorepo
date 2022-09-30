@@ -7,6 +7,16 @@
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
   tasks:
+    - name: Vault Monorepo | Check for tools
+      run_once: true
+      ansible.builtin.shell: "command -v {{ item }} >/dev/null 2>&1"
+      changed_when: false
+      with_items:
+        - terraform
+        - bw
+      tags:
+        - always
+
     - name: Vault Monorepo | Common Tasks
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
       tags:
