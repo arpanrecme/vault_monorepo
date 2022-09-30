@@ -1,14 +1,14 @@
 ---
-- name: Vault Monorepo | Configure Hashicorp Vault | Get IP Address from DNS
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get IP Address from DNS
   ansible.builtin.set_fact:
     vault_mono_server_vault_dig: "{{ lookup('community.general.dig', vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME) }}"
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Get Public IP Address
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get Public IP Address
   ansible.builtin.uri:
     url: https://ifconfig.me/all.json
   register: vault_mono_server_vault_ifconfig_me
 
-# - name: Vault Monorepo | Configure Hashicorp Vault | Fail if A recored is not proper
+# - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Fail if A recored is not proper
 #   ansible.builtin.fail:
 #     msg: >+
 #       DNS A record is wrong.
@@ -16,7 +16,7 @@
 #       Current public ip from
 #   when: vault_mono_server_vault_dig != vault_mono_server_vault_ifconfig_me.json.ip_addr
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Configure
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Configure
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/files/vault.hcl"
     dest: /etc/vault.d/vault.hcl
@@ -24,7 +24,7 @@
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Write Client Cert To File
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Client Cert To File
   ansible.builtin.copy:
     content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
     dest: "/opt/vault/tls/root.crt"
@@ -32,19 +32,19 @@
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL private key with the default values (4096 bits, RSA)
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
   community.crypto.openssl_privatekey:
     path: /opt/vault/tls/tls.key
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Check existing certificate file
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Check existing certificate file
   ansible.builtin.stat:
     path: /opt/vault/tls/tls.crt
   register: vault_mono_server_vault_certificate_file_stat
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Get information on generated certificate
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get information on generated certificate
   when: vault_mono_server_vault_certificate_file_stat.stat.exists
   community.crypto.x509_certificate_info:
     path: /opt/vault/tls/tls.crt
@@ -52,7 +52,7 @@
       point_1: "+1d"
   register: vault_mono_server_vault_x509_certificate_info
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL Certificate Signing Request
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL Certificate Signing Request
   when: >
     (
       not vault_mono_server_vault_certificate_file_stat.stat.exists
@@ -94,7 +94,7 @@
     extended_key_usage_critical: true
   register: vault_mono_server_vault_openssl_csr_pipe
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Generate an OpenSSL certificate signed with your own CA certificate
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL certificate signed with your own CA certificate
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
@@ -105,7 +105,7 @@
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_x509_certificate_pipe
 
-- name: Vault Monorepo | Configure Hashicorp Vault | Write Cert To File
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Cert To File
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
     content: |+
@@ -116,7 +116,7 @@
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"
 
-- name: Vault Monorepo | Install Hashicorp Vault | Enable Service
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Enable Service
   ansible.builtin.service:
     name: vault
     enabled: true

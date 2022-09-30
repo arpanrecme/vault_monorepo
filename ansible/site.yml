@@ -18,7 +18,7 @@
     - name: Vault Monorepo | Wirte Private key to file
       ansible.builtin.copy:
         content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
-        dest: "{{ vault_mono_private_key_file }}"
+        dest: "{{ vault_mono_local_file_openssh_private_key }}"
         mode: "600"
       tags:
         - patch_server
@@ -61,7 +61,7 @@
         - install_vault
         - never
 
-    - name: Vault Monorepo | Setup Hashicorp Vault
+    - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-vault_tls.yml"
       tags:
         - vault_tls
@@ -76,18 +76,18 @@
   tasks:
     - name: Vault Monorepo | Common Tasks
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
+      tags:
+        - vault_init
+        - never
 
-    - name: Vault Monorepo | Certificate
+    - name: Vault Monorepo | Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
+      tags:
+        - vault_init
+        - never
 
-    - name: Vault Post Install Steps | Get Vault Health Status
-      ansible.builtin.uri:
-        url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/sys/health"
-        method: GET
-        ca_path: "{{ vault_mono_root_certificate_file_in_local }}"
-        client_cert: "{{ vault_mono_client_certificate_file }}"
-        client_key: "{{ vault_mono_client_private_key_file }}"
-        status_code: [501, 503, 200]
-        validate_certs: true
-        timeout: 10
-      register: pv_vault_health_status
+    - name: Vault Monorepo | Initialize
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/600-init.yml"
+      tags:
+        - vault_init
+        - never

@@ -1,29 +1,29 @@
 ---
-- name: Vault Monorepo | Hashicorp Vault Client | Write Client Cert To File
+- name: Vault Monorepo | Client Certificate | Write Client Cert To File
   ansible.builtin.copy:
     content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
-    dest: "{{ vault_mono_root_certificate_file_in_local }}"
+    dest: "{{ vault_mono_local_file_root_certificate }}"
     mode: "0600"
 
-- name: Vault Monorepo | Hashicorp Vault Client | Generate an OpenSSL private key with the default values (4096 bits, RSA)
+- name: Vault Monorepo | Client Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
   community.crypto.openssl_privatekey:
-    path: "{{ vault_mono_client_private_key_file }}"
+    path: "{{ vault_mono_local_file_client_private_key }}"
     mode: "0600"
 
-- name: Vault Monorepo | Hashicorp Vault Client | Check existing certificate file
+- name: Vault Monorepo | Client Certificate | Check existing certificate file
   ansible.builtin.stat:
-    path: "{{ vault_mono_client_certificate_file }}"
+    path: "{{ vault_mono_local_file_client_certificate }}"
   register: vault_mono_server_vault_certificate_file_stat
 
-- name: Vault Monorepo | Hashicorp Vault Client | Get information on generated certificate
+- name: Vault Monorepo | Client Certificate | Get information on generated certificate
   when: vault_mono_server_vault_certificate_file_stat.stat.exists
   community.crypto.x509_certificate_info:
-    path: "{{ vault_mono_client_certificate_file }}"
+    path: "{{ vault_mono_local_file_client_certificate }}"
     valid_at:
       point_1: "+1d"
   register: vault_mono_server_vault_x509_certificate_info
 
-- name: Vault Monorepo | Hashicorp Vault Client | Generate an OpenSSL Certificate Signing Request
+- name: Vault Monorepo | Client Certificate | Generate an OpenSSL Certificate Signing Request
   when: >
     (
       not vault_mono_server_vault_certificate_file_stat.stat.exists
@@ -43,7 +43,7 @@
       )
     )
   community.crypto.openssl_csr_pipe:
-    privatekey_path: "{{ vault_mono_client_private_key_file }}"
+    privatekey_path: "{{ vault_mono_local_file_client_private_key }}"
     common_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
     subject_alt_name:
       - "DNS:{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
@@ -63,7 +63,7 @@
     extended_key_usage_critical: true
   register: vault_mono_server_vault_openssl_csr_pipe
 
-- name: Vault Monorepo | Hashicorp Vault Client | Generate an OpenSSL certificate signed with your own CA certificate
+- name: Vault Monorepo | Client Certificate | Generate an OpenSSL certificate signed with your own CA certificate
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
@@ -74,11 +74,11 @@
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_x509_certificate_pipe
 
-- name: Vault Monorepo | Hashicorp Vault Client | Write Cert To File
+- name: Vault Monorepo | Client Certificate | Write Cert To File
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
     content: |
       {{ vault_mono_server_vault_x509_certificate_pipe.certificate | trim }}
       {{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}
-    dest: "{{ vault_mono_client_certificate_file }}"
+    dest: "{{ vault_mono_local_file_client_certificate }}"
     mode: "0600"

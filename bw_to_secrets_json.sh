@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-__vault_mono_bw_export_file="secrets.json"
+__vault_mono_local_file_bw_export="secrets.json"
 
 ## Get Bitwarden Info
 __bw_organization_name='Password Organization'
@@ -128,4 +128,4 @@ jq --null-input \
     + {RSA_PRIVATE_KEY_PASSPHRASE: $RSA_PRIVATE_KEY_PASSPHRASE}
     + {ROOT_CERTIFICATE: $ROOT_CERTIFICATE}
     ' \
-    >"${__vault_mono_bw_export_file}"
+    >"${__vault_mono_local_file_bw_export}"
