@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-# __vault_mono_local_file_bw_export="secrets.json"
-
 ## Get Bitwarden Info
 __bw_organization_name='Password Organization'
 __bw_organization_collection_name='arpanrec/gitlab_master_control'
@@ -127,4 +125,4 @@ jq --null-input -r \
     + {RSA_PRIVATE_KEY: $RSA_PRIVATE_KEY}
     + {RSA_PRIVATE_KEY_PASSPHRASE: $RSA_PRIVATE_KEY_PASSPHRASE}
     + {ROOT_CERTIFICATE: $ROOT_CERTIFICATE}
-    ' # >"${__vault_mono_local_file_bw_export}"
+    '

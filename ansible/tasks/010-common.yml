@@ -1,31 +1,22 @@
 ---
 - name: Vault Monorepo | Common | Execute bitwarden secrets export script
   run_once: true
+  become: false
   delegate_to: localhost
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.command:
     argv:
       - "{{ vault_mono_local_file_bw_export_script }}"
-    creates: "{{ vault_mono_local_file_bw_export }}"
   changed_when: false
   register: vault_mono_local_file_bw_export_script_command
 
-- name: Vault Monorepo | Common | Write secrets into filee
-  ansible.builtin.copy:
-    content: "{{ vault_mono_local_file_bw_export_script_command.stdout }}"
-    dest: "{{ vault_mono_local_file_bw_export }}"
-    mode: "0400"
-  when: vault_mono_local_file_bw_export_script_command.stdout is not match("^skipped*")
-
-- name: Vault Monorepo | Get bitwarden secrets
-  no_log: "{{ vault_mono_debug_no_log }}"
-  run_once: true
-  delegate_to: localhost
+- name: Vault Monorepo | Common | Get bitwarden secrets
   ansible.builtin.set_fact:
-    vault_mono_bw_secrets: "{{ lookup('ansible.builtin.file', vault_mono_local_file_bw_export) | from_json }}"
+    vault_mono_bw_secrets: "{{ vault_mono_local_file_bw_export_script_command.stdout | from_json }}"
 
-- name: Vault Monorepo | Get Vault Config
+- name: Vault Monorepo | Common | Get Vault Config
   no_log: "{{ vault_mono_debug_no_log }}"
+  become: false
   run_once: true
   delegate_to: localhost
   ansible.builtin.set_fact:

@@ -3,12 +3,10 @@
 vault_mono_local_file_openssh_private_key: "{{ playbook_dir }}/../secrets.openssh_rsa_id"
 vault_mono_local_file_global_config: "{{ playbook_dir }}/../config.json"
 vault_mono_local_file_bw_export_script: "{{ playbook_dir }}/files/bw_to_secrets_json.sh"
-vault_mono_local_file_bw_export: "{{ playbook_dir }}/../secrets.json"
 vault_mono_local_file_client_private_key: "{{ playbook_dir }}/../secrets.client_private_key.key"
 vault_mono_local_file_client_certificate: "{{ playbook_dir }}/../secrets.client_certificate.crt"
 vault_mono_local_file_root_certificate: "{{ playbook_dir }}/../secrets.root_certificate.crt"
 vault_mono_local_file_vault_init_secrets: "{{ playbook_dir }}/../secrets.vault_init_secrets.json"
-
 
 vault_mono_server_username: vault_mono
 vault_mono_debug_no_log: false

@@ -14,6 +14,7 @@
       with_items:
         - terraform
         - bw
+        - jq
       tags:
         - always
 
@@ -24,7 +25,7 @@
         - install_vault
         - vault_tls
 
-    - name: Vault Monorepo | Wirte Private key to file
+    - name: Vault Monorepo | Wirte Openssh Private key to file
       ansible.builtin.copy:
         content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
         dest: "{{ vault_mono_local_file_openssh_private_key }}"
@@ -86,23 +87,39 @@
     - name: Vault Monorepo | Common Tasks
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
       tags:
-        - vault_init
+        - vault_init_unseal
         - codified_vault
 
     - name: Vault Monorepo | Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
       tags:
-        - vault_init
+        - vault_init_unseal
+        - codified_vault
+
+    - name: Vault Monorepo | Read init secrets from File
+      no_log: "{{ vault_mono_debug_no_log }}"
+      run_once: true
+      ignore_errors: true
+      ansible.builtin.set_fact:
+        vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_init_secrets, errors='ignore') | default(omit) | from_json }}"
+      tags:
+        - vault_init_unseal
         - codified_vault
 
     - name: Vault Monorepo | Initialize
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/600-init.yml"
       tags:
-        - vault_init
+        - vault_init_unseal
 
     - name: Vault Monorepo | terraform_codified_vault
       community.general.terraform:
         project_path: "{{ playbook_dir }}/../terraform"
         state: present
+      environment:
+        TF_VAR_vault_mono_vault_root_token: "{{ vault_mono_init_secrets.root_token }}"
+        TF_VAR_vault_mono_local_file_global_config: "{{ vault_mono_local_file_global_config }}"
+        TF_VAR_vault_mono_local_file_root_certificate: "{{ vault_mono_local_file_root_certificate }}"
+        TF_VAR_vault_mono_local_file_client_private_key: "{{ vault_mono_local_file_client_private_key }}"
+        TF_VAR_vault_mono_local_file_client_certificate: "{{ vault_mono_local_file_client_certificate }}"
       tags:
         - codified_vault
