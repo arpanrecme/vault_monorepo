@@ -1,5 +1,5 @@
 ---
-- name: Get Server Info
+- name: Get Server Information
   hosts: localhost
   gather_facts: true
   vars:
@@ -9,17 +9,32 @@
   tasks:
     - name: Vault Monorepo | Common Tasks
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
+      tags:
+        - patch_server
+        - install_vault
+        - vault_tls
+        - never
 
     - name: Vault Monorepo | Wirte Private key to file
       ansible.builtin.copy:
         content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
         dest: "{{ vault_mono_private_key_file }}"
         mode: "600"
+      tags:
+        - patch_server
+        - install_vault
+        - vault_tls
+        - never
 
     - name: Vault Monorepo | Create serevr
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-server_in_linode.yml"
+      tags:
+        - patch_server
+        - install_vault
+        - vault_tls
+        - never
 
-- name: Get Server Info
+- name: Setup Vault Server
   hosts: vault_mono_server_ansible_inventory
   gather_facts: true
   become: true
@@ -28,13 +43,51 @@
   tasks:
     - name: Vault Monorepo | Common Tasks
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
-      delegate_to: localhost
+      tags:
+        - patch_server
+        - install_vault
+        - vault_tls
+        - never
 
     - name: Vault Monorepo | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
+      tags:
+        - patch_server
+        - never
 
     - name: Vault Monorepo | Install Hashicorp Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/300-install_vault.yml"
+      tags:
+        - install_vault
+        - never
 
     - name: Vault Monorepo | Setup Hashicorp Vault
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-post_install.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-vault_tls.yml"
+      tags:
+        - vault_tls
+        - never
+
+- name: Client setup
+  hosts: localhost
+  gather_facts: false
+  become: false
+  vars_files:
+    - "{{ playbook_dir }}/vars/main.yml"
+  tasks:
+    - name: Vault Monorepo | Common Tasks
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
+
+    - name: Vault Monorepo | Certificate
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
+
+    - name: Vault Post Install Steps | Get Vault Health Status
+      ansible.builtin.uri:
+        url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/sys/health"
+        method: GET
+        ca_path: "{{ vault_mono_root_certificate_file_in_local }}"
+        client_cert: "{{ vault_mono_client_certificate_file }}"
+        client_key: "{{ vault_mono_client_private_key_file }}"
+        status_code: [501, 503, 200]
+        validate_certs: true
+        timeout: 10
+      register: pv_vault_health_status

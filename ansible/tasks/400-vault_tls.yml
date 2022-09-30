@@ -109,7 +109,7 @@
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
     content: |+
-      {{ vault_mono_server_vault_x509_certificate_pipe.certificate }}
+      {{ vault_mono_server_vault_x509_certificate_pipe.certificate | trim }}
       {{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}
     dest: /opt/vault/tls/tls.crt
     owner: "{{ vault_mono_server_vault_user }}"

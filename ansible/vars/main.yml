@@ -5,3 +5,6 @@ vault_mono_bw_export_file: "{{ playbook_dir }}/../secrets.json"
 vault_mono_debug_no_log: false
 vault_mono_global_config_file: "{{ playbook_dir }}/../config.json"
 vault_mono_server_vault_user: vault
+vault_mono_client_private_key_file: "{{ playbook_dir }}/../secrets.client_private_key.key"
+vault_mono_client_certificate_file: "{{ playbook_dir }}/../secrets.client_certificate.crt"
+vault_mono_root_certificate_file_in_local: "{{ playbook_dir }}/../secrets.root_certificate.crt"
