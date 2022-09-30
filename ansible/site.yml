@@ -101,7 +101,9 @@
       run_once: true
       ignore_errors: true
       ansible.builtin.set_fact:
-        vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_init_secrets, errors='ignore') | default(omit) | from_json }}"
+        vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', \
+          vault_mono_local_file_vault_init_secrets) | \
+          from_json }}"
       tags:
         - vault_init_unseal
         - codified_vault
@@ -111,10 +113,11 @@
       tags:
         - vault_init_unseal
 
-    - name: Vault Monorepo | terraform_codified_vault
+    - name: Vault Monorepo | Terraform Codified Vault
       community.general.terraform:
         project_path: "{{ playbook_dir }}/../terraform"
         state: present
+        force_init: true
       environment:
         TF_VAR_vault_mono_vault_root_token: "{{ vault_mono_init_secrets.root_token }}"
         TF_VAR_vault_mono_local_file_global_config: "{{ vault_mono_local_file_global_config }}"

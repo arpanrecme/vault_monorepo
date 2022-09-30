@@ -8,14 +8,6 @@
     url: https://ifconfig.me/all.json
   register: vault_mono_server_vault_ifconfig_me
 
-# - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Fail if A recored is not proper
-#   ansible.builtin.fail:
-#     msg: >+
-#       DNS A record is wrong.
-#       DNS Entry for {{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }} : {{ vault_mono_server_vault_dig }}
-#       Current public ip from
-#   when: vault_mono_server_vault_dig != vault_mono_server_vault_ifconfig_me.json.ip_addr
-
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Configure
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/files/vault.hcl"

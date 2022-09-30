@@ -4,7 +4,7 @@ set -e
 __vault_init_secrets_file=$1
 
 if [ -z "${__vault_init_secrets_file}" ]; then
-    echo "Missing init secret content"
+    echo "Missing init secret file"
     exit 1
 fi
 
