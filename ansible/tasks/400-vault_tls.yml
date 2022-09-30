@@ -10,7 +10,7 @@
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Configure
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/files/vault.hcl"
+    src: "{{ vault_mono_local_file_vault_server_config }}"
     dest: /etc/vault.d/vault.hcl
     mode: "0644"
     owner: "{{ vault_mono_server_vault_user }}"
