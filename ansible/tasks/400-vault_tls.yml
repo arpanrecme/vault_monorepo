@@ -23,6 +23,7 @@
     mode: "0644"
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
+  notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Client Cert To File
   ansible.builtin.copy:
@@ -31,6 +32,7 @@
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"
+  notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
   community.crypto.openssl_privatekey:
@@ -38,6 +40,7 @@
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"
+  notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Check existing certificate file
   ansible.builtin.stat:
@@ -51,6 +54,7 @@
     valid_at:
       point_1: "+1d"
   register: vault_mono_server_vault_x509_certificate_info
+  ignore_errors: true
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL Certificate Signing Request
   when: >
@@ -70,6 +74,10 @@
           vault_mono_server_vault_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
         )
       )
+    )
+    or
+    (
+      vault_mono_server_vault_x509_certificate_info.failed is defined and vault_mono_server_vault_x509_certificate_info.failed
     )
   community.crypto.openssl_csr_pipe:
     privatekey_path: /opt/vault/tls/tls.key
@@ -93,6 +101,7 @@
       - serverAuth
     extended_key_usage_critical: true
   register: vault_mono_server_vault_openssl_csr_pipe
+  notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL certificate signed with your own CA certificate
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
@@ -104,6 +113,7 @@
     provider: ownca
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_x509_certificate_pipe
+  notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Cert To File
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
@@ -115,9 +125,7 @@
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"
+  notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Enable Service
-  ansible.builtin.service:
-    name: vault
-    enabled: true
-    state: restarted
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Cert To File
+  ansible.builtin.meta: flush_handlers

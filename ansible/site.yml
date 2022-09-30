@@ -13,7 +13,6 @@
         - patch_server
         - install_vault
         - vault_tls
-        - never
 
     - name: Vault Monorepo | Wirte Private key to file
       ansible.builtin.copy:
@@ -24,7 +23,6 @@
         - patch_server
         - install_vault
         - vault_tls
-        - never
 
     - name: Vault Monorepo | Create serevr
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-server_in_linode.yml"
@@ -32,7 +30,6 @@
         - patch_server
         - install_vault
         - vault_tls
-        - never
 
 - name: Setup Vault Server
   hosts: vault_mono_server_ansible_inventory
@@ -47,25 +44,27 @@
         - patch_server
         - install_vault
         - vault_tls
-        - never
 
     - name: Vault Monorepo | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
       tags:
         - patch_server
-        - never
 
     - name: Vault Monorepo | Install Hashicorp Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/300-install_vault.yml"
       tags:
         - install_vault
-        - never
 
     - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-vault_tls.yml"
       tags:
         - vault_tls
-        - never
+
+  handlers:
+    - name: Vault Monorepo | Handlers | Restart Vault
+      ansible.builtin.service:
+        name: vault
+        state: restarted
 
 - name: Client setup
   hosts: localhost
@@ -78,16 +77,22 @@
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
       tags:
         - vault_init
-        - never
+        - codified_vault
 
     - name: Vault Monorepo | Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
       tags:
         - vault_init
-        - never
+        - codified_vault
 
     - name: Vault Monorepo | Initialize
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/600-init.yml"
       tags:
         - vault_init
-        - never
+
+    - name: Vault Monorepo | terraform_codified_vault
+      community.general.terraform:
+        project_path: "{{ playbook_dir }}/../terraform"
+        state: present
+      tags:
+        - codified_vault

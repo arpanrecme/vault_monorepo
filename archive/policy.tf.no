@@ -29,3 +29,9 @@ resource "vault_policy" "mradmin" {
   policy = data.vault_policy_document.mradmin.hcl
   /* file("sys/policies/admin.hcl") */
 }
+
+# Use Vault provider
+/* resource "vault_policy" "default" {
+  name = "default"
+  policy = file("sys/policies/default.hcl")
+} */

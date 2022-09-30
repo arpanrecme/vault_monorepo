@@ -14,6 +14,7 @@
 
 - name: Vault Post Install Steps | Initialize | Initialize
   when: not vault_mono_health.json.initialized
+  no_log: "{{ vault_mono_debug_no_log }}"
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_certificate }}"
   ansible.builtin.uri:
@@ -32,6 +33,7 @@
 
 - name: Vault Monorepo | Initialize | Write init secrets To File
   when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
+  no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.copy:
     content: |
       {{ vault_mono_sys_init.json | to_nice_json(indent=2) }}
@@ -41,17 +43,21 @@
 - name: Vault Monorepo | Initialize | Read init secrets from File
   no_log: "{{ vault_mono_debug_no_log }}"
   run_once: true
-  delegate_to: localhost
   ansible.builtin.set_fact:
     vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_init_secrets) | from_json }}"
 
 - name: Vault Post Install Steps | Initialize | Unseal
   when: >
-    (vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined)
+    (
+      vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
+    )
     or
-    (vault_mono_health.json.initialized)
+    (
+      vault_mono_health.json.initialized and vault_mono_health.json.sealed
+    )
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_certificate }}"
+  no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.uri:
     url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/sys/unseal"
     method: POST

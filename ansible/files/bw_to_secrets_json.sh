@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-__vault_mono_local_file_bw_export="secrets.json"
+# __vault_mono_local_file_bw_export="secrets.json"
 
 ## Get Bitwarden Info
 __bw_organization_name='Password Organization'
@@ -92,7 +92,7 @@ __root_certificate=$(echo "${__bw_root_certificate_item}" | jq .notes -r)
 ## Create JSON and Write to file
 
 ###  Why line break in some variables, like OPENPGP_PRIVATE_KEY?? https://askubuntu.com/questions/121866/why-does-bash-remove-n-in-cat-file
-jq --null-input \
+jq --null-input -r \
     --arg GH_PROD_API_TOKEN "${__gh_prod_api_token}" \
     --arg GL_PROD_API_KEY "${__gl_prod_api_key}" \
     --arg GALAXY_API_KEY "${__galaxy_api_key}" \
@@ -127,5 +127,4 @@ jq --null-input \
     + {RSA_PRIVATE_KEY: $RSA_PRIVATE_KEY}
     + {RSA_PRIVATE_KEY_PASSPHRASE: $RSA_PRIVATE_KEY_PASSPHRASE}
     + {ROOT_CERTIFICATE: $ROOT_CERTIFICATE}
-    ' \
-    >"${__vault_mono_local_file_bw_export}"
+    ' # >"${__vault_mono_local_file_bw_export}"
