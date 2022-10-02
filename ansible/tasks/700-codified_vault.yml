@@ -1,7 +1,7 @@
 ---
 - name: Vault Monorepo | Terraform Codified Vault | Terraform Apply
   community.general.terraform:
-    project_path: "{{ playbook_dir }}/../terraform"
+    project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present
     force_init: true
     backend_config:

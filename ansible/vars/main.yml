@@ -24,6 +24,8 @@ vault_mono_local_file_client_chain_certificate: "{{ vault_mono_local_files_dir }
 vault_mono_local_file_client_chain_pkcs12_certificate: "{{ vault_mono_local_files_dir }}/secrets.pkcs12_vault_client.p12"
 
 vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_files_dir }}/secrets.vault_init_secrets.json"
+
+vault_mono_codified_vault_dir: "{{ playbook_dir }}/../terraform"
 vault_mono_local_file_codified_vault_terraform_local_backend_path: "{{ vault_mono_local_files_dir }}/secrets.terraform.tfstate"
 
 vault_mono_server_username: vault_mono
