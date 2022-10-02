@@ -88,6 +88,7 @@
   community.crypto.openssl_pkcs12:
     action: export
     path: "{{ vault_mono_local_file_client_chain_pkcs12_certificate }}"
+    passphrase: "{{ vault_mono_local_file_client_passphrase_pkcs12_certificate | default(omit, true) }}"
     friendly_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
     privatekey_path: "{{ vault_mono_local_file_client_private_key }}"
     certificate_path: "{{ vault_mono_local_file_client_certificate }}"
