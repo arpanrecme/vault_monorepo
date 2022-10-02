@@ -10,11 +10,19 @@ vault_mono_local_file_openssh_passphrase_private_key:
 
 vault_mono_linode_cli_prod_token:
 
+vault_mono_local_file_root_ca_passphrase_private_key:
+vault_mono_local_file_root_ca_private_key: "{{ vault_mono_local_files_dir }}/secrets.root_ca_private_key.key"
+vault_mono_local_file_root_ca_certificate: "{{ vault_mono_local_files_dir }}/secrets.root_ca_certificate.crt"
+
 vault_mono_local_file_global_config: "{{ vault_mono_local_files_dir }}/config.json"
+
 vault_mono_local_file_vault_server_config: "{{ vault_mono_local_files_dir }}/vault.hcl"
+
 vault_mono_local_file_client_private_key: "{{ vault_mono_local_files_dir }}/secrets.client_private_key.key"
 vault_mono_local_file_client_certificate: "{{ vault_mono_local_files_dir }}/secrets.client_certificate.crt"
-vault_mono_local_file_root_certificate: "{{ vault_mono_local_files_dir }}/secrets.root_certificate.crt"
+vault_mono_local_file_client_chain_certificate: "{{ vault_mono_local_files_dir }}/secrets.client_certificate_chain.crt"
+vault_mono_local_file_client_chain_pkcs12_certificate: "{{ vault_mono_local_files_dir }}/secrets.pkcs12_vault_client.p12"
+
 vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_files_dir }}/secrets.vault_init_secrets.json"
 vault_mono_local_file_codified_vault_terraform_local_backend_path: "{{ vault_mono_local_files_dir }}/secrets.terraform.tfstate"
 

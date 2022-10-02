@@ -46,7 +46,7 @@
   ansible.posix.authorized_key:
     user: "{{ vault_mono_server_username }}"
     state: present
-    key: "{{ vault_mono_bw_secrets.OPENSSH_PUBLIC_KEY }}"
+    key: "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
 
 - name: Vault Monorepo | Patch System | SSHD Hardening Disable Password Authentication
   ansible.builtin.lineinfile:

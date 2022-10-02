@@ -40,6 +40,8 @@
     - "{{ playbook_dir }}/vars/main.yml"
   tasks:
     - name: Vault Monorepo | Common Tasks
+      delegate_to: localhost
+      become: false
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
       tags:
         - patch_server
@@ -65,7 +67,10 @@
     - name: Vault Monorepo | Handlers | Restart Vault
       ansible.builtin.service:
         name: vault
-        state: restarted
+        state: "{{ item }}"
+      with_items:
+        - reloaded
+        - restarted
 
 - name: Client setup
   hosts: localhost

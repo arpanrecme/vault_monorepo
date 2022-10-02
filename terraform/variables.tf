@@ -17,11 +17,11 @@ variable "vault_mono_vault_root_token" {
   }
 }
 
-variable "vault_mono_local_file_root_certificate" {
+variable "vault_mono_local_file_root_ca_certificate" {
   type    = string
   default = null
   validation {
-    condition     = length(var.vault_mono_local_file_root_certificate) > 1
+    condition     = length(var.vault_mono_local_file_root_ca_certificate) > 1
     error_message = "Missing root CA certificate file path"
   }
 }

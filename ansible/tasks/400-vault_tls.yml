@@ -17,16 +17,17 @@
     group: "{{ vault_mono_server_vault_user }}"
   notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Client Cert To File
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write TLS Client CA Certificate To File for tls_client_ca_file
   ansible.builtin.copy:
-    content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
+    src: "{{ vault_mono_local_file_root_ca_certificate }}"
     dest: "/opt/vault/tls/root.crt"
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"
+    remote_src: false
   notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL private key
   community.crypto.openssl_privatekey:
     path: /opt/vault/tls/tls.key
     owner: "{{ vault_mono_server_vault_user }}"
@@ -36,13 +37,13 @@
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Check existing certificate file
   ansible.builtin.stat:
-    path: /opt/vault/tls/tls.crt
+    path: /opt/vault/tls/tls_chain.crt
   register: vault_mono_server_vault_certificate_file_stat
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get information on generated certificate
   when: vault_mono_server_vault_certificate_file_stat.stat.exists
   community.crypto.x509_certificate_info:
-    path: /opt/vault/tls/tls.crt
+    path: /opt/vault/tls/tls_chain.crt
     valid_at:
       point_1: "+1d"
   register: vault_mono_server_vault_x509_certificate_info
@@ -96,24 +97,41 @@
   notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL certificate signed with your own CA certificate
+  delegate_to: localhost
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
-    ownca_content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
-    ownca_privatekey_content: "{{ vault_mono_bw_secrets.RSA_PRIVATE_KEY }}"
-    ownca_privatekey_passphrase: "{{ vault_mono_bw_secrets.RSA_PRIVATE_KEY_PASSPHRASE }}"
+    ownca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
+    ownca_privatekey_path: "{{ vault_mono_local_file_root_ca_private_key }}"
+    ownca_privatekey_passphrase: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
     provider: ownca
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_x509_certificate_pipe
   notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Cert To File
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Certificate To File
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
-    content: |+
+    content: "{{ vvault_mono_server_vault_x509_certificate_pipe.certificate }}"
+    dest: "/opt/vault/tls/tls_chain.crt"
+    owner: "{{ vault_mono_server_vault_user }}"
+    group: "{{ vault_mono_server_vault_user }}"
+    mode: "0600"
+  notify: Vault Monorepo | Handlers | Restart Vault
+
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Set certificate chain
+  delegate_to: localhost
+  when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
+  ansible.builtin.set_fact:
+    vault_mono_server_vault_chain_x509_certificate: |+
       {{ vault_mono_server_vault_x509_certificate_pipe.certificate | trim }}
-      {{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}
-    dest: /opt/vault/tls/tls.crt
+      {{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}
+
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Certificate Chain To File
+  when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
+  ansible.builtin.copy:
+    content: "{{ vault_mono_server_vault_chain_x509_certificate }}"
+    dest: "/opt/vault/tls/tls_chain.crt"
     owner: "{{ vault_mono_server_vault_user }}"
     group: "{{ vault_mono_server_vault_user }}"
     mode: "0600"

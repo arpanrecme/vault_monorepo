@@ -1,10 +1,4 @@
 ---
-- name: Vault Monorepo | Client Certificate | Write Client Cert To File
-  ansible.builtin.copy:
-    content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
-    dest: "{{ vault_mono_local_file_root_certificate }}"
-    mode: "0600"
-
 - name: Vault Monorepo | Client Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
   community.crypto.openssl_privatekey:
     path: "{{ vault_mono_local_file_client_private_key }}"
@@ -67,18 +61,38 @@
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
-    ownca_content: "{{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}"
-    ownca_privatekey_content: "{{ vault_mono_bw_secrets.RSA_PRIVATE_KEY }}"
-    ownca_privatekey_passphrase: "{{ vault_mono_bw_secrets.RSA_PRIVATE_KEY_PASSPHRASE }}"
+    ownca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
+    ownca_privatekey_path: "{{ vault_mono_local_file_root_ca_private_key }}"
+    ownca_privatekey_passphrase: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
     provider: ownca
     ownca_not_after: "+30d"
-  register: vault_mono_server_vault_x509_certificate_pipe
+  register: vault_mono_server_vault_client_x509_certificate_pipe
 
-- name: Vault Monorepo | Client Certificate | Write Cert To File
-  when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
+- name: Vault Monorepo | Client Certificate | Write Certificate To File
+  when: vault_mono_server_vault_client_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
-    content: |
-      {{ vault_mono_server_vault_x509_certificate_pipe.certificate | trim }}
-      {{ vault_mono_bw_secrets.ROOT_CERTIFICATE }}
+    content: "{{ vault_mono_server_vault_client_x509_certificate_pipe.certificate }}"
     dest: "{{ vault_mono_local_file_client_certificate }}"
     mode: "0600"
+
+- name: Vault Monorepo | Client Certificate | Write Certificate Chain To File
+  when: vault_mono_server_vault_client_x509_certificate_pipe.certificate is defined
+  ansible.builtin.copy:
+    content: |
+      {{ vault_mono_server_vault_client_x509_certificate_pipe.certificate | trim }}
+      {{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}
+    dest: "{{ vault_mono_local_file_client_chain_certificate }}"
+    mode: "0600"
+
+- name: Vault Monorepo | Client Certificate | Generate PKCS#12 file
+  when: vault_mono_server_vault_client_x509_certificate_pipe.certificate is defined
+  community.crypto.openssl_pkcs12:
+    action: export
+    path: "{{ vault_mono_local_file_client_chain_pkcs12_certificate }}"
+    friendly_name: raclette
+    privatekey_path: "{{ vault_mono_local_file_client_private_key }}"
+    certificate_path: "{{ vault_mono_local_file_client_certificate }}"
+    other_certificates_parse_all: true
+    other_certificates:
+      - "{{ vault_mono_local_file_root_ca_certificate }}"
+    state: present

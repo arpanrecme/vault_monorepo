@@ -1,9 +1,6 @@
 ---
 - name: Vault Monorepo | Common | Get Vault Config
-  no_log: "{{ vault_mono_debug_no_log }}"
-  become: false
   run_once: true
-  delegate_to: localhost
   ansible.builtin.set_fact:
     vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
 

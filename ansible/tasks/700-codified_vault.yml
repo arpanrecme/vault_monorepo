@@ -9,7 +9,7 @@
   environment:
     TF_VAR_vault_mono_vault_root_token: "{{ vault_mono_init_secrets.root_token }}"
     TF_VAR_vault_mono_local_file_global_config: "{{ vault_mono_local_file_global_config }}"
-    TF_VAR_vault_mono_local_file_root_certificate: "{{ vault_mono_local_file_root_certificate }}"
+    TF_VAR_vault_mono_local_file_root_ca_certificate: "{{ vault_mono_local_file_root_ca_certificate }}"
     TF_VAR_vault_mono_local_file_client_private_key: "{{ vault_mono_local_file_client_private_key }}"
     TF_VAR_vault_mono_local_file_client_certificate: "{{ vault_mono_local_file_client_certificate }}"
   register: vault_mono_codified_vault_output
