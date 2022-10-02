@@ -2,11 +2,11 @@
 - name: Setup Vault | Server in linode | Create a new linode
   linode_v4:
     label: "vault_server"
-    access_token: "{{ vault_mono_bw_secrets.LINODE_CLI_PROD_TOKEN }}"
+    access_token: "{{ vault_mono_linode_cli_prod_token }}"
     type: g6-standard-4
     region: ap-west
     image: linode/debian11
-    authorized_keys: "{{ vault_mono_bw_secrets.OPENSSH_PUBLIC_KEY }}"
+    authorized_keys: "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
     state: present
   register: vault_mono_linode
 

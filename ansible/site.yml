@@ -25,16 +25,6 @@
         - install_vault
         - vault_tls
 
-    - name: Vault Monorepo | Wirte Openssh Private key to file
-      ansible.builtin.copy:
-        content: "{{ vault_mono_bw_secrets.OPENSSH_PRIVATE_KEY }}"
-        dest: "{{ vault_mono_local_file_openssh_private_key }}"
-        mode: "600"
-      tags:
-        - patch_server
-        - install_vault
-        - vault_tls
-
     - name: Vault Monorepo | Create serevr
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-server_in_linode.yml"
       tags:
