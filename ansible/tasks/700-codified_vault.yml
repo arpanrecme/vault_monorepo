@@ -7,11 +7,11 @@
     backend_config:
       path: "{{ vault_mono_local_file_codified_vault_terraform_local_backend_path }}"
   environment:
-    TF_VAR_vault_mono_vault_root_token: "{{ vault_mono_init_secrets.root_token }}"
-    TF_VAR_vault_mono_local_file_global_config: "{{ vault_mono_local_file_global_config }}"
-    TF_VAR_vault_mono_local_file_root_ca_certificate: "{{ vault_mono_local_file_root_ca_certificate }}"
-    TF_VAR_vault_mono_local_file_client_private_key: "{{ vault_mono_local_file_client_private_key }}"
-    TF_VAR_vault_mono_local_file_client_certificate: "{{ vault_mono_local_file_client_certificate }}"
+    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_init_secrets.root_token }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE: "{{ vault_mono_local_file_client_certificate }}"
   register: vault_mono_codified_vault_output
   ignore_errors: true
 

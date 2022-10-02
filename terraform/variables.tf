@@ -1,45 +1,45 @@
-variable "vault_mono_local_file_global_config" {
+variable "VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG" {
   type    = string
   default = null
   validation {
-    condition     = length(var.vault_mono_local_file_global_config) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG) > 1
     error_message = "Missing global config file path"
   }
 }
 
-variable "vault_mono_vault_root_token" {
+variable "VAULT_MONO_VAULT_ROOT_TOKEN" {
   type      = string
   default   = null
   sensitive = true
   validation {
-    condition     = length(var.vault_mono_vault_root_token) > 1
+    condition     = length(var.VAULT_MONO_VAULT_ROOT_TOKEN) > 1
     error_message = "Missing vault root token"
   }
 }
 
-variable "vault_mono_local_file_root_ca_certificate" {
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
   type    = string
   default = null
   validation {
-    condition     = length(var.vault_mono_local_file_root_ca_certificate) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE) > 1
     error_message = "Missing root CA certificate file path"
   }
 }
 
-variable "vault_mono_local_file_client_private_key" {
+variable "VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY" {
   type    = string
   default = null
   validation {
-    condition     = length(var.vault_mono_local_file_client_private_key) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY) > 1
     error_message = "Missing vault mutual TLS auth private key file path"
   }
 }
 
-variable "vault_mono_local_file_client_certificate" {
+variable "VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE" {
   type    = string
   default = null
   validation {
-    condition     = length(var.vault_mono_local_file_client_certificate) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE) > 1
     error_message = "Missing vault mutual TLS auth client certificate file path"
   }
 }
