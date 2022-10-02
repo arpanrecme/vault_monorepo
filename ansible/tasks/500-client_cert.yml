@@ -85,11 +85,10 @@
     mode: "0600"
 
 - name: Vault Monorepo | Client Certificate | Generate PKCS#12 file
-  when: vault_mono_server_vault_client_x509_certificate_pipe.certificate is defined
   community.crypto.openssl_pkcs12:
     action: export
     path: "{{ vault_mono_local_file_client_chain_pkcs12_certificate }}"
-    friendly_name: raclette
+    friendly_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
     privatekey_path: "{{ vault_mono_local_file_client_private_key }}"
     certificate_path: "{{ vault_mono_local_file_client_certificate }}"
     other_certificates_parse_all: true
