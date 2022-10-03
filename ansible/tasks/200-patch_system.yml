@@ -11,7 +11,7 @@
   ignore_errors: true
   register: rv_linux_patching_hw_settime_result
 
-- name: Vault Monorepo | Patch System | Set timezone as {{ rv_linux_patching_timezone }} via softlink
+- name: Vault Monorepo | Patch System | Set timezone via softlink
   ansible.builtin.file:
     src: "/usr/share/zoneinfo/Asia/Kolkata"
     dest: /etc/localtime
