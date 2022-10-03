@@ -1,10 +1,10 @@
 ---
 - name: Vault Monorepo | Terraform Codified Vault | Include variables
-  no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.include_vars:
     file: "{{ playbook_dir }}/vars/gitlab_artifacts.yml"
 
 - name: Vault Monorepo | Terraform Codified Vault | Terraform Apply
+  no_log: "{{ vault_mono_debug_no_log }}"
   community.general.terraform:
     project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present

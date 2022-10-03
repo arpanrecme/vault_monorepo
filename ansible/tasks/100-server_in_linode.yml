@@ -1,5 +1,6 @@
 ---
 - name: Setup Vault | Server in linode | Create a new linode
+  no_log: "{{ vault_mono_debug_no_log }}"
   linode_v4:
     label: "vault_server"
     access_token: "{{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"

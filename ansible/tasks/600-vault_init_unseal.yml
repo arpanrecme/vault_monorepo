@@ -33,6 +33,7 @@
   changed_when: true
 
 - name: Vault Monorepo | Initialize | Reset init secret
+  no_log: "{{ vault_mono_debug_no_log }}"
   when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
   ansible.builtin.set_fact:
     vault_mono_init_secrets: "{{ vault_mono_sys_init.json }}"
