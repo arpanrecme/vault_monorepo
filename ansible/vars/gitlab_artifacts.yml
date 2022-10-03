@@ -1,0 +1,16 @@
+---
+vault_mono_gitlab_artifacts_project_path:
+  "{{ lookup('ansible.builtin.file', vault_mono_local_file_github_username) | trim }}\
+  /vault_monorepo"
+vault_mono_gitlab_artifacts_project_id: 39779402
+vault_mono_gitlab_artifacts_vault_cicd_variable_key_init_file: VAULT_INIT_SECRET_FILE
+vault_mono_gitlab_artifacts_tf_http_address:
+  "https://gitlab.com/api/v4/projects/{{ vault_mono_gitlab_artifacts_project_id }}\
+  /terraform/state/default"
+vault_mono_gitlab_artifacts_tf_http_lock_address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}/lock"
+vault_mono_gitlab_artifacts_tf_http_unlock_address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}/lock"
+vault_mono_gitlab_artifacts_tf_http_username: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_username) | trim }}"
+vault_mono_gitlab_artifacts_tf_http_password: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_gl_prod_api_key) | trim }}"
+vault_mono_gitlab_artifacts_tf_http_lock_method: POST
+vault_mono_gitlab_artifacts_tf_http_unlock_method: DELETE
+vault_mono_gitlab_artifacts_tf_http_retry_wait_min: 5

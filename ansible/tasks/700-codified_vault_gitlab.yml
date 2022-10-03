@@ -1,11 +1,23 @@
 ---
+- name: Vault Monorepo | Terraform Codified Vault | Include variables
+  no_log: "{{ vault_mono_debug_no_log }}"
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/vars/gitlab_artifacts.yml"
+
 - name: Vault Monorepo | Terraform Codified Vault | Terraform Apply
   community.general.terraform:
     project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present
     force_init: true
     backend_config:
-      path: "{{ vault_mono_local_file_codified_vault_terraform_local_backend_path }}"
+      address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}"
+      lock_address: "{{ vault_mono_gitlab_artifacts_tf_http_lock_address }}"
+      lock_method: "{{ vault_mono_gitlab_artifacts_tf_http_lock_method }}"
+      unlock_address: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_address }}"
+      unlock_method: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_method }}"
+      username: "{{ lookup('ansible.builtin.file', vault_mono_local_file_github_username) | trim }}"
+      password: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_gl_prod_api_key) | trim }}"
+      retry_wait_min: "{{ vault_mono_gitlab_artifacts_tf_http_retry_wait_min }}"
   environment:
     TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_init_secrets.root_token }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"

@@ -92,14 +92,8 @@
         - vault_init_unseal
         - codified_vault
 
-    - name: Vault Monorepo | Read init secrets from File
-      no_log: "{{ vault_mono_debug_no_log }}"
-      run_once: true
-      ignore_errors: true
-      ansible.builtin.set_fact:
-        vault_mono_init_secrets: "{{ lookup('ansible.builtin.file', \
-          vault_mono_local_file_vault_init_secrets) | \
-          from_json }}"
+    - name: Vault Monorepo | Vault Init Secret Get
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/800-get_vault_init_secret_gitlab.yml"
       tags:
         - vault_init_unseal
         - codified_vault
@@ -109,7 +103,12 @@
       tags:
         - vault_init_unseal
 
+    - name: Vault Monorepo | Vault Init Secret Update
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/810-update_vault_init_secret_gitlab.yml"
+      tags:
+        - vault_init_unseal
+
     - name: Vault Monorepo | Terraform Codified Vault
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/700-codified_vault.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/700-codified_vault_gitlab.yml"
       tags:
         - codified_vault

@@ -1,3 +1,4 @@
 ansible
 linode_api4
 dnspython
+python-gitlab

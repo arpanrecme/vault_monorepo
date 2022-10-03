@@ -5,6 +5,7 @@
         "lineinfile",
         "nanode",
         "NOPASSWD",
+        "OPENPGP",
         "posix"
     ]
 }
