@@ -1,13 +1,48 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+---
+image: node:bullseye
+variables:
+  DEBIAN_FRONTEND: noninteractive
+
 stages:
-- test
+  - test
+  - vault-action
 sast:
   stage: test
 include:
-- template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
+terraform_apply:
+  stage: vault-action
+  rules:
+    - changes:
+        - terraform/**/*
+        - ansible/**/*
+        - files/**/*
+        - .gitlab-ci.yml
+        - inventory.yml
+        - requirements.txt
+        - ansible.cfg
+  before_script:
+    # Get credentials from Bitwarden to terraform/secrets.auto.tfvars.json
+    ## Install bitwarden cli
+    - apt-get update
+    - apt-get install -y jq
+    - apt-get install -y python3-pip
+    - npm install -g @bitwarden/cli
+    - pip install --upgrade -r requirements.txt
+    ## Login and execute
+    - bw login --apikey --quiet
+    - export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
+    # Install Terraform
+    - apt-get update && apt-get install -y gnupg software-properties-common wget curl
+    - |
+      wget -O- https://apt.releases.hashicorp.com/gpg | \
+      gpg --dearmor | \
+      tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    - |
+      echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+      https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+      tee /etc/apt/sources.list.d/hashicorp.list
+    - apt update && apt-get install terraform -y
+  script:
+    - ansible-playbook ansible/site.yml --tags codified_vault
