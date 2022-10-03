@@ -4,8 +4,10 @@
 ARG VARIANT="bullseye"
 FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-     && apt-get -y install python3-pip iputils-ping
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
+RUN apt-get -y install python3-pip
 RUN apt-get -y install npm
 
 RUN npm install -g @bitwarden/cli
