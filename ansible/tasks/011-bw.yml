@@ -2,25 +2,15 @@
 - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY
   no_log: "{{ vault_mono_debug_no_log }}"
   block:
-    - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Get Item
-      ansible.builtin.command: bw get item 'OPENSSH PRIVATE KEY' --raw
-      register: vault_mono_temp_bw_openssh_key_item
-      changed_when: false
-
-    - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Get Item ID and passphrase
-      ansible.builtin.set_fact:
-        vault_mono_temp_bw_openssh_key_id_item: "{{ (vault_mono_temp_bw_openssh_key_item.stdout | from_json).get('id') }}"
-        vault_mono_local_file_openssh_passphrase_private_key: "{{ (vault_mono_temp_bw_openssh_key_item.stdout | from_json).get('login').get('password') }}"
-
-    - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Get Item ID
-      ansible.builtin.shell: bw get item 'OPENSSH PRIVATE KEY' --raw | jq .id -r
-      register: vault_mono_temp_bw_openssh_key_item
-      changed_when: false
+    - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Get Private Ket Password
+      ansible.builtin.shell: bw get password 'OPENSSH PRIVATE KEY' --raw > "{{ vault_mono_local_file_openssh_passphrase_private_key }}"
+      args:
+        creates: "{{ vault_mono_local_file_openssh_passphrase_private_key }}"
 
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Private key
       ansible.builtin.shell: |-
         bw get attachment id_rsa \
-        --itemid "{{ vault_mono_temp_bw_openssh_key_id_item }}" \
+        --itemid $(bw get item 'OPENSSH PRIVATE KEY' --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_openssh_private_key }}"
         chmod 600 "{{ vault_mono_local_file_openssh_private_key }}"
       args:
@@ -29,43 +19,35 @@
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Public key
       ansible.builtin.shell: |-
         bw get attachment id_rsa.pub \
-        --itemid "{{ vault_mono_temp_bw_openssh_key_id_item }}" \
+        --itemid $(bw get item 'OPENSSH PRIVATE KEY' --raw | jq .id -r) \
         --output {{ vault_mono_local_file_openssh_public_key }}
         chmod 600 {{ vault_mono_local_file_openssh_public_key }}
       args:
         creates: "{{ vault_mono_local_file_openssh_public_key }}"
 
-- name: Vault Monorepo | Bitwarden | Linode
-  no_log: "{{ vault_mono_debug_no_log }}"
-  block:
-    - name: Vault Monorepo | Bitwarden | Linode | Get Item
-      ansible.builtin.shell: |
-        bw get item 'Linode' --raw | jq '.fields | .[] | select(.name == "LINODE_CLI_PROD_TOKEN") | .value' -r
-      register: vault_mono_temp_bw_linode
-      changed_when: false
-
-    - name: Vault Monorepo | Bitwarden | Linode | Get token
-      ansible.builtin.set_fact:
-        vault_mono_linode_cli_prod_token: "{{ vault_mono_temp_bw_linode.stdout }}"
+- name: Vault Monorepo | Bitwarden | Linode | Get Password
+  ansible.builtin.shell: >
+    bw get item 'Linode' --raw |
+    jq '.fields |
+    .[] |
+    select(.name == "LINODE_CLI_PROD_TOKEN") |
+    .value' -r > {{ vault_mono_local_file_linode_cli_prod_token }}
+  args:
+    creates: "{{ vault_mono_local_file_linode_cli_prod_token }}"
 
 - name: Vault Monorepo | Bitwarden | ROOT CA
   no_log: "{{ vault_mono_debug_no_log }}"
   block:
     - name: Vault Monorepo | Bitwarden | ROOT CA | Get Item
       ansible.builtin.shell: |
-        bw get item 'CA ROOT' --raw
-      register: vault_mono_temp_bw_root_ca
-      changed_when: false
-
-    - name: Vault Monorepo | Bitwarden | ROOT CA | Get Item ID and passphrase
-      ansible.builtin.set_fact:
-        vault_mono_temp_bw_item_id_root_ca: "{{ (vault_mono_temp_bw_root_ca.stdout | from_json).get('id') }}"
-        vault_mono_local_file_root_ca_passphrase_private_key: "{{ (vault_mono_temp_bw_root_ca.stdout | from_json).get('login').get('password') }}"
+        bw get password 'CA ROOT' --raw > "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
+      args:
+        creates: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
 
     - name: Vault Monorepo | Bitwarden | ROOT CA | Download Private key
       ansible.builtin.shell: |-
         bw get attachment own_ca_root.key \
-        --itemid "{{ vault_mono_temp_bw_item_id_root_ca }}" \
+        --itemid $(bw get item 'CA ROOT' --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_root_ca_private_key }}"
       args:
         creates: "{{ vault_mono_local_file_root_ca_private_key }}"
@@ -73,7 +55,7 @@
     - name: Vault Monorepo | Bitwarden | ROOT CA | Download Certificate
       ansible.builtin.shell: |-
         bw get attachment own_ca_root.cert \
-        --itemid "{{ vault_mono_temp_bw_item_id_root_ca }}" \
+        --itemid $(bw get item 'CA ROOT' --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_root_ca_certificate }}"
       args:
         creates: "{{ vault_mono_local_file_root_ca_certificate }}"
