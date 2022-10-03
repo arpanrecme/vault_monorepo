@@ -20,7 +20,7 @@ vault_mono_local_file_client_private_key: "{{ vault_mono_local_files_dir }}/secr
 vault_mono_local_file_client_certificate: "{{ vault_mono_local_files_dir }}/secrets.client_certificate.crt"
 vault_mono_local_file_client_chain_certificate: "{{ vault_mono_local_files_dir }}/secrets.client_certificate_chain.crt"
 vault_mono_local_file_client_chain_pkcs12_certificate: "{{ vault_mono_local_files_dir }}/secrets.client_certificate_chain.p12"
-vault_mono_local_file_client_passphrase_pkcs12_certificate:
+vault_mono_client_passphrase_pkcs12_certificate:
 
 vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_files_dir }}/secrets.vault_init_secrets.json"
 

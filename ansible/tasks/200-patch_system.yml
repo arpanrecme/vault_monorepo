@@ -4,6 +4,27 @@
   register: vault_mono_install_python_pip_result_raw
   changed_when: "'0 upgraded, 0 newly installed' not in vault_mono_install_python_pip_result_raw.stdout_lines | last"
 
+- name: Vault Monorepo | Patch System | Set timezone as Asia/Kolkata
+  community.general.timezone:
+    name: Asia/Kolkata
+    hwclock: local
+  ignore_errors: true
+  register: rv_linux_patching_hw_settime_result
+
+- name: Vault Monorepo | Patch System | Set timezone as {{ rv_linux_patching_timezone }} via softlink
+  ansible.builtin.file:
+    src: "/usr/share/zoneinfo/Asia/Kolkata"
+    dest: /etc/localtime
+    state: link
+  when: rv_linux_patching_hw_settime_result.failed
+
+- name: Vault Monorepo | Patch System | Ensure a locale exists as en_US.UTF-8
+  community.general.locale_gen:
+    name: en_US.UTF-8
+    state: present
+  environment:
+    PATH: /usr/sbin:{{ ansible_env.PATH }}
+
 - name: Vault Monorepo | Patch System | Create wheel and sudo groups
   ansible.builtin.group:
     name: "{{ item }}"
