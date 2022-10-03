@@ -35,3 +35,8 @@ backend-config.tf.json
 .secret.backend-config.json
 .secret.all.json
 tfplan
+files/prerequisite.root_ca_certificate.crt
+files/prerequisite.openpgp_public.asc
+files/client_certificate.crt
+files/client_certificate_chain.crt
+files/prerequisite.openssh_rsa_id.key.pub
