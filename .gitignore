@@ -40,3 +40,6 @@ files/prerequisite.openpgp_public.asc
 files/client_certificate.crt
 files/client_certificate_chain.crt
 files/prerequisite.openssh_rsa_id.key.pub
+files/prerequisite.gitlab_username.txt
+files/prerequisite.gitlab_gl_prod_api_key.txt
+files/prerequisite.github_username.txt

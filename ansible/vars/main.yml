@@ -3,19 +3,38 @@
 vault_mono_local_files_dir: "{{ playbook_dir }}/../files"
 
 ## from bitwarden
+### OPENSSH
 vault_mono_local_file_openssh_private_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.openssh_rsa_id.key"
 vault_mono_local_file_openssh_passphrase_private_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.openssh_rsa_id_passphrase.txt"
 vault_mono_local_file_openssh_public_key: "{{ vault_mono_local_files_dir }}/prerequisite.openssh_rsa_id.key.pub"
 
+### OPENPGP
 vault_mono_local_file_openpgp_private_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.openpgp_private.asc"
 vault_mono_local_file_openpgp_passphrase_private_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.openpgp_passphrase.txt"
 vault_mono_local_file_openpgp_public_key: "{{ vault_mono_local_files_dir }}/prerequisite.openpgp_public.asc"
 
+### Linode
 vault_mono_local_file_linode_cli_prod_token: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.linode_cli_prod_token.txt"
 
+### ROOT CA
 vault_mono_local_file_root_ca_passphrase_private_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.root_ca_private_key_passphrase.txt"
 vault_mono_local_file_root_ca_private_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.root_ca_private_key.key"
 vault_mono_local_file_root_ca_certificate: "{{ vault_mono_local_files_dir }}/prerequisite.root_ca_certificate.crt"
+
+### GITLAB
+vault_mono_local_file_gitlab_username: "{{ vault_mono_local_files_dir }}/prerequisite.gitlab_username.txt"
+vault_mono_local_file_gitlab_gl_prod_api_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.gitlab_gl_prod_api_key.txt"
+
+### GITHUB
+vault_mono_local_file_github_username: "{{ vault_mono_local_files_dir }}/prerequisite.github_username.txt"
+vault_mono_local_file_github_gh_prod_api_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.github_gh_prod_api_key.txt"
+
+### Ansible Galaxy
+vault_mono_local_file_ansible_galaxy_api_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.ansible_galaxy_api_key.txt"
+
+### HashiCorp Terraform cloud
+vault_mono_local_file_terraform_cloud_prod_token: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.terraform_cloud_prod_token.txt"
+
 ## from bitwarden
 
 vault_mono_local_file_global_config: "{{ vault_mono_local_files_dir }}/config.json"
