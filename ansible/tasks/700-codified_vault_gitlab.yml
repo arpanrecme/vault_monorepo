@@ -39,6 +39,12 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME: "{{ vault_mono_local_file_gitlab_username }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME: "{{ vault_mono_local_file_github_username }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_KEY: "{{ vault_mono_local_file_github_gh_prod_api_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_prod_token }}"
   register: vault_mono_codified_vault_output
   ignore_errors: true
 
