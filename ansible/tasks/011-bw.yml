@@ -142,6 +142,6 @@
     jq '.fields |
     .[] |
     select(.name == "TF_PROD_TOKEN") |
-    .value' -r > {{ vault_mono_local_file_terraform_cloud_prod_token }}
+    .value' -r > {{ vault_mono_local_file_terraform_cloud_tf_prod_token }}
   args:
-    creates: "{{ vault_mono_local_file_terraform_cloud_prod_token }}"
+    creates: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"

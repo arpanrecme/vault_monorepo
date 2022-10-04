@@ -33,7 +33,7 @@ vault_mono_local_file_github_gh_prod_api_key: "{{ vault_mono_local_files_dir }}/
 vault_mono_local_file_ansible_galaxy_api_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.ansible_galaxy_api_key.txt"
 
 ### HashiCorp Terraform cloud
-vault_mono_local_file_terraform_cloud_prod_token: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.terraform_cloud_prod_token.txt"
+vault_mono_local_file_terraform_cloud_tf_prod_token: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.terraform_cloud_tf_prod_token.txt"
 
 ## from bitwarden
 

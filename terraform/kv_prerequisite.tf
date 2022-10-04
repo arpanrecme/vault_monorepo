@@ -81,7 +81,7 @@ resource "vault_kv_secret_v2" "secret_prerequisite_terraform_cloud" {
   name  = "prerequisite/terraform_cloud"
   data_json = jsonencode(
     {
-      TF_PROD_TOKEN = file(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_PROD_TOKEN)
+      TF_PROD_TOKEN = file(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN)
     }
   )
 }

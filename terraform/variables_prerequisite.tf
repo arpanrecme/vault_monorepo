@@ -133,11 +133,11 @@ variable "VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_PROD_TOKEN" {
+variable "VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN" {
   type    = string
   default = null
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_PROD_TOKEN) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN) > 1
     error_message = "Missing Terraform API Key file path"
   }
 }
