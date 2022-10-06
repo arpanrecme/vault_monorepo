@@ -93,7 +93,7 @@
         - codified_vault
 
     - name: Vault Monorepo | Vault Init Secret Get
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/800-get_vault_init_secret_gitlab.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/550-get_vault_init_secret.yml"
       tags:
         - vault_init_unseal
         - codified_vault
@@ -104,7 +104,7 @@
         - vault_init_unseal
 
     - name: Vault Monorepo | Vault Init Secret Update
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/810-update_vault_init_secret_gitlab.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/650-update_vault_init_secret.yml"
       tags:
         - vault_init_unseal
 
