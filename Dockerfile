@@ -1,0 +1,32 @@
+# docker build . -t arpanrec/vaultmonorepo
+FROM debian
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
+
+RUN apt-get install -y apt-utils
+
+RUN apt-get upgrade -y
+
+RUN apt-get install -y python3-pip
+
+RUN apt-get install -y npm
+
+RUN apt-get install -y jq
+
+RUN apt-get install -y gnupg
+
+RUN apt-get install -y software-properties-common
+
+RUN apt-get install -y wget
+
+RUN apt-get install -y curl
+
+RUN npm install -g @bitwarden/cli
+
+COPY requirements.txt /tmp/requirements.txt
+
+RUN python3 -m pip install -r /tmp/requirements.txt --upgrade
+
+RUN rm -rf /tmp/requirements.txt
