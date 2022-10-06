@@ -16,6 +16,7 @@
         "posix",
         "SAST",
         "sourceshift",
+        "tfvars",
         "timestamping"
     ]
 }
