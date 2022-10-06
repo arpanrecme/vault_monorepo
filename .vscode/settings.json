@@ -17,6 +17,7 @@
         "SAST",
         "sourceshift",
         "tfvars",
-        "timestamping"
+        "timestamping",
+        "vaultmonorepo"
     ]
 }

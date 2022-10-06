@@ -40,3 +40,11 @@ RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
     tee /etc/apt/sources.list.d/hashicorp.list
 
 RUN apt update && apt-get install terraform -y
+
+RUN apt-get install -y git
+
+RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
+
+USER vault-mono
+
+WORKDIR /home/vault-mono
