@@ -1,13 +1,19 @@
 {
     "cSpell.words": [
+        "apikey",
         "arpanrec",
         "bitwarden",
+        "dearmor",
+        "keyrings",
         "lineinfile",
+        "MASTERPASSWORD",
         "nanode",
+        "noninteractive",
         "NOPASSWD",
         "OCSP",
         "OPENPGP",
         "posix",
+        "SAST",
         "sourceshift",
         "timestamping"
     ]

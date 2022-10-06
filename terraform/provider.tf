@@ -3,6 +3,9 @@ terraform {
     vault = {
       source = "hashicorp/vault"
     }
+    tls = {
+      source = "hashicorp/tls"
+    }
   }
 }
 
@@ -14,4 +17,7 @@ provider "vault" {
     cert_file = var.VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE
     key_file  = var.VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY
   }
+}
+
+provider "tls" {
 }

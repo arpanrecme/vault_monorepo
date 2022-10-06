@@ -45,5 +45,5 @@ vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_files_dir }}/secr
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/../terraform"
 
 vault_mono_server_username: vault_mono
-vault_mono_debug_no_log: false
+vault_mono_debug_no_log: true
 vault_mono_server_vault_user: vault

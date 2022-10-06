@@ -1,6 +1,6 @@
 variable "VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG" {
   type    = string
-  default = null
+  default = "../files/config.json"
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG) > 1
     error_message = "Missing global config file path"
@@ -19,7 +19,7 @@ variable "VAULT_MONO_VAULT_ROOT_TOKEN" {
 
 variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
   type    = string
-  default = null
+  default = "../files/prerequisite.root_ca_certificate.crt"
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE) > 1
     error_message = "Missing root CA certificate file path"
@@ -28,7 +28,7 @@ variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
 
 variable "VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY" {
   type    = string
-  default = null
+  default = "../files/secrets.client_private_key.key"
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY) > 1
     error_message = "Missing vault mutual TLS auth private key file path"
@@ -37,7 +37,7 @@ variable "VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY" {
 
 variable "VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE" {
   type    = string
-  default = null
+  default = "../files/client_certificate_chain.crt"
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE) > 1
     error_message = "Missing vault mutual TLS auth client certificate file path"
