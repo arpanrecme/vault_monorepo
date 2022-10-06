@@ -45,4 +45,6 @@ terraform_apply:
       tee /etc/apt/sources.list.d/hashicorp.list
     - apt update && apt-get install terraform -y
   script:
+    - bw logout
+    - bw status
     - ansible-playbook ansible/site.yml
