@@ -19,6 +19,7 @@ terraform_apply:
         - inventory.yml
         - requirements.txt
         - ansible.cfg
+        - Dockerfile
   before_script:
     - bw login --apikey --quiet
     - chmod 600 ansible.cfg
