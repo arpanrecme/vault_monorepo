@@ -5,7 +5,10 @@
         "lineinfile",
         "nanode",
         "NOPASSWD",
+        "OCSP",
         "OPENPGP",
-        "posix"
+        "posix",
+        "sourceshift",
+        "timestamping"
     ]
 }
