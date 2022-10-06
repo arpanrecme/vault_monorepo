@@ -45,4 +45,4 @@ terraform_apply:
       tee /etc/apt/sources.list.d/hashicorp.list
     - apt update && apt-get install terraform -y
   script:
-    - ansible-playbook ansible/site.yml --tags codified_vault,vault_init_unseal
+    - ansible-playbook ansible/site.yml
