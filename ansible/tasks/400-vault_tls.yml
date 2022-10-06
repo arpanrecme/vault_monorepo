@@ -103,9 +103,6 @@
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
     ownca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
     ownca_privatekey_path: "{{ vault_mono_local_file_root_ca_private_key }}"
-    ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', \
-      vault_mono_local_file_root_ca_passphrase_private_key, errors='ignore') | \
-      default(omit) | trim }}"
     provider: ownca
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_x509_certificate_pipe
