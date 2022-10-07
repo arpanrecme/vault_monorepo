@@ -7,6 +7,15 @@ resource "vault_auth_backend" "mradmin" {
   }
 }
 
+resource "vault_auth_backend" "userpass" {
+  type = "userpass"
+  tune {
+    default_lease_ttl  = "768h"
+    max_lease_ttl      = 0
+    listing_visibility = "unauth"
+  }
+}
+
 resource "vault_approle_auth_backend_role" "mradmin" {
   backend       = vault_auth_backend.approle.path
   role_name     = "mradmin"
