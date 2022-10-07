@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "apikey",
+        "approle",
         "arpanrec",
         "bitwarden",
         "dearmor",
@@ -8,6 +9,7 @@
         "lineinfile",
         "MASTERPASSWORD",
         "mlock",
+        "mradmin",
         "nanode",
         "noninteractive",
         "NOPASSWD",
@@ -18,6 +20,7 @@
         "sourceshift",
         "tfvars",
         "timestamping",
+        "unauth",
         "vaultmonorepo"
     ]
 }
