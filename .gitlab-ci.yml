@@ -1,5 +1,7 @@
 ---
-image: arpanrec/vaultmonorepo:3
+variables:
+  GIT_STRATEGY: none
+image: arpanrec/vaultmonorepo:4
 stages:
   - test
   - vault-action

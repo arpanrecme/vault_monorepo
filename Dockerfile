@@ -1,4 +1,4 @@
-# docker build . -t arpanrec/vaultmonorepo:3
+## export __docker_tag=4 && docker build . -t arpanrec/vaultmonorepo:"${__docker_tag}" && docker push arpanrec/vaultmonorepo:"${__docker_tag}"
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -45,8 +45,10 @@ RUN apt-get install -y git
 
 RUN apt-get clean all && rm -rf /var/cache/apt
 
-# RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
+RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
 
-# USER vault-mono
+USER vault-mono
 
-# WORKDIR /home/vault-mono
+WORKDIR /home/vault-mono/repo
+
+COPY . .
