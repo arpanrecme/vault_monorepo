@@ -109,3 +109,16 @@
     .value' -r > {{ vault_mono_local_file_terraform_cloud_tf_prod_token }}
   args:
     creates: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
+
+- name: Vault Monorepo | Bitwarden | Remove empty lines from files
+  ansible.builtin.replace:
+    path: "{{ item }}"
+    regexp: '(\n\s*$)'
+    replace: ''
+    mode: "600"
+  with_items:
+    - "{{ vault_mono_local_file_linode_cli_prod_token }}"
+    - "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
+    - "{{ vault_mono_local_file_github_gh_prod_api_key }}"
+    - "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
+    - "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
