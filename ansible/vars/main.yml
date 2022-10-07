@@ -1,6 +1,6 @@
 ---
 # Local Files
-vault_mono_local_files_dir: "{{ playbook_dir }}/../files"
+vault_mono_local_files_dir: "{{ playbook_dir | dirname }}/files"
 
 ## from bitwarden
 ### OPENSSH
