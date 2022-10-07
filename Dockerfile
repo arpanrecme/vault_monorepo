@@ -1,4 +1,4 @@
-# docker build . -t arpanrec/vaultmonorepo:1
+# docker build . -t arpanrec/vaultmonorepo:2
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -43,8 +43,8 @@ RUN apt update && apt-get install terraform -y
 
 RUN apt-get install -y git
 
-RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
+# RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
 
-USER vault-mono
+# USER vault-mono
 
-WORKDIR /home/vault-mono
+# WORKDIR /home/vault-mono
