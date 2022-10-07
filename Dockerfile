@@ -1,4 +1,4 @@
-# docker build . -t arpanrec/vaultmonorepo:2
+# docker build . -t arpanrec/vaultmonorepo:3
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -39,9 +39,11 @@ RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     tee /etc/apt/sources.list.d/hashicorp.list
 
-RUN apt update && apt-get install terraform -y
+RUN apt-get update && apt-get install terraform -y
 
 RUN apt-get install -y git
+
+RUN apt-get clean all && rm -rf /var/cache/apt
 
 # RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
 

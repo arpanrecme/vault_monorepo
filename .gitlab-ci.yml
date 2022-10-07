@@ -1,5 +1,5 @@
 ---
-image: arpanrec/vaultmonorepo:2
+image: arpanrec/vaultmonorepo:3
 stages:
   - test
   - vault-action
@@ -21,6 +21,8 @@ terraform_apply:
         - ansible.cfg
         - Dockerfile
   before_script:
+    - pwd
+    - ls -al
     - bw login --apikey --quiet
     - chmod 600 ansible.cfg
   script:
