@@ -28,7 +28,7 @@ vault_mono_local_file_gitlab_gl_prod_api_key: "{{ vault_mono_local_files_dir }}/
 
 ### GITHUB
 vault_mono_local_file_github_username: "{{ vault_mono_local_files_dir }}/prerequisite.github_username.txt"
-vault_mono_local_file_github_gh_prod_api_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.github_gh_prod_api_key.txt"
+vault_mono_local_file_github_gh_prod_api_token: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.github_gh_prod_api_token.txt"
 
 ### Ansible Galaxy
 vault_mono_local_file_ansible_galaxy_api_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.ansible_galaxy_api_key.txt"

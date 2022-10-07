@@ -41,7 +41,7 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
     ## GITHUB
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME: "{{ vault_mono_local_file_github_username }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_KEY: "{{ vault_mono_local_file_github_gh_prod_api_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
     ## Ansible Galaxy
     TF_VAR_VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
     ## Terraform Cloud

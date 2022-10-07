@@ -70,11 +70,11 @@ variable "VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_KEY" {
+variable "VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN" {
   type    = string
   default = "../files/secrets.prerequisite.github_gh_prod_api_key.txt"
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_KEY) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN) > 1
     error_message = "Missing Github API Key file path"
   }
 }
