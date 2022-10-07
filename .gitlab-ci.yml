@@ -21,13 +21,11 @@ terraform_apply:
         - ansible.cfg
         - Dockerfile
   before_script:
-    - pwd
-    - ls -al
     - bw login --apikey --quiet
+    - export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
     - chmod 750 -R "${PWD}"
-    - ls -al
   script:
-    - ansible-playbook ansible/site.yml --extra-vars "vault_mono_debug_no_log=0"
+    - ansible-playbook ansible/site.yml
   after_script:
     - bw logout
     - bw status
