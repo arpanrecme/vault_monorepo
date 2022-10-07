@@ -4,7 +4,6 @@
     file: "{{ playbook_dir }}/vars/gitlab_artifacts.yml"
 
 - name: Vault Monorepo | Terraform Codified Vault | Terraform Apply
-  no_log: "{{ vault_mono_debug_no_log }}"
   community.general.terraform:
     project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present
@@ -56,8 +55,9 @@
     msg: "{{ item | regex_replace('\\u001b.*0m', '') | trim }}"
   register: vault_mono_codified_vault_output_debug
   with_items:
-    - "{{ vault_mono_codified_vault_output.stdout_lines }}"
-    - "{{ vault_mono_codified_vault_output.stderr_lines }}"
+    - "{{ vault_mono_codified_vault_output.stdout_lines | default(omit) }}"
+    - "{{ vault_mono_codified_vault_output.stderr_lines | default(omit) }}"
+    - "{{ vault_mono_codified_vault_output.msg | default(omit) }}"
 
 - name: Vault Monorepo | Terraform Codified Vault Error | Terraform Fail
   when: vault_mono_codified_vault_output.failed
