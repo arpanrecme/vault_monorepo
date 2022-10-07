@@ -71,3 +71,23 @@ resource "vault_kv_secret_v2" "secret_prerequisite_terraform_cloud" {
     }
   )
 }
+
+resource "vault_kv_secret_v2" "secret_prerequisite_openssh_master_public" {
+  mount = vault_mount.secret.path
+  name  = "prerequisite/openssh_master_public"
+  data_json = jsonencode(
+    {
+      public_key = file(var.VAULT_MONO_LOCAL_FILE_OPENSSH_MASTER_PUBLIC_KEY)
+    }
+  )
+}
+
+resource "vault_kv_secret_v2" "secret_prerequisite_openpgp_master_public" {
+  mount = vault_mount.secret.path
+  name  = "prerequisite/openpgp_master_public"
+  data_json = jsonencode(
+    {
+      public_key = file(var.VAULT_MONO_LOCAL_FILE_OPENPGP_MASTER_PUBLIC_KEY)
+    }
+  )
+}

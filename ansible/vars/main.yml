@@ -7,6 +7,14 @@ vault_mono_local_files_dir: "{{ playbook_dir | dirname }}/files"
 vault_mono_local_file_openssh_private_key: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.openssh_rsa_id.key"
 vault_mono_local_file_openssh_public_key: "{{ vault_mono_local_files_dir }}/prerequisite.openssh_rsa_id.key.pub"
 
+### OPENSSH MASTER PUBLIC KEY
+vault_mono_local_file_openssh_master_public_key:
+  "{{ vault_mono_local_files_dir }}/prerequisite.openssh_master_rsa_id.key.pub"
+
+### OPENPGP MASTER PUBLIC KEY
+vault_mono_local_file_openpgp_master_public_key:
+  "{{ vault_mono_local_files_dir }}/prerequisite.openpgp_master_public.asc"
+
 ### Linode
 vault_mono_local_file_linode_cli_prod_token: "{{ vault_mono_local_files_dir }}/secrets.prerequisite.linode_cli_prod_token.txt"
 

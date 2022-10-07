@@ -43,3 +43,21 @@ variable "VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE" {
     error_message = "Missing vault mutual TLS auth client certificate file path"
   }
 }
+
+variable "VAULT_MONO_LOCAL_FILE_OPENPGP_MASTER_PUBLIC_KEY" {
+  type    = string
+  default = "../files/prerequisite.openpgp_master_rsa_id.key.pub"
+  validation {
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_OPENPGP_MASTER_PUBLIC_KEY) > 1
+    error_message = "Missing master OPENPGP public key file path"
+  }
+}
+
+variable "VAULT_MONO_LOCAL_FILE_OPENSSH_MASTER_PUBLIC_KEY" {
+  type    = string
+  default = "../files/prerequisite.openpgp_master_rsa_id.key.pub"
+  validation {
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_OPENSSH_MASTER_PUBLIC_KEY) > 1
+    error_message = "Missing master OPENSSH public key file path"
+  }
+}

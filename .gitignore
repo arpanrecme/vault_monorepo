@@ -43,3 +43,5 @@ files/prerequisite.openssh_rsa_id.key.pub
 files/prerequisite.gitlab_username.txt
 files/prerequisite.gitlab_gl_prod_api_key.txt
 files/prerequisite.github_username.txt
+files/prerequisite.openpgp_master_rsa_id.key.pub
+files/prerequisite.openssh_master_rsa_id.key.pub

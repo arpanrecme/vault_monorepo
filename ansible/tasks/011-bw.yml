@@ -5,7 +5,8 @@
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Private key
       ansible.builtin.shell: |-
         bw get attachment id_rsa \
-        --itemid $(bw get item 'OPENSSH PRIVATE KEY' --raw | jq .id -r) \
+        --itemid $(bw get item 'OPENSSH PRIVATE KEY - SHA256:fhklvyDcKCjO0LBqPLhgLyK4Y37sj9reXnYPh0QhsMA' \
+        --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_openssh_private_key }}"
         chmod 600 "{{ vault_mono_local_file_openssh_private_key }}"
       args:
@@ -14,7 +15,8 @@
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Public key
       ansible.builtin.shell: |-
         bw get attachment id_rsa.pub \
-        --itemid $(bw get item 'OPENSSH PRIVATE KEY' --raw | jq .id -r) \
+        --itemid $(bw get item 'OPENSSH PRIVATE KEY - SHA256:fhklvyDcKCjO0LBqPLhgLyK4Y37sj9reXnYPh0QhsMA' \
+        --raw | jq .id -r) \
         --output {{ vault_mono_local_file_openssh_public_key }}
         chmod 600 {{ vault_mono_local_file_openssh_public_key }}
       args:
@@ -109,6 +111,25 @@
     .value' -r > {{ vault_mono_local_file_terraform_cloud_tf_prod_token }}
   args:
     creates: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
+
+- name: Vault Monorepo | Bitwarden | OPENSSH MASTER KEY | Download Public key
+  ansible.builtin.shell: |-
+    bw get attachment id_rsa.pub \
+    --itemid $(bw get item 'OPENSSH PRIVATE KEY - SHA256:5Q1+kxpJwCigjVOZEB02EYW5m/r6Bm4GRme90/0DkoI' \
+    --raw | jq .id -r) \
+    --output {{ vault_mono_local_file_openssh_master_public_key }}
+    chmod 600 {{ vault_mono_local_file_openssh_master_public_key }}
+  args:
+    creates: "{{ vault_mono_local_file_openssh_master_public_key }}"
+
+- name: Vault Monorepo | Bitwarden | OPENPGP MASTER KEY | Download Public key
+  ansible.builtin.shell: |-
+    bw get attachment public.asc \
+    --itemid $(bw get item 'PGP PRIVATE KEY - B9A81CB849629C6341EC0AACD813A505EB696576' \
+    --raw | jq .id -r) \
+    --output {{ vault_mono_local_file_openpgp_master_public_key }}
+  args:
+    creates: "{{ vault_mono_local_file_openpgp_master_public_key }}"
 
 - name: Vault Monorepo | Bitwarden | Remove empty lines from files
   ansible.builtin.replace:
