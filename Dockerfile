@@ -1,4 +1,4 @@
-## export __docker_tag=4 && docker build . -t arpanrec/vaultmonorepo:"${__docker_tag}" && docker push arpanrec/vaultmonorepo:"${__docker_tag}"
+# docker build . -t arpanrec/vaultmonorepo:3
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive

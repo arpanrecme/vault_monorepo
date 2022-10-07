@@ -1,7 +1,5 @@
 ---
-variables:
-  GIT_STRATEGY: none
-image: arpanrec/vaultmonorepo:4
+image: arpanrec/vaultmonorepo:3
 stages:
   - test
   - vault-action
@@ -23,7 +21,6 @@ terraform_apply:
         - ansible.cfg
         - Dockerfile
   before_script:
-    - cd /home/vault-mono/repo
     - bw login --apikey --quiet
     - export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
     - chmod 750 -R "${PWD}"
