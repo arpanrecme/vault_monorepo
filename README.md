@@ -20,3 +20,5 @@ Prerequisite: Download the below resources from [bitwarden](ansible/tasks/011-bw
 
 - Vault init secrets stored in gitlab CI/CD variables
 - Terraform state stored in gitlab
+
+# L
