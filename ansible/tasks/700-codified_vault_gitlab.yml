@@ -30,7 +30,7 @@
     ## OpenSSH Master Public Key
     TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_MASTER_PUBLIC_KEY: "{{ vault_mono_local_file_openssh_master_public_key }}"
     ## OpenPGP Master Public Key
-    TF_VAT_VAULT_MONO_LOCAL_FILE_OPENPGP_MASTER_PUBLIC_KEY: "{{ vault_mono_local_file_openpgp_master_public_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENPGP_MASTER_PUBLIC_KEY: "{{ vault_mono_local_file_openpgp_master_public_key }}"
     ## Linode
     TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
     ## ROOT CA
