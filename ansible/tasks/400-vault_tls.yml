@@ -1,17 +1,8 @@
 ---
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get vault systemd group
   ansible.builtin.set_fact:
-    vault_mono_server_vault_systemd_group: "{{ lookup('ansible.builtin.ini', \
-      'group', file='/lib/systemd/system/vault.service', \
-      section='Service', \
-      allow_no_value=false) }}"
-
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get vault systemd user
-  ansible.builtin.set_fact:
-    vault_mono_server_vault_systemd_user: "{{ lookup('ansible.builtin.ini', \
-      'user', file='/lib/systemd/system/vault.service', \
-      section='Service', \
-      allow_no_value=false) }}"
+    vault_mono_server_vault_systemd_group: vault
+    vault_mono_server_vault_systemd_user: vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get IP Address from DNS
   ansible.builtin.set_fact:
