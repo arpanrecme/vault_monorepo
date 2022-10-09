@@ -1,4 +1,7 @@
 ---
+vault_mono_server_login_username: vault_mono
+vault_mono_debug_no_log: "{{ lookup('ansible.builtin.env', 'VAULT_MONO_DEBUG_NO_LOG') | default(true, true) | bool }}"
+
 # Local Files
 vault_mono_local_files_dir: "{{ playbook_dir | dirname }}/files"
 
@@ -56,7 +59,3 @@ vault_mono_client_passphrase_pkcs12_certificate: password
 ## Terraform
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/../terraform"
 ## Terraform
-
-vault_mono_server_login_username: vault_mono
-vault_mono_debug_no_log: "{{ lookup('ansible.builtin.env', 'VAULT_MONO_DEBUG_NO_LOG') | default(true, true) | bool }}"
-vault_mono_server_vault_systemd_user: vault

@@ -1,4 +1,18 @@
 ---
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get vault systemd group
+  ansible.builtin.set_fact:
+    vault_mono_server_vault_systemd_group: "{{ lookup('ansible.builtin.ini', \
+      'group', file='/lib/systemd/system/vault.service', \
+      section='Service', \
+      allow_no_value=false) }}"
+
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get vault systemd user
+  ansible.builtin.set_fact:
+    vault_mono_server_vault_systemd_user: "{{ lookup('ansible.builtin.ini', \
+      'user', file='/lib/systemd/system/vault.service', \
+      section='Service', \
+      allow_no_value=false) }}"
+
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get IP Address from DNS
   ansible.builtin.set_fact:
     vault_mono_server_vault_dig: "{{ lookup('community.general.dig', vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME) }}"
@@ -14,7 +28,7 @@
     dest: /etc/vault.d/vault.hcl
     mode: "0644"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
   notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write TLS Client CA Certificate To File for tls_client_ca_file
@@ -22,7 +36,7 @@
     src: "{{ vault_mono_local_file_root_ca_certificate }}"
     dest: "/opt/vault/tls/root.crt"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0600"
     remote_src: false
   notify: Vault Monorepo | Handlers | Restart Vault
@@ -31,7 +45,7 @@
   community.crypto.openssl_privatekey:
     path: /opt/vault/tls/tls.key
     owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0600"
   notify: Vault Monorepo | Handlers | Restart Vault
 
@@ -114,7 +128,7 @@
     content: "{{ vault_mono_server_vault_x509_certificate_pipe.certificate }}"
     dest: "/opt/vault/tls/tls.crt"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0600"
   notify: Vault Monorepo | Handlers | Restart Vault
 
@@ -132,7 +146,7 @@
     content: "{{ vault_mono_server_vault_chain_x509_certificate }}"
     dest: "/opt/vault/tls/tls_chain.crt"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0600"
   notify: Vault Monorepo | Handlers | Restart Vault
 
