@@ -41,17 +41,17 @@
   ignore_unreachable: true
   register: vault_mono_dynamic_host_ping
 
-- name: Vault Monorepo | Server in linode | Adding dynamic host with new user {{ vault_mono_server_username }}
+- name: Vault Monorepo | Server in linode | Adding dynamic host with new user {{ vault_mono_server_login_username }}
   ansible.builtin.add_host:
     hostname: "{{ vault_mono_server_ansible_inventory_name }}"
     ansible_host: "{{ vault_mono_vault_server_public_ip }}"
     ansible_connection: "ssh"
     ansible_port: 22
-    ansible_user: "{{ vault_mono_server_username }}"
+    ansible_user: "{{ vault_mono_server_login_username }}"
     ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_private_key }}"
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   when: vault_mono_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_dynamic_host_ping.msg'
 
-- name: Vault Monorepo | Server in linode | Verify dynamic host with {{ vault_mono_server_username }}
+- name: Vault Monorepo | Server in linode | Verify dynamic host with {{ vault_mono_server_login_username }}
   delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
   ansible.builtin.ping:

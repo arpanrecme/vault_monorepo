@@ -58,14 +58,14 @@
 
 - name: Vault Monorepo | Patch System | Add new user
   ansible.builtin.user:
-    name: "{{ vault_mono_server_username }}"
+    name: "{{ vault_mono_server_login_username }}"
     groups: wheel
     append: true
     shell: /bin/bash
 
 - name: Vault Monorepo | Patch System | Set authorized key
   ansible.posix.authorized_key:
-    user: "{{ vault_mono_server_username }}"
+    user: "{{ vault_mono_server_login_username }}"
     state: present
     key: "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
 

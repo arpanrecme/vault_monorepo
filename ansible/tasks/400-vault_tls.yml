@@ -13,16 +13,16 @@
     src: "{{ vault_mono_local_file_vault_server_config }}"
     dest: /etc/vault.d/vault.hcl
     mode: "0644"
-    owner: "{{ vault_mono_server_vault_user }}"
-    group: "{{ vault_mono_server_vault_user }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_user }}"
   notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write TLS Client CA Certificate To File for tls_client_ca_file
   ansible.builtin.copy:
     src: "{{ vault_mono_local_file_root_ca_certificate }}"
     dest: "/opt/vault/tls/root.crt"
-    owner: "{{ vault_mono_server_vault_user }}"
-    group: "{{ vault_mono_server_vault_user }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_user }}"
     mode: "0600"
     remote_src: false
   notify: Vault Monorepo | Handlers | Restart Vault
@@ -30,8 +30,8 @@
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL private key
   community.crypto.openssl_privatekey:
     path: /opt/vault/tls/tls.key
-    owner: "{{ vault_mono_server_vault_user }}"
-    group: "{{ vault_mono_server_vault_user }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_user }}"
     mode: "0600"
   notify: Vault Monorepo | Handlers | Restart Vault
 
@@ -113,8 +113,8 @@
   ansible.builtin.copy:
     content: "{{ vault_mono_server_vault_x509_certificate_pipe.certificate }}"
     dest: "/opt/vault/tls/tls.crt"
-    owner: "{{ vault_mono_server_vault_user }}"
-    group: "{{ vault_mono_server_vault_user }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_user }}"
     mode: "0600"
   notify: Vault Monorepo | Handlers | Restart Vault
 
@@ -131,8 +131,8 @@
   ansible.builtin.copy:
     content: "{{ vault_mono_server_vault_chain_x509_certificate }}"
     dest: "/opt/vault/tls/tls_chain.crt"
-    owner: "{{ vault_mono_server_vault_user }}"
-    group: "{{ vault_mono_server_vault_user }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_user }}"
     mode: "0600"
   notify: Vault Monorepo | Handlers | Restart Vault
 
