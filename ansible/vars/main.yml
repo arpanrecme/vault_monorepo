@@ -41,7 +41,7 @@ vault_mono_local_file_terraform_cloud_tf_prod_token: "{{ vault_mono_prerequisite
 ## from bitwarden
 
 ## Mutual TLS
-vault_mono_mutual_tls_files_dir: "{{ vault_mono_local_files_dir }}/mutual_tls"
+vault_mono_mutual_tls_files_dir: "{{ vault_mono_local_files_dir }}/mutual_tls_certs"
 vault_mono_local_file_client_private_key: "{{ vault_mono_mutual_tls_files_dir }}/secrets.client_private_key.key"
 vault_mono_local_file_client_certificate: "{{ vault_mono_mutual_tls_files_dir }}/client_certificate.crt"
 vault_mono_local_file_client_chain_certificate: "{{ vault_mono_mutual_tls_files_dir }}/client_certificate_chain.crt"
