@@ -1,4 +1,4 @@
-# docker build . -t arpanrec/vaultmonorepo:3
+# docker build . -t arpanrec/vaultmonorepo:4
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -45,10 +45,10 @@ RUN apt-get install -y git
 
 RUN apt-get clean all && rm -rf /var/cache/apt
 
-RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
+# RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
 
-USER vault-mono
+# USER vault-mono
 
-WORKDIR /home/vault-mono/repo
+# WORKDIR /home/vault-mono/repo
 
-COPY . .
+# COPY . .
