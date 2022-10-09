@@ -19,6 +19,17 @@
       tags:
         - always
 
+    - name: Vault Monorepo | Mandatory directories
+      run_once: true
+      ansible.builtin.file:
+        state: directory
+        path: "{{ item }}"
+        mode: "0750"
+      with_items:
+        - "{{ vault_mono_local_files_dir }}"
+        - "{{ vault_mono_prerequisite_files_dir }}"
+        - "{{ vault_mono_mutual_tls_files_dir }}"
+
     - name: Vault Monorepo | Common Tasks
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
       tags:
