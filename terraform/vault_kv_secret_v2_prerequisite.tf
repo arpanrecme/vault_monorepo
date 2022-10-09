@@ -46,7 +46,7 @@ resource "vault_kv_secret_v2" "secret_prerequisite_github" {
   name  = "prerequisite/github"
   data_json = jsonencode(
     {
-      username        = file(var.VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME)
+      username          = file(var.VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME)
       GH_PROD_API_TOKEN = file(var.VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN)
     }
   )

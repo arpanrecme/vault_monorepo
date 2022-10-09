@@ -1,11 +1,13 @@
 resource "vault_auth_backend" "userpass" {
   type = "userpass"
+  path = "userpass"
   tune {
     default_lease_ttl  = "768h"
     max_lease_ttl      = 0
     listing_visibility = "unauth"
   }
 }
+
 
 # resource "vault_auth_backend" "approle" {
 #   type = "approle"

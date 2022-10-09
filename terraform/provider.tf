@@ -6,6 +6,9 @@ terraform {
     tls = {
       source = "hashicorp/tls"
     }
+    random = {
+      source = "hashicorp/random"
+    }
   }
 }
 
@@ -20,4 +23,7 @@ provider "vault" {
 }
 
 provider "tls" {
+}
+
+provider "random" {
 }

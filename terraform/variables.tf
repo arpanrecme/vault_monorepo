@@ -9,7 +9,7 @@ variable "VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG" {
 
 variable "VAULT_MONO_VAULT_ROOT_TOKEN" {
   type      = string
-  default   = null
+  default   = "hvs.atoNJder3l55wipDiGX6Yc03"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_VAULT_ROOT_TOKEN) > 1
