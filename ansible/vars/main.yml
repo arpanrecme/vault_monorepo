@@ -5,7 +5,7 @@ vault_mono_local_files_dir: "{{ playbook_dir | dirname }}/files"
 vault_mono_local_file_global_config: "{{ vault_mono_local_files_dir }}/config.json"
 vault_mono_local_file_vault_server_config: "{{ vault_mono_local_files_dir }}/vault.hcl"
 
-vault_mono_local_tmp_files_dir: "{{ playbook_dir | dirname }}/tmp"
+vault_mono_local_tmp_files_dir: "{{ playbook_dir | dirname }}/.tmp"
 
 vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_tmp_files_dir }}/secrets.backup.update.vault_init_secrets.json"
 
