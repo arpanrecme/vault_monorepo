@@ -29,7 +29,7 @@ vault_mono_local_file_root_ca_private_key: "{{ vault_mono_prerequisite_files_dir
 vault_mono_local_file_root_ca_certificate: "{{ vault_mono_prerequisite_files_dir }}/root_ca_certificate.crt"
 
 ### GITLAB
-vault_mono_local_file_gitlab_username: "{{ vault_mono_prerequisite_files_dir }}.gitlab_username.txt"
+vault_mono_local_file_gitlab_username: "{{ vault_mono_prerequisite_files_dir }}/gitlab_username.txt"
 vault_mono_local_file_gitlab_gl_prod_api_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.gitlab_gl_prod_api_key.txt"
 
 ### GITHUB
