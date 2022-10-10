@@ -5,7 +5,10 @@ resource "random_password" "password_admin" {
 }
 
 resource "vault_generic_endpoint" "admin" {
-  depends_on           = [vault_auth_backend.userpass, vault_policy.admin]
+  depends_on = [
+    vault_auth_backend.userpass,
+    vault_policy.admin
+  ]
   path                 = "auth/userpass/users/admin"
   ignore_absent_fields = true
 
