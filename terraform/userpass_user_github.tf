@@ -11,7 +11,7 @@ resource "vault_generic_endpoint" "github" {
 
   data_json = <<EOT
 {
-  "policies": ["github"],
+  "policies": ["github", "default", "default_login"],
   "password": "${random_password.password_github.result}"
 }
 EOT
