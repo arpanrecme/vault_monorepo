@@ -70,6 +70,7 @@
     status_code: 200
     body:
       key: "{{ item }}"
+  changed_when: true
   with_items:
     - "{{ vault_mono_init_secrets['keys'][0] }}"
     - "{{ vault_mono_init_secrets['keys'][1] }}"

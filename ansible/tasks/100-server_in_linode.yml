@@ -4,10 +4,12 @@
   linode_v4:
     label: "vault_server"
     access_token: "{{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
-    type: g6-standard-4
+    type: g6-nanode-1
     region: ap-west
     image: linode/debian11
-    authorized_keys: "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
+    authorized_keys:
+      - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
+      - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_master_public_key) }}"
     state: present
   register: vault_mono_linode
 

@@ -54,6 +54,7 @@
   ansible.builtin.debug:
     msg: "{{ item | regex_replace('\\u001b.*0m', '') | trim }}"
   register: vault_mono_codified_vault_output_debug
+  changed_when: vault_mono_codified_vault_output.changed
   with_items:
     - "{{ vault_mono_codified_vault_output.stdout_lines | default(omit) }}"
     - "{{ vault_mono_codified_vault_output.stderr_lines | default(omit) }}"
