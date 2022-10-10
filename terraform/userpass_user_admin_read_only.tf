@@ -12,7 +12,7 @@ resource "vault_generic_endpoint" "admin_read_only" {
 
   data_json = <<EOT
 {
-  "policies": ["${vault_policy.admin_read_only}"],
+  "policies": ["admin_read_only"],
   "password": "${random_password.password_admin_read_only.result}"
 }
 EOT

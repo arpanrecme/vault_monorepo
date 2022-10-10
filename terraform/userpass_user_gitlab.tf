@@ -5,13 +5,17 @@ resource "random_password" "password_gitlab" {
 }
 
 resource "vault_generic_endpoint" "gitlab" {
-  depends_on           = [vault_auth_backend.userpass, vault_policy.gitlab]
+  depends_on = [
+    vault_auth_backend.userpass,
+    vault_policy.gitlab,
+    vault_policy.default_login
+  ]
   path                 = "auth/userpass/users/gitlab"
   ignore_absent_fields = true
 
   data_json = <<EOT
 {
-  "policies": ["${vault_policy.gitlab}", "default", "${vault_policy.default_login}"],
+  "policies": ["gitlab", "default", "default_login"],
   "password": "${random_password.password_gitlab.result}"
 }
 EOT
