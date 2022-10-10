@@ -11,7 +11,7 @@ resource "vault_generic_endpoint" "admin" {
 
   data_json = <<EOT
 {
-  "policies": ["admin"],
+  "policies": ["${vault_policy.admin}"],
   "password": "${random_password.password_admin.result}"
 }
 EOT
