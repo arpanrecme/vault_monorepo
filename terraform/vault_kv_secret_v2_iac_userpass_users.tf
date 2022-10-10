@@ -1,6 +1,6 @@
 resource "vault_kv_secret_v2" "secret_userpass_gitlab" {
   mount = vault_mount.secret.path
-  name  = "iac/userpass/user/gitlab"
+  name  = "iac/vault/userpass/user/gitlab"
   data_json = jsonencode(
     {
       username = "gitlab"
@@ -11,7 +11,7 @@ resource "vault_kv_secret_v2" "secret_userpass_gitlab" {
 
 resource "vault_kv_secret_v2" "secret_userpass_github" {
   mount = vault_mount.secret.path
-  name  = "iac/userpass/user/github"
+  name  = "iac/vault/userpass/user/github"
   data_json = jsonencode(
     {
       username = "github"
@@ -22,7 +22,7 @@ resource "vault_kv_secret_v2" "secret_userpass_github" {
 
 resource "vault_kv_secret_v2" "secret_userpass_admin" {
   mount = vault_mount.secret.path
-  name  = "iac/userpass/user/admin"
+  name  = "iac/vault/userpass/user/admin"
   data_json = jsonencode(
     {
       username = "admin"
@@ -33,7 +33,7 @@ resource "vault_kv_secret_v2" "secret_userpass_admin" {
 
 resource "vault_kv_secret_v2" "secret_userpass_admin_read_only" {
   mount = vault_mount.secret.path
-  name  = "iac/userpass/user/admin_read_only"
+  name  = "iac/vault/userpass/user/admin_read_only"
   data_json = jsonencode(
     {
       username = "admin_read_only"
