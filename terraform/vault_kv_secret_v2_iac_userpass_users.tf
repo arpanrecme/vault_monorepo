@@ -1,0 +1,43 @@
+resource "vault_kv_secret_v2" "secret_userpass_gitlab" {
+  mount = vault_mount.secret.path
+  name  = "iac/userpass/gitlab"
+  data_json = jsonencode(
+    {
+      username = "gitlab"
+      password = random_password.password_gitlab.result
+    }
+  )
+}
+
+resource "vault_kv_secret_v2" "secret_userpass_github" {
+  mount = vault_mount.secret.path
+  name  = "iac/userpass/github"
+  data_json = jsonencode(
+    {
+      username = "github"
+      password = random_password.password_github.result
+    }
+  )
+}
+
+resource "vault_kv_secret_v2" "secret_userpass_admin" {
+  mount = vault_mount.secret.path
+  name  = "iac/userpass/admin"
+  data_json = jsonencode(
+    {
+      username = "admin"
+      password = random_password.password_admin.result
+    }
+  )
+}
+
+resource "vault_kv_secret_v2" "secret_userpass_admin_read_only" {
+  mount = vault_mount.secret.path
+  name  = "iac/userpass/admin_read_only"
+  data_json = jsonencode(
+    {
+      username = "admin_read_only"
+      password = random_password.password_admin_read_only.result
+    }
+  )
+}
