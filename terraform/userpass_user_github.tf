@@ -4,7 +4,7 @@ resource "random_password" "password_github" {
   override_special = "_"
 }
 
-resource "vault_generic_endpoint" "github" {
+resource "vault_generic_endpoint" "create_user_userpass_github" {
   depends_on = [
     vault_auth_backend.userpass,
     vault_policy.github,

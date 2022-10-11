@@ -4,7 +4,7 @@ resource "random_password" "password_gitlab" {
   override_special = "_"
 }
 
-resource "vault_generic_endpoint" "gitlab" {
+resource "vault_generic_endpoint" "create_user_userpass_gitlab" {
   depends_on = [
     vault_auth_backend.userpass,
     vault_policy.gitlab,

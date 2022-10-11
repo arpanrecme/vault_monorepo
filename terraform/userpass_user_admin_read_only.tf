@@ -5,7 +5,7 @@ resource "random_password" "password_admin_read_only" {
   override_special = "_"
 }
 
-resource "vault_generic_endpoint" "admin_read_only" {
+resource "vault_generic_endpoint" "create_user_userpass_admin_read_only" {
   depends_on = [
     vault_auth_backend.userpass,
     vault_policy.admin_read_only

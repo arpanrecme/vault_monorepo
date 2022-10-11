@@ -41,3 +41,14 @@ resource "vault_kv_secret_v2" "secret_userpass_admin_read_only" {
     }
   )
 }
+
+resource "vault_kv_secret_v2" "secret_userpass_backup_user" {
+  mount = vault_mount.secret.path
+  name  = "iac/vault/userpass/user/backup_user"
+  data_json = jsonencode(
+    {
+      username = "backup_user"
+      password = random_password.password_backup_user.result
+    }
+  )
+}
