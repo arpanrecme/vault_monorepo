@@ -1,8 +1,13 @@
 data "vault_policy_document" "gitlab" {
   rule {
-    path         = "secret/*"
+    path         = "secret/iac/vault/userpass/user/gitlab"
     capabilities = ["read", "list"]
-    description  = "Allow to read resources on vault for gitlab user"
+    description  = "Allow to read vault gitlab user cerdentials"
+  }
+  rule {
+    path         = "pki/issue/client_certificate"
+    capabilities = ["create", "update", "read", "list"]
+    description  = "Allow to create TLS client certificats"
   }
 }
 
