@@ -60,6 +60,16 @@
         - install_vault
         - vault_tls
 
+    - name: Vault Monorepo | Get vault systemd group
+      ansible.builtin.set_fact:
+        vault_mono_server_vault_systemd_group: vault
+        vault_mono_server_vault_systemd_user: vault
+          tags:
+            - patch_server
+            - install_vault
+            - vault_tls
+
+
     - name: Vault Monorepo | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
       tags:

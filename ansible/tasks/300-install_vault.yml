@@ -24,3 +24,9 @@
     name: vault
     state: present
   notify: Vault Monorepo | Handlers | Restart Vault
+
+- name: Vault Monorepo | Install Hashicorp Vault | Add user to vault group
+  ansible.builtin.user:
+    name: "{{ vault_mono_server_login_username }}"
+    groups: "{{ vault_mono_server_vault_systemd_group }}"
+    append: true

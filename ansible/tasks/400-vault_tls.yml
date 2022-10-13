@@ -1,9 +1,4 @@
 ---
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get vault systemd group
-  ansible.builtin.set_fact:
-    vault_mono_server_vault_systemd_group: vault
-    vault_mono_server_vault_systemd_user: vault
-
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get IP Address from DNS
   ansible.builtin.set_fact:
     vault_mono_server_vault_dig: "{{ lookup('community.general.dig', vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME) }}"
