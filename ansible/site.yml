@@ -69,7 +69,6 @@
         - install_vault
         - vault_tls
 
-
     - name: Vault Monorepo | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
       tags:
