@@ -5,7 +5,7 @@
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Private key
       ansible.builtin.shell: |-
         bw get attachment id_rsa \
-        --itemid $(bw get item 'fhklvyDcKCjO0LBqPLhgLyK4Y37sj9reXnYPh0QhsMA' \
+        --itemid $(bw get item 'kKVUh0EIoVXLP5Cxek2aUgwuBobrUfmvXZtVQ3jx1AA' \
         --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_openssh_private_key }}"
         chmod 600 "{{ vault_mono_local_file_openssh_private_key }}"
@@ -15,7 +15,7 @@
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Public key
       ansible.builtin.shell: |-
         bw get attachment id_rsa.pub \
-        --itemid $(bw get item 'fhklvyDcKCjO0LBqPLhgLyK4Y37sj9reXnYPh0QhsMA' \
+        --itemid $(bw get item 'kKVUh0EIoVXLP5Cxek2aUgwuBobrUfmvXZtVQ3jx1AA' \
         --raw | jq .id -r) \
         --output {{ vault_mono_local_file_openssh_public_key }}
         chmod 600 {{ vault_mono_local_file_openssh_public_key }}

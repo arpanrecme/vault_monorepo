@@ -2,7 +2,7 @@
 
 Prerequisite: Download the below resources from [bitwarden](ansible/tasks/011-bw.yml)
 
-- OPENSSH KEY - SHA256:fhklvyDcKCjO0LBqPLhgLyK4Y37sj9reXnYPh0QhsMA
+- OPENSSH KEY - SHA256:kKVUh0EIoVXLP5Cxek2aUgwuBobrUfmvXZtVQ3jx1AA
 - CA ROOT - RSA PRIVATE KEY and CERTIFICATE
 
 - OPENSSH KEY - SHA256:5Q1+kxpJwCigjVOZEB02EYW5m/r6Bm4GRme90/0DkoI
