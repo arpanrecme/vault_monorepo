@@ -1,32 +1,72 @@
 ---
 # tasks file for hashicorp_vault
-- name: Vault Monorepo | Install Hashicorp Vault | Install required packages
-  ansible.builtin.apt:
-    name: [gpg]
-
-- name: Vault Monorepo | Install Hashicorp Vault | Download GPG key
-  ansible.builtin.get_url:
-    url: https://apt.releases.hashicorp.com/gpg
-    dest: /usr/share/keyrings/hashicorp-archive-keyring.asc
-    mode: "0644"
-    force: true
-
-- name: Vault Monorepo | Install Hashicorp Vault | Add APT Repository
-  ansible.builtin.apt_repository:
-    repo: >-
-      deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.asc]
-      https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
-    state: present
-    filename: hashicorp
-
-- name: Vault Monorepo | Install Hashicorp Vault | Install Vault
+- name: Vault Monorepo | Install Hashicorp Vault | Remove OS Package Vault
   ansible.builtin.apt:
     name: vault
-    state: present
+    purge: true
+    state: absent
+
+- name: Vault Monorepo | Install Hashicorp Vault | Create Directories
+  ansible.builtin.file:
+    name: "{{ item }}"
+    mode: "0700"
+    state: directory
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+  with_items:
+    - "{{ vault_mono_install_path }}"
+    - "{{ vault_mono_tls_dir_path }}"
+    - "{{ vault_mono_config_dir_path }}"
+    - "{{ vault_mono_bin_dir_path }}"
+    - "{{ vault_mono_install_tmp_dir_path }}"
   notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Install Hashicorp Vault | Add user to vault group
-  ansible.builtin.user:
-    name: "{{ vault_mono_server_login_username }}"
-    groups: "{{ vault_mono_server_vault_systemd_group }}"
-    append: true
+- name: Linux Patching | Install Hashicorp Vault | Config File
+  ansible.builtin.template:
+    src: "{{ vault_mono_local_templates_dir }}/vault.hcl.j2"
+    dest: "{{ vault_mono_config_file_path }}"
+    mode: "0644"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+  notify: Vault Monorepo | Handlers | Restart Vault
+
+- name: Linux Patching | Install Hashicorp Vault | Download Vault (local) → {{ vault_mono_vault_zip_url }}
+  ansible.builtin.get_url:
+    url: "{{ vault_mono_vault_zip_url }}"
+    dest: "{{ vault_mono_install_tmp_dir_path }}/{{ vault_mono_vault_pkg }}"
+    checksum: "sha256:{{ (lookup('url', vault_mono_vault_checksum_file_url, wantlist=true) | select('match', '.*' + vault_mono_vault_pkg + '$') | first).split()[0] }}"
+    timeout: "42"
+    mode: "0600"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+  notify: Vault Monorepo | Handlers | Restart Vault
+
+- name: Linux Patching | Install Hashicorp Vault | Unarchive Vault (local)
+  ansible.builtin.unarchive:
+    src: "{{ vault_mono_install_tmp_dir_path }}/{{ vault_mono_vault_pkg }}"
+    dest: "{{ vault_mono_install_tmp_dir_path }}"
+    # creates: "{{ role_path }}/files/vault"
+    mode: "0400"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    remote_src: true
+  notify: Vault Monorepo | Handlers | Restart Vault
+
+- name: Linux Patching | Install Hashicorp Vault | Install Vault
+  ansible.builtin.copy:
+    src: "{{ vault_mono_install_tmp_dir_path }}/vault"
+    dest: "{{ vault_mono_bin_file_path }}"
+    mode: "0500"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    remote_src: true
+  notify: Vault Monorepo | Handlers | Restart Vault
+
+- name: Linux Patching | Install Hashicorp Vault | Systemd Service File
+  ansible.builtin.template:
+    src: "{{ vault_mono_local_templates_dir }}/vault.service.j2"
+    dest: "/etc/systemd/system/{{ vault_mono_systemd_service_name }}.service"
+    mode: "0644"
+    group: root
+    owner: root
+  notify: Vault Monorepo | Handlers | Restart Vault

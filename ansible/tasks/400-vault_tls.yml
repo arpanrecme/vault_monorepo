@@ -8,48 +8,39 @@
     url: https://ifconfig.me/all.json
   register: vault_mono_server_vault_ifconfig_me
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Configure
-  ansible.builtin.copy:
-    src: "{{ vault_mono_local_file_vault_server_config }}"
-    dest: /etc/vault.d/vault.hcl
-    mode: "0644"
-    owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_group }}"
-  notify: Vault Monorepo | Handlers | Restart Vault
-
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write TLS Client CA Certificate To File for tls_client_ca_file
   ansible.builtin.copy:
     src: "{{ vault_mono_local_file_root_ca_certificate }}"
-    dest: "/opt/vault/tls/root.crt"
+    dest: "{{ vault_mono_tls_vault_tls_client_ca_file }}"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
-    mode: "0600"
+    mode: "0400"
     remote_src: false
   notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL private key
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL private key for tls_key_file
   community.crypto.openssl_privatekey:
-    path: /opt/vault/tls/tls.key
+    path: "{{ vault_mono_tls_vault_tls_key_file }}"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
-    mode: "0600"
+    mode: "0400"
   notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Check existing certificate file
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Check existing certificate file for tls_cert_file
   ansible.builtin.stat:
-    path: /opt/vault/tls/tls_chain.crt
+    path: "{{ vault_mono_tls_vault_tls_cert_file }}"
   register: vault_mono_server_vault_certificate_file_stat
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get information on generated certificate
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Get information on generated certificate for tls_cert_file
   when: vault_mono_server_vault_certificate_file_stat.stat.exists
   community.crypto.x509_certificate_info:
-    path: /opt/vault/tls/tls_chain.crt
+    path: "{{ vault_mono_tls_vault_tls_cert_file }}"
     valid_at:
       point_1: "+1d"
   register: vault_mono_server_vault_x509_certificate_info
   ignore_errors: true
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL Certificate Signing Request
+- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL Certificate Signing Request for tls_cert_file
   when: >
     (
       not vault_mono_server_vault_certificate_file_stat.stat.exists
@@ -73,7 +64,7 @@
       vault_mono_server_vault_x509_certificate_info.failed is defined and vault_mono_server_vault_x509_certificate_info.failed
     )
   community.crypto.openssl_csr_pipe:
-    privatekey_path: /opt/vault/tls/tls.key
+    privatekey_path: "{{ vault_mono_tls_vault_tls_key_file }}"
     common_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
     subject_alt_name:
       - "DNS:{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
@@ -94,7 +85,6 @@
       - serverAuth
     extended_key_usage_critical: true
   register: vault_mono_server_vault_openssl_csr_pipe
-  notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Generate an OpenSSL certificate signed with your own CA certificate
   delegate_to: localhost
@@ -108,18 +98,7 @@
   register: vault_mono_server_vault_x509_certificate_pipe
   notify: Vault Monorepo | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Certificate To File
-  when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
-  ansible.builtin.copy:
-    content: "{{ vault_mono_server_vault_x509_certificate_pipe.certificate }}"
-    dest: "/opt/vault/tls/tls.crt"
-    owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_group }}"
-    mode: "0600"
-  notify: Vault Monorepo | Handlers | Restart Vault
-
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Set certificate chain
-  delegate_to: localhost
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
   ansible.builtin.set_fact:
     vault_mono_server_vault_chain_x509_certificate: |+
@@ -130,11 +109,14 @@
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
     content: "{{ vault_mono_server_vault_chain_x509_certificate }}"
-    dest: "/opt/vault/tls/tls_chain.crt"
+    dest: "{{ vault_mono_tls_vault_tls_cert_file }}"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
-    mode: "0600"
+    mode: "0400"
   notify: Vault Monorepo | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Cert To File
   ansible.builtin.meta: flush_handlers
+
+- ansible.builtin.fail:
+    msg: hard

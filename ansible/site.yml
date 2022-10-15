@@ -6,6 +6,7 @@
     vault_mono_server_ansible_inventory_name: vault_mono_server_ansible_inventory
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
+    - "{{ playbook_dir }}/vars/vault_install.yml"
   tasks:
     - name: Vault Monorepo | Check for tools
       run_once: true
@@ -50,20 +51,12 @@
   become: true
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
+    - "{{ playbook_dir }}/vars/vault_install.yml"
   tasks:
     - name: Vault Monorepo | Common Tasks
       delegate_to: localhost
       become: false
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
-      tags:
-        - patch_server
-        - install_vault
-        - vault_tls
-
-    - name: Vault Monorepo | Get vault systemd group
-      ansible.builtin.set_fact:
-        vault_mono_server_vault_systemd_group: vault
-        vault_mono_server_vault_systemd_user: vault
       tags:
         - patch_server
         - install_vault
@@ -87,7 +80,7 @@
   handlers:
     - name: Vault Monorepo | Handlers | Restart Vault
       ansible.builtin.service:
-        name: vault
+        name: "{{ vault_mono_systemd_service_name }}"
         state: "{{ item }}"
       with_items:
         - reloaded

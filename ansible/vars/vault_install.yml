@@ -1,0 +1,36 @@
+#vault_mono_vault_version: "{{ lookup('env', 'VAULT_VERSION') | default('1.5.5', true) }}{{ '+prem' if vault_enterprise_premium else '' }}{{ '.hsm' if vault_enterprise_premium_hsm else '' }}"
+vault_mono_vault_version: 1.5.5
+vault_mono_vault_architecture_map:
+  # this first entry seems... redundant (but it's required for reasons)
+  amd64: amd64
+  x86_64: amd64
+  armv7l: arm
+  aarch64: arm64
+vault_mono_vault_architecture: "{{ vault_mono_vault_architecture_map[ansible_architecture] }}"
+vault_mono_vault_os: "{{ ansible_system | lower }}"
+vault_mono_vault_pkg: "vault_{{ vault_mono_vault_version }}_{{ vault_mono_vault_os }}_{{ vault_mono_vault_architecture }}.zip"
+vault_mono_vault_shasums: "vault_{{ vault_mono_vault_version }}_SHA256SUMS"
+vault_mono_vault_zip_url: "https://releases.hashicorp.com/vault/{{ vault_mono_vault_version }}/vault_{{ vault_mono_vault_version }}_{{ vault_mono_vault_os }}_{{ vault_mono_vault_architecture }}.zip"
+vault_mono_vault_checksum_file_url: "https://releases.hashicorp.com/vault/{{ vault_mono_vault_version }}/vault_{{ vault_mono_vault_version }}_SHA256SUMS"
+vault_mono_server_vault_systemd_user: vaultssot
+vault_mono_server_vault_systemd_group: "{{ vault_mono_server_vault_systemd_user }}"
+vault_mono_ufw_rule_name: "{{ vault_mono_server_vault_systemd_user }}"
+
+vault_mono_install_path: "/opt/{{ vault_mono_server_vault_systemd_user }}"
+
+vault_mono_install_tmp_dir_path: "{{ vault_mono_install_path }}/tmp"
+
+vault_mono_data_dir_path: "{{ vault_mono_install_path }}/data"
+
+vault_mono_tls_dir_path: "{{ vault_mono_install_path }}/tls"
+vault_mono_tls_vault_tls_cert_file: "{{ vault_mono_tls_dir_path }}/tls_cert_file_chain.crt"
+vault_mono_tls_vault_tls_key_file: "{{ vault_mono_tls_dir_path }}/tls_key_file.key"
+vault_mono_tls_vault_tls_client_ca_file: "{{ vault_mono_tls_dir_path }}/tls_client_ca_file.crt"
+
+vault_mono_config_dir_path: "{{ vault_mono_install_path }}/etc"
+vault_mono_config_file_path: "{{ vault_mono_config_dir_path }}/vault.hcl"
+vault_mono_env_file_path: "{{ vault_mono_config_dir_path }}/vault.env"
+
+vault_mono_bin_dir_path: "{{ vault_mono_install_path }}/bin"
+vault_mono_bin_file_path: "{{ vault_mono_bin_dir_path }}/vault"
+vault_mono_systemd_service_name: "{{ vault_mono_server_vault_systemd_user }}"

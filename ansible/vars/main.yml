@@ -1,6 +1,8 @@
 ---
-vault_mono_server_login_username: vault_mono
 vault_mono_debug_no_log: "{{ lookup('ansible.builtin.env', 'VAULT_MONO_DEBUG_NO_LOG') | default(true, true) | bool }}"
+
+# Template Files
+vault_mono_local_templates_dir: "{{ playbook_dir | dirname }}/templates"
 
 # Local Files
 vault_mono_local_files_dir: "{{ playbook_dir | dirname }}/files"

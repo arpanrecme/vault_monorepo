@@ -4,19 +4,57 @@
   register: vault_mono_install_python_pip_result_raw
   changed_when: "'0 upgraded, 0 newly installed' not in vault_mono_install_python_pip_result_raw.stdout_lines | last"
 
-- name: Vault Monorepo | Patch System | Set timezone as Asia/Kolkata
+- name: Vault Monorepo | Patch System | Set timezone as UTC
   community.general.timezone:
-    name: Asia/Kolkata
-    hwclock: local
-  ignore_errors: true
-  register: rv_linux_patching_hw_settime_result
+    name: UTC
+    hwclock: UTC
 
-- name: Vault Monorepo | Patch System | Set timezone via softlink
-  ansible.builtin.file:
-    src: "/usr/share/zoneinfo/Asia/Kolkata"
-    dest: /etc/localtime
-    state: link
-  when: rv_linux_patching_hw_settime_result.failed
+- name: Vault Monorepo | Patch System | Install required packages
+  ansible.builtin.apt:
+    name:
+      [
+        libcap2-bin,
+        zip,
+        unzip,
+        net-tools,
+        build-essential,
+        tar,
+        wget,
+        curl,
+        ca-certificates,
+        sudo,
+        systemd,
+        telnet,
+        gnupg2,
+        apt-transport-https,
+        lsb-release,
+        software-properties-common,
+        locales,
+        systemd-timesyncd,
+        network-manager,
+        gnupg2,
+        gnupg,
+        pigz,
+        cron,
+        acl,
+        ufw,
+        vim,
+        python3-pip,
+        git,
+        fontconfig,
+        gtk-update-icon-cache,
+        libnss3,
+        libatk1.0-0,
+        libatk-bridge2.0-0,
+        libgtk-3-0,
+        bzip2,
+        libgbm-dev,
+        libglib2.0-dev,
+        libdrm-dev,
+        libasound2,
+        jq,
+        zsh,
+      ]
 
 - name: Vault Monorepo | Patch System | Ensure a locale exists as en_US.UTF-8
   community.general.locale_gen:
@@ -56,16 +94,22 @@
     - file_loc: 1200-wheel
       rule: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL"
 
+- name: Vault Monorepo | Patch System | Vault Group
+  ansible.builtin.group:
+    name: "{{ vault_mono_server_vault_systemd_group }}"
+    state: present
+
 - name: Vault Monorepo | Patch System | Add new user
   ansible.builtin.user:
-    name: "{{ vault_mono_server_login_username }}"
+    name: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
     groups: wheel
     append: true
-    shell: /bin/bash
+    shell: /bin/zsh
 
 - name: Vault Monorepo | Patch System | Set authorized key
   ansible.posix.authorized_key:
-    user: "{{ vault_mono_server_login_username }}"
+    user: "{{ vault_mono_server_vault_systemd_user }}"
     state: present
     key: "{{ item }}"
   with_items:
@@ -83,3 +127,25 @@
       line: "PasswordAuthentication no"
     - regexp: "^PermitRootLogin"
       line: "PermitRootLogin no"
+
+- name: Linux Patching | Patch System | Enable network services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  with_items: [NetworkManager, systemd-timesyncd, systemd-resolved, ufw, cron]
+
+- name: Linux Patching | Patch System | Apply Vault UFW Rule
+  template:
+    src: "{{ vault_mono_local_templates_dir }}/ufw-vault.j2"
+    dest: /etc/ufw/applications.d/ufw-vault
+    mode: "0644"
+
+- name: Linux Patching | Patch System | Enable network services
+  community.general.ufw:
+    rule: allow
+    name: "{{ item }}"
+    state: enabled
+  with_items:
+    - OpenSSH
+    - "{{ vault_mono_ufw_rule_name }}"
