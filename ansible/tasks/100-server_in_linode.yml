@@ -23,6 +23,29 @@
   ansible.builtin.set_fact:
     vault_mono_vault_server_public_ip: "{{ vault_mono_linode_server.instance.ipv4[0] }}"
 
+- name: Setup Vault | Server in linode | Get existing RDNS
+  no_log: "{{ vault_mono_debug_no_log }}"
+  ansible.builtin.uri:
+    url: "https://api.linode.com/v4/networking/ips/{{ vault_mono_vault_server_public_ip }}"
+    headers:
+      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
+    method: GET
+  register: vault_mono_linode_ipv4_rdns
+
+- name: Setup Vault | Server in linode | Update existing RDNS
+  no_log: "{{ vault_mono_debug_no_log }}"
+  when: vault_mono_linode_ipv4_rdns['json']['rdns'] != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+  ansible.builtin.uri:
+    url: "https://api.linode.com/v4/networking/ips/{{ vault_mono_vault_server_public_ip }}"
+    headers:
+      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
+    body_format: json
+    body:
+      rdns: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+    method: PUT
+  register: vault_mono_linode_ipv4_rdns
+  changed_when: vault_mono_linode_ipv4_rdns.status == 200
+
 - name: Setup Vault | Server in linode | Wait for the host to come online
   ansible.builtin.wait_for:
     port: 22
