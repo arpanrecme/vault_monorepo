@@ -117,6 +117,3 @@
 
 - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate | Write Cert To File
   ansible.builtin.meta: flush_handlers
-
-- ansible.builtin.fail:
-    msg: hard

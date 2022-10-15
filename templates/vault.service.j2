@@ -9,7 +9,7 @@ StartLimitBurst=3
 
 [Service]
 Type=notify
-# EnvironmentFile={{ vault_mono_env_file_path }}
+EnvironmentFile={{ vault_mono_env_file_path }}
 User={{ vault_mono_server_vault_systemd_user }}
 Group={{ vault_mono_server_vault_systemd_group }}
 ProtectSystem=full

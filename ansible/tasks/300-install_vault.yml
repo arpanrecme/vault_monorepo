@@ -62,6 +62,12 @@
     remote_src: true
   notify: Vault Monorepo | Handlers | Restart Vault
 
+- name: Linux Patching | Install Hashicorp Vault | cap_ipc_lock=ep
+  community.general.capabilities:
+    path: "{{ vault_mono_bin_file_path }}"
+    capability: cap_ipc_lock=ep
+    state: present
+
 - name: Linux Patching | Install Hashicorp Vault | Systemd Service File
   ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/vault.service.j2"

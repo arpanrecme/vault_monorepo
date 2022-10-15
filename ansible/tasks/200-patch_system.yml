@@ -56,6 +56,12 @@
         zsh,
       ]
 
+- name: Linux Patching | Patch System | Install headers linux-headers-{{ ansible_kernel }}
+  ansible.builtin.apt:
+    name: "linux-headers-{{ ansible_kernel }}"
+    state: present
+    update_cache: true
+
 - name: Vault Monorepo | Patch System | Ensure a locale exists as en_US.UTF-8
   community.general.locale_gen:
     name: en_US.UTF-8
@@ -103,9 +109,19 @@
   ansible.builtin.user:
     name: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
+    create_home: true
+    home: "{{ vault_mono_install_path }}"
     groups: wheel
     append: true
     shell: /bin/zsh
+
+- name: Vault Monorepo | Patch System | User zsh rc
+  ansible.builtin.file:
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    path: "{{ vault_mono_install_path }}/zshrc"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    mode: "0644"
+    state: touch
 
 - name: Vault Monorepo | Patch System | Set authorized key
   ansible.posix.authorized_key:
@@ -127,6 +143,65 @@
       line: "PasswordAuthentication no"
     - regexp: "^PermitRootLogin"
       line: "PermitRootLogin no"
+
+- name: Linux Patching | Patch System | Disable Wifi MAC randomization
+  community.general.ini_file:
+    path: /etc/NetworkManager/NetworkManager.conf
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: true
+    mode: "0775"
+  with_items:
+    - section: "device"
+      option: "wifi.scan-rand-mac-address"
+      value: "no"
+    - section: "device-mac-randomization"
+      option: "wifi.scan-rand-mac-address"
+      value: "no"
+    - section: "ifupdown"
+      option: "managed"
+      value: "true"
+    - section: "main"
+      option: "plugins"
+      value: "ifupdown,keyfile"
+    - section: "connection"
+      option: "wifi.powersave"
+      value: 2
+
+- name: Linux Patching | Patch System | Disable IPv6
+  ansible.posix.sysctl:
+    sysctl_file: /etc/sysctl.d/70-disable-ipv6.conf
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: true
+  with_items:
+    - name: net.ipv6.conf.all.disable_ipv6
+      value: "1"
+    - name: net.ipv6.conf.default.disable_ipv6
+      value: "1"
+    - name: net.ipv6.conf.lo.disable_ipv6
+      value: "1"
+
+- name: Linux Patching | Patch System | Set a hostname
+  ansible.builtin.hostname:
+    name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+    use: debian
+
+- name: Linux Patching | Patch System | Set Hosts file
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    owner: root
+    group: root
+    mode: "0644"
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+  loop:
+    - regexp: '^127\.0\.0\.1'
+      line: "127.0.0.1\tlocalhost"
+    - regexp: '^127\.0\.1\.1'
+      line: "127.0.1.1\t{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
 
 - name: Linux Patching | Patch System | Enable network services
   ansible.builtin.service:

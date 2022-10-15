@@ -1,5 +1,5 @@
 #vault_mono_vault_version: "{{ lookup('env', 'VAULT_VERSION') | default('1.5.5', true) }}{{ '+prem' if vault_enterprise_premium else '' }}{{ '.hsm' if vault_enterprise_premium_hsm else '' }}"
-vault_mono_vault_version: 1.5.5
+vault_mono_vault_version: 1.12.0
 vault_mono_vault_architecture_map:
   # this first entry seems... redundant (but it's required for reasons)
   amd64: amd64
