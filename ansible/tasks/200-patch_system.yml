@@ -118,7 +118,7 @@
 - name: Vault Monorepo | Patch System | User zsh rc
   ansible.builtin.file:
     group: "{{ vault_mono_server_vault_systemd_group }}"
-    path: "{{ vault_mono_install_path }}/zshrc"
+    path: "{{ vault_mono_install_path }}/.zshrc"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     mode: "0644"
     state: touch
