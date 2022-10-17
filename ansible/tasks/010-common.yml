@@ -16,3 +16,12 @@
       -N '' -f {{ vault_mono_local_file_openssh_nopass_private_key }}
   args:
     creates: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
+
+- name: Vault Monorepo | Bitwarden | ROOT CA | Remove Password
+  ansible.builtin.shell: |-
+    openssl rsa -in {{ vault_mono_local_file_root_ca_private_key }} \
+        -passin pass:{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_private_key_passphrase) }} \
+        -passout pass:"" \
+        -out {{ vault_mono_local_file_root_ca_private_key_no_pass }}
+  args:
+    creates: "{{ vault_mono_local_file_root_ca_private_key_no_pass }}"

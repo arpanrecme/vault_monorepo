@@ -29,6 +29,7 @@ vault_mono_local_file_linode_cli_prod_token: "{{ vault_mono_prerequisite_files_d
 vault_mono_local_file_root_ca_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.root_ca_private_key.key"
 vault_mono_local_file_root_ca_certificate: "{{ vault_mono_prerequisite_files_dir }}/root_ca_certificate.crt"
 vault_mono_local_file_root_ca_private_key_passphrase: "{{ vault_mono_prerequisite_files_dir }}/secrets.root_ca_private_key_passphrase.txt"
+vault_mono_local_file_root_ca_private_key_no_pass: "{{ vault_mono_prerequisite_files_dir }}/secrets.root_ca_private_key_no_pass.key"
 
 ### GITLAB
 vault_mono_local_file_gitlab_username: "{{ vault_mono_prerequisite_files_dir }}/gitlab_username.txt"
