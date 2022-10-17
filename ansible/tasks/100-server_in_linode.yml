@@ -3,13 +3,12 @@
   no_log: "{{ vault_mono_debug_no_log }}"
   community.general.linode_v4:
     label: "vault_server"
-    access_token: "{{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
+    access_token: "{{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) }}"
     type: g6-nanode-1
     region: ap-west
     image: linode/debian11
     authorized_keys:
       - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
-      - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_master_public_key) }}"
     state: present
     tags:
       - vault
@@ -63,7 +62,7 @@
     ansible_connection: "ssh"
     ansible_port: 22
     ansible_user: root
-    ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_private_key }}"
+    ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
 - name: Vault Monorepo | Server in linode | Verify dynamic host
@@ -72,17 +71,17 @@
   ignore_unreachable: true
   register: vault_mono_dynamic_host_ping
 
-- name: Vault Monorepo | Server in linode | Adding dynamic host with new user {{ vault_mono_server_vault_systemd_user }}
+- name: Vault Monorepo | Server in linode | Adding dynamic host with new user {{ vault_mono_server_login_user_username }}
   ansible.builtin.add_host:
     hostname: "{{ vault_mono_server_ansible_inventory_name }}"
     ansible_host: "{{ vault_mono_vault_server_public_ip }}"
     ansible_connection: "ssh"
     ansible_port: 22
-    ansible_user: "{{ vault_mono_server_vault_systemd_user }}"
-    ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_private_key }}"
+    ansible_user: "{{ vault_mono_server_login_user_username }}"
+    ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   when: vault_mono_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_dynamic_host_ping.msg'
 
-- name: Vault Monorepo | Server in linode | Verify dynamic host with {{ vault_mono_server_vault_systemd_user }}
+- name: Vault Monorepo | Server in linode | Verify dynamic host with {{ vault_mono_server_login_user_username }}
   delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
   ansible.builtin.ping:

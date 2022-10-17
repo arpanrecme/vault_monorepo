@@ -120,22 +120,13 @@
     shell: /bin/zsh
   register: vault_mono_server_login_user_homedir_result
 
-- name: Vault Monorepo | Patch System | Create zshrc file for {{ vault_mono_server_login_user_username }}
-  ansible.builtin.file:
-    group: "{{ vault_mono_server_login_user_groupname }}"
-    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
-    owner: "{{ vault_mono_server_login_user_username }}"
-    mode: "0644"
-    state: touch
-
 - name: Vault Monorepo | Patch System | Set authorized key for login user {{ vault_mono_server_login_user_username }}
   ansible.posix.authorized_key:
-    user: "{{ vault_mono_server_vault_systemd_user }}"
+    user: "{{ vault_mono_server_login_user_username }}"
     state: present
     key: "{{ item }}"
   with_items:
     - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
-    - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_master_public_key) }}"
 
 - name: Vault Monorepo | Patch System | Add systemd new user
   ansible.builtin.user:
@@ -144,6 +135,22 @@
     create_home: true
     home: "{{ vault_mono_install_path }}"
     shell: /bin/zsh
+  register: vault_mono_server_systemd_user_homedir_result
+
+- name: Vault Monorepo | Patch System | Create zshrc file
+  ansible.builtin.file:
+    group: "{{ item.group }}"
+    path: "{{ item.file }}"
+    owner: "{{ item.user }}"
+    mode: "0644"
+    state: touch
+  with_items:
+    - file: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
+      group: "{{ vault_mono_server_login_user_groupname }}"
+      user: "{{ vault_mono_server_login_user_username }}"
+    - file: "{{ vault_mono_server_systemd_user_homedir_result.home }}/.zshrc"
+      group: "{{ vault_mono_server_vault_systemd_group }}"
+      user: "{{ vault_mono_server_vault_systemd_user }}"
 
 - name: Vault Monorepo | Patch System | SSHD Hardening Disable Password Authentication
   ansible.builtin.lineinfile:
@@ -237,3 +244,11 @@
   with_items:
     - OpenSSH
     - "{{ vault_mono_ufw_rule_name }}"
+
+- name: Linux Patching | Patch System | Allow Other Ports
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+  with_items:
+    - 8088
+    - 5432

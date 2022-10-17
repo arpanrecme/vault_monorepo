@@ -20,6 +20,7 @@ vault_mono_prerequisite_files_dir: "{{ vault_mono_local_tmp_files_dir }}/prerequ
 vault_mono_local_file_openssh_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.openssh_rsa_id.key"
 vault_mono_local_file_openssh_public_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_rsa_id.key.pub"
 vault_mono_local_file_openssh_private_key_passphrase: "{{ vault_mono_prerequisite_files_dir }}/secrets.openssh_rsa_id_passphrase.txt"
+vault_mono_local_file_openssh_nopass_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.openssh_nopass_rsa_id.key"
 
 ### Linode
 vault_mono_local_file_linode_cli_prod_token: "{{ vault_mono_prerequisite_files_dir }}/secrets.linode_cli_prod_token.txt"

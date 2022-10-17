@@ -6,3 +6,13 @@
 
 - name: Vault Monorepo | Bitwarden
   ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/011-bw.yml"
+
+- name: Vault Monorepo | Common | OPENSSH PRIVATE KEY | Remove Password
+  ansible.builtin.shell: |-
+    cp {{ vault_mono_local_file_openssh_private_key }} {{ vault_mono_local_file_openssh_nopass_private_key }}
+    chmod 600 {{ vault_mono_local_file_openssh_nopass_private_key }}
+    ssh-keygen -p \
+      -P {{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_private_key_passphrase) }} \
+      -N '' -f {{ vault_mono_local_file_openssh_nopass_private_key }}
+  args:
+    creates: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
