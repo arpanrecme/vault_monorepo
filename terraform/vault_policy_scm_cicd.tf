@@ -1,4 +1,4 @@
-data "vault_policy_document" "gitlab" {
+data "vault_policy_document" "scm_cicd" {
 
   rule {
     path         = "secret/data/iac/prerequisite/*"
@@ -19,7 +19,7 @@ data "vault_policy_document" "gitlab" {
   }
 }
 
-resource "vault_policy" "gitlab" {
-  name   = "gitlab"
-  policy = data.vault_policy_document.gitlab.hcl
+resource "vault_policy" "scm_cicd" {
+  name   = "scm_cicd"
+  policy = data.vault_policy_document.scm_cicd.hcl
 }

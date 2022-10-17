@@ -1,21 +1,10 @@
 resource "vault_kv_secret_v2" "secret_userpass_gitlab" {
   mount = vault_mount.secret.path
-  name  = "iac/vault/userpass/user/gitlab"
+  name  = "iac/vault/userpass/user/scm_cicd"
   data_json = jsonencode(
     {
-      username = "gitlab"
-      password = random_password.password_gitlab.result
-    }
-  )
-}
-
-resource "vault_kv_secret_v2" "secret_userpass_github" {
-  mount = vault_mount.secret.path
-  name  = "iac/vault/userpass/user/github"
-  data_json = jsonencode(
-    {
-      username = "github"
-      password = random_password.password_github.result
+      username = "scm_cicd"
+      password = random_password.password_scm_cicd.result
     }
   )
 }
