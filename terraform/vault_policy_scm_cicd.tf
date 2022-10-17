@@ -7,9 +7,9 @@ data "vault_policy_document" "scm_cicd" {
   }
 
   rule {
-    path         = "secret/data/iac/vault/userpass/user/gitlab"
+    path         = "secret/data/iac/vault/userpass/user/scm_cicd"
     capabilities = ["read"]
-    description  = "Allow to read vault gitlab user cerdentials"
+    description  = "Allow to read vault scm_cicd user cerdentials"
   }
 
   rule {
