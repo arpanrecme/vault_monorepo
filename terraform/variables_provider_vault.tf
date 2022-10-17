@@ -1,6 +1,6 @@
 variable "VAULT_MONO_VAULT_ROOT_TOKEN" {
   type      = string
-  default   = null
+  default   = "hvs.mRz3MvtwM9ZbxSyvRGI9wtqz"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_VAULT_ROOT_TOKEN) > 1

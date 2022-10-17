@@ -24,8 +24,8 @@ resource "vault_kv_secret_v2" "secret_prerequisite_rootca" {
   name  = "iac/prerequisite/rootca"
   data_json = jsonencode(
     {
-      private_key = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY)
-      certificate = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE)
+      private_key = file(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_PRIVATE_KEY)
+      certificate = file(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_CERTIFICATE)
     }
   )
 }
