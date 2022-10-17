@@ -26,11 +26,15 @@
     ## Open SSH
     TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PUBLIC_KEY: "{{ vault_mono_local_file_openssh_public_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY_PASSPHRASE: "{{ vault_mono_local_file_openssh_private_key_passphrase }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
     ## Linode
     TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
     ## ROOT CA
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS: "{{ vault_mono_local_file_root_ca_private_key_no_pass }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_private_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE: "{{ vault_mono_local_file_root_ca_private_key_passphrase }}"
     ## GITLAB
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME: "{{ vault_mono_local_file_gitlab_username }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"

@@ -7,6 +7,24 @@ variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY" {
   }
 }
 
+variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY_PASSPHRASE" {
+  type    = string
+  default = "../.tmp/prerequisite/secrets.openssh_rsa_id_passphrase.txt"
+  validation {
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY_PASSPHRASE) > 1
+    error_message = "Missing OPEN SSH Private Key file path"
+  }
+}
+
+variable "VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY" {
+  type    = string
+  default = "../.tmp/prerequisite/secrets.openssh_nopass_rsa_id.key"
+  validation {
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY) > 1
+    error_message = "Missing OPEN SSH Private Key file path"
+  }
+}
+
 variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PUBLIC_KEY" {
   type    = string
   default = "../.tmp/prerequisite/openssh_rsa_id.key.pub"
@@ -30,6 +48,24 @@ variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS" {
   default = "../.tmp/prerequisite/secrets.root_ca_private_key_no_pass.key"
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS) > 1
+    error_message = "Missing Root CA Private key file path"
+  }
+}
+
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY" {
+  type    = string
+  default = "../.tmp/prerequisite/secrets.root_ca_private_key.key"
+  validation {
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY) > 1
+    error_message = "Missing Root CA Private key file path"
+  }
+}
+
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE" {
+  type    = string
+  default = "../.tmp/prerequisite/secrets.root_ca_private_key_passphrase.txt"
+  validation {
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE) > 1
     error_message = "Missing Root CA Private key file path"
   }
 }
