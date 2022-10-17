@@ -100,30 +100,35 @@
     - file_loc: 1200-wheel
       rule: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL"
 
-- name: Vault Monorepo | Patch System | Vault Group
+- name: Vault Monorepo | Patch System | Vault Groups
   ansible.builtin.group:
     name: "{{ vault_mono_server_vault_systemd_group }}"
     state: present
+  with_items:
+    - "{{ vault_mono_server_vault_systemd_group }}"
+    - "{{ vault_mono_server_login_user_groupname }}"
 
-- name: Vault Monorepo | Patch System | Add new user
+- name: Vault Monorepo | Patch System | Add login user {{ vault_mono_server_login_user_username }}
   ansible.builtin.user:
-    name: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_group }}"
+    name: "{{ vault_mono_server_login_user_username }}"
+    group: "{{ vault_mono_server_login_user_groupname }}"
     create_home: true
-    home: "{{ vault_mono_install_path }}"
-    groups: wheel
     append: true
+    groups:
+      - wheel
+    home: "{{ vault_mono_server_login_user_homedir }}"
     shell: /bin/zsh
+  register: vault_mono_server_login_user_homedir_result
 
-- name: Vault Monorepo | Patch System | User zsh rc
+- name: Vault Monorepo | Patch System | Create zshrc file for {{ vault_mono_server_login_user_username }}
   ansible.builtin.file:
-    group: "{{ vault_mono_server_vault_systemd_group }}"
-    path: "{{ vault_mono_install_path }}/.zshrc"
-    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_login_user_groupname }}"
+    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
+    owner: "{{ vault_mono_server_login_user_username }}"
     mode: "0644"
     state: touch
 
-- name: Vault Monorepo | Patch System | Set authorized key
+- name: Vault Monorepo | Patch System | Set authorized key for login user {{ vault_mono_server_login_user_username }}
   ansible.posix.authorized_key:
     user: "{{ vault_mono_server_vault_systemd_user }}"
     state: present
@@ -131,6 +136,14 @@
   with_items:
     - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
     - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_master_public_key) }}"
+
+- name: Vault Monorepo | Patch System | Add systemd new user
+  ansible.builtin.user:
+    name: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    create_home: true
+    home: "{{ vault_mono_install_path }}"
+    shell: /bin/zsh
 
 - name: Vault Monorepo | Patch System | SSHD Hardening Disable Password Authentication
   ansible.builtin.lineinfile:
