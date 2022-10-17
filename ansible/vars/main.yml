@@ -58,8 +58,4 @@ vault_mono_client_passphrase_pkcs12_certificate: password
 
 ## Terraform
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/../terraform"
-vault_mono_local_tmp_terraform_intermittent_ca_dir: "{{ vault_mono_local_tmp_files_dir }}/terraform_intermittent_ca"
-vault_mono_local_file_terraform_intermittent_ca_certificate: "{{ vault_mono_local_tmp_terraform_intermittent_ca_dir }}/terraform_intermittent_certificate.pem"
-vault_mono_local_file_terraform_intermittent_ca_private_key: "{{ vault_mono_local_tmp_terraform_intermittent_ca_dir }}/secrets.terraform_intermittent_certificate_private_key.key"
-vault_mono_local_file_terraform_intermittent_ca_validity: 3651
 ## Terraform

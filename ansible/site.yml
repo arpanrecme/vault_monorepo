@@ -30,7 +30,6 @@
         - "{{ vault_mono_local_files_dir }}"
         - "{{ vault_mono_prerequisite_files_dir }}"
         - "{{ vault_mono_mutual_tls_files_dir }}"
-        - "{{ vault_mono_local_tmp_terraform_intermittent_ca_dir }}"
       tags:
         - always
 
@@ -123,11 +122,6 @@
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/650-update_vault_init_secret.yml"
       tags:
         - vault_init_unseal
-
-    - name: Vault Monorepo | Terraform Create CA Cert
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/690-codified_vault_terraform_intermittent_ca.yml"
-      tags:
-        - codified_vault
 
     - name: Vault Monorepo | Terraform Codified Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/700-codified_vault_gitlab.yml"

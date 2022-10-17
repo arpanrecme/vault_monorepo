@@ -20,7 +20,6 @@
   environment:
     TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_init_secrets.root_token }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
-    # TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE: "{{ vault_mono_local_file_client_certificate }}"
     # prerequisite
@@ -30,8 +29,8 @@
     ## Linode
     TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
     ## ROOT CA
-    TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_PRIVATE_KEY: "{{ vault_mono_local_file_terraform_intermittent_ca_private_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_CERTIFICATE: "{{ vault_mono_local_file_terraform_intermittent_ca_certificate }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS: "{{ vault_mono_local_file_root_ca_private_key_no_pass }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
     ## GITLAB
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME: "{{ vault_mono_local_file_gitlab_username }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"

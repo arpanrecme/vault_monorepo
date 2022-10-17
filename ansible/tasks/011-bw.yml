@@ -52,7 +52,7 @@
 
     - name: Vault Monorepo | Bitwarden | ROOT CA | Download Certificate
       ansible.builtin.shell: |-
-        bw get attachment cert_full_chain.pem \
+        bw get attachment cert.pem \
         --itemid $(bw get item '33:9a:2d:7c:48:4d:1a:d1:18:ee:b7:60:f8:d2:18:70:7e:a3:b9:fb' --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_root_ca_certificate }}"
       args:

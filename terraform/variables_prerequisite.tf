@@ -25,11 +25,11 @@ variable "VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_PRIVATE_KEY" {
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS" {
   type    = string
-  default = "../.tmp/terraform_intermittent_ca/secrets.terraform_intermittent_certificate_private_key.key"
+  default = "../.tmp/prerequisite/secrets.root_ca_private_key_no_pass.key"
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_PRIVATE_KEY) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS) > 1
     error_message = "Missing Root CA Private key file path"
   }
 }
@@ -88,11 +88,11 @@ variable "VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_CERTIFICATE" {
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
   type    = string
-  default = "../.tmp/terraform_intermittent_ca/terraform_intermittent_certificate.pem"
+  default = "../.tmp/prerequisite/root_ca_certificate.crt"
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_INTERMITTENT_CA_CERTIFICATE) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE) > 1
     error_message = "Missing root CA certificate file path"
   }
 }
