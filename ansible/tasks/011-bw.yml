@@ -102,17 +102,6 @@
       args:
         creates: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
 
-- name: Vault Monorepo | Bitwarden | Ansible Galaxy API Key
-  no_log: "{{ vault_mono_debug_no_log }}"
-  ansible.builtin.shell: >
-    bw get item 'Ansible galaxy' --raw |
-    jq '.fields |
-    .[] |
-    select(.name == "GALAXY_API_KEY") |
-    .value' -r > {{ vault_mono_local_file_ansible_galaxy_api_key }}
-  args:
-    creates: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
-
 - name: Vault Monorepo | Bitwarden | HashiCorp Terraform cloud API Token
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.shell: >
@@ -134,5 +123,4 @@
     - "{{ vault_mono_local_file_linode_cli_prod_token }}"
     - "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
     - "{{ vault_mono_local_file_github_gh_prod_api_token }}"
-    - "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
     - "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"

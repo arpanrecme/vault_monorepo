@@ -11,7 +11,6 @@ Prerequisite: Download the below resources from [bitwarden](ansible/tasks/011-bw
 - Linode
 - GITLAB
 - GITHUB
-- Ansible Galaxy
 - HashiCorp Terraform cloud
 
 ## Artifacts

@@ -106,15 +106,6 @@ variable "VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.ansible_galaxy_api_key.txt"
-  validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY) > 1
-    error_message = "Missing Ansible Galaxy API Key file path"
-  }
-}
-
 variable "VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN" {
   type    = string
   default = "../.tmp/prerequisite/secrets.terraform_cloud_tf_prod_token.txt"

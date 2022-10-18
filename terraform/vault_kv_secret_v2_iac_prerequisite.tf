@@ -56,16 +56,6 @@ resource "vault_kv_secret_v2" "secret_prerequisite_github" {
   )
 }
 
-resource "vault_kv_secret_v2" "secret_prerequisite_ansibe_galaxy" {
-  mount = vault_mount.secret.path
-  name  = "iac/prerequisite/ansibe_galaxy"
-  data_json = jsonencode(
-    {
-      GALAXY_API_KEY = file(var.VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY)
-    }
-  )
-}
-
 resource "vault_kv_secret_v2" "secret_prerequisite_terraform_cloud" {
   mount = vault_mount.secret.path
   name  = "iac/prerequisite/terraform_cloud"
