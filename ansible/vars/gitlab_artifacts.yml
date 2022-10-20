@@ -1,9 +1,10 @@
 ---
 vault_mono_gitlab_artifacts_project_id: 39779402
 vault_mono_gitlab_artifacts_vault_cicd_variable_key_init_file: VAULT_INIT_SECRET_FILE
+vault_mono_gitlab_artifacts_tf_state_name: vault_monorepo
 vault_mono_gitlab_artifacts_tf_http_address:
   "https://gitlab.com/api/v4/projects/{{ vault_mono_gitlab_artifacts_project_id }}\
-  /terraform/state/default"
+  /terraform/state/{{ vault_mono_gitlab_artifacts_tf_state_name }}"
 vault_mono_gitlab_artifacts_tf_http_lock_address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}/lock"
 vault_mono_gitlab_artifacts_tf_http_unlock_address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}/lock"
 vault_mono_gitlab_artifacts_tf_http_username: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_username) | trim }}"

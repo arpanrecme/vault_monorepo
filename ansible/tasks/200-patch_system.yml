@@ -135,6 +135,7 @@
     create_home: true
     home: "{{ vault_mono_install_path }}"
     shell: /bin/zsh
+    system: true
   register: vault_mono_server_systemd_user_homedir_result
 
 - name: Vault Monorepo | Patch System | Create zshrc file
