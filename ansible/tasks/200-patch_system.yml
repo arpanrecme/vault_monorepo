@@ -1,15 +1,15 @@
 ---
-- name: Vault Monorepo | Patch System | Install upgrade and install python3-pip
+- name: Vault Monorepo | Setup Vault Server | Patch System | Install upgrade and install python3-pip
   ansible.builtin.raw: apt-get update && apt-get install -y python3-pip
   register: vault_mono_install_python_pip_result_raw
   changed_when: "'0 upgraded, 0 newly installed' not in vault_mono_install_python_pip_result_raw.stdout_lines | last"
 
-- name: Vault Monorepo | Patch System | Set timezone as UTC
+- name: Vault Monorepo | Setup Vault Server | Patch System | Set timezone as UTC
   community.general.timezone:
     name: UTC
     hwclock: UTC
 
-- name: Vault Monorepo | Patch System | Install required packages
+- name: Vault Monorepo | Setup Vault Server | Patch System | Install required packages
   ansible.builtin.apt:
     name:
       [
@@ -56,20 +56,20 @@
         zsh,
       ]
 
-- name: Linux Patching | Patch System | Install headers linux-headers-{{ ansible_kernel }}
+- name: Vault Monorepo | Setup Vault Server | Patch System | Install headers linux-headers-{{ ansible_kernel }}
   ansible.builtin.apt:
     name: "linux-headers-{{ ansible_kernel }}"
     state: present
     update_cache: true
 
-- name: Vault Monorepo | Patch System | Ensure a locale exists as en_US.UTF-8
+- name: Vault Monorepo | Setup Vault Server | Patch System | Ensure a locale exists as en_US.UTF-8
   community.general.locale_gen:
     name: en_US.UTF-8
     state: present
   environment:
     PATH: /usr/sbin:{{ ansible_env.PATH }}
 
-- name: Vault Monorepo | Patch System | Create wheel and sudo groups
+- name: Vault Monorepo | Setup Vault Server | Patch System | Create wheel and sudo groups
   ansible.builtin.group:
     name: "{{ item }}"
     state: present
@@ -77,7 +77,7 @@
     - wheel
     - sudo
 
-- name: Vault Monorepo | Patch System | Create Sudoers directory
+- name: Vault Monorepo | Setup Vault Server | Patch System | Create Sudoers directory
   ansible.builtin.file:
     path: /etc/sudoers.d
     state: directory
@@ -85,7 +85,7 @@
     owner: root
     group: root
 
-- name: Vault Monorepo | Patch System | Allow group permissions
+- name: Vault Monorepo | Setup Vault Server | Patch System | Allow group permissions
   ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ item.file_loc }}"
     content: "{{ item.rule }}"
@@ -100,7 +100,7 @@
     - file_loc: 1200-wheel
       rule: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL"
 
-- name: Vault Monorepo | Patch System | Vault Groups
+- name: Vault Monorepo | Setup Vault Server | Patch System | Vault Groups
   ansible.builtin.group:
     name: "{{ vault_mono_server_vault_systemd_group }}"
     state: present
@@ -108,7 +108,7 @@
     - "{{ vault_mono_server_vault_systemd_group }}"
     - "{{ vault_mono_server_login_user_groupname }}"
 
-- name: Vault Monorepo | Patch System | Add login user {{ vault_mono_server_login_user_username }}
+- name: Vault Monorepo | Setup Vault Server | Patch System | Add login user {{ vault_mono_server_login_user_username }}
   ansible.builtin.user:
     name: "{{ vault_mono_server_login_user_username }}"
     group: "{{ vault_mono_server_login_user_groupname }}"
@@ -120,7 +120,7 @@
     shell: /bin/zsh
   register: vault_mono_server_login_user_homedir_result
 
-- name: Vault Monorepo | Patch System | Set authorized key for login user {{ vault_mono_server_login_user_username }}
+- name: Vault Monorepo | Setup Vault Server | Patch System | Set authorized key for login user {{ vault_mono_server_login_user_username }}
   ansible.posix.authorized_key:
     user: "{{ vault_mono_server_login_user_username }}"
     state: present
@@ -128,7 +128,7 @@
   with_items:
     - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
 
-- name: Vault Monorepo | Patch System | Add systemd new user
+- name: Vault Monorepo | Setup Vault Server | Patch System | Add systemd new user
   ansible.builtin.user:
     name: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
@@ -138,7 +138,7 @@
     system: true
   register: vault_mono_server_systemd_user_homedir_result
 
-- name: Vault Monorepo | Patch System | Create zshrc file
+- name: Vault Monorepo | Setup Vault Server | Patch System | Create zshrc file
   ansible.builtin.file:
     group: "{{ item.group }}"
     path: "{{ item.file }}"
@@ -153,7 +153,7 @@
       group: "{{ vault_mono_server_vault_systemd_group }}"
       user: "{{ vault_mono_server_vault_systemd_user }}"
 
-- name: Vault Monorepo | Patch System | SSHD Hardening Disable Password Authentication
+- name: Vault Monorepo | Setup Vault Server | Patch System | SSHD Hardening Disable Password Authentication
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "{{ item.regexp }}"
@@ -165,7 +165,7 @@
     - regexp: "^PermitRootLogin"
       line: "PermitRootLogin no"
 
-- name: Linux Patching | Patch System | Disable Wifi MAC randomization
+- name: Vault Monorepo | Setup Vault Server | Patch System | Disable Wifi MAC randomization
   community.general.ini_file:
     path: /etc/NetworkManager/NetworkManager.conf
     section: "{{ item.section }}"
@@ -190,7 +190,7 @@
       option: "wifi.powersave"
       value: 2
 
-- name: Linux Patching | Patch System | Disable IPv6
+- name: Vault Monorepo | Setup Vault Server | Patch System | Disable IPv6
   ansible.posix.sysctl:
     sysctl_file: /etc/sysctl.d/70-disable-ipv6.conf
     name: "{{ item.name }}"
@@ -205,12 +205,12 @@
     - name: net.ipv6.conf.lo.disable_ipv6
       value: "1"
 
-- name: Linux Patching | Patch System | Set a hostname
+- name: Vault Monorepo | Setup Vault Server | Patch System | Set a hostname
   ansible.builtin.hostname:
     name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
     use: debian
 
-- name: Linux Patching | Patch System | Set Hosts file
+- name: Vault Monorepo | Setup Vault Server | Patch System | Set Hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
     owner: root
@@ -224,20 +224,20 @@
     - regexp: '^127\.0\.1\.1'
       line: "127.0.1.1\t{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
 
-- name: Linux Patching | Patch System | Enable network services
+- name: Vault Monorepo | Setup Vault Server | Patch System | Enable network services
   ansible.builtin.service:
     name: "{{ item }}"
     enabled: true
     state: started
   with_items: [NetworkManager, systemd-timesyncd, systemd-resolved, ufw, cron]
 
-- name: Linux Patching | Patch System | Apply Vault UFW Rule
-  template:
+- name: Vault Monorepo | Setup Vault Server | Patch System | Apply Vault UFW Rule
+  ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/ufw-vault.j2"
     dest: /etc/ufw/applications.d/ufw-vault
     mode: "0644"
 
-- name: Linux Patching | Patch System | Enable network services
+- name: Vault Monorepo | Setup Vault Server | Patch System | Enable network services
   community.general.ufw:
     rule: allow
     name: "{{ item }}"
@@ -246,7 +246,7 @@
     - OpenSSH
     - "{{ vault_mono_ufw_rule_name }}"
 
-- name: Linux Patching | Patch System | Allow Other Ports
+- name: Vault Monorepo | Setup Vault Server | Patch System | Allow Other Ports
   community.general.ufw:
     rule: allow
     port: "{{ item }}"
