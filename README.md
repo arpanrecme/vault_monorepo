@@ -1,18 +1,16 @@
 # Vault Monolithic Repository
 
-Prerequisite: Download the below resources from [bitwarden](ansible/tasks/011-bw.yml)
+## Prerequisite: Download the below resources from [bitwarden](ansible/tasks/011-get_prerequisite.yml)
 
-- OPENSSH KEY - SHA256:kKVUh0EIoVXLP5Cxek2aUgwuBobrUfmvXZtVQ3jx1AA
-- CA ROOT - RSA PRIVATE KEY and CERTIFICATE
-
-- OPENSSH KEY - SHA256:5Q1+kxpJwCigjVOZEB02EYW5m/r6Bm4GRme90/0DkoI
-- PGP KEY - B9A81CB849629C6341EC0AACD813A505EB696576
-
+- OPENSSH KEY - SHA256:Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0
+- CA ROOT - RSA PRIVATE KEY and CERTIFICATE - 16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9
 - Linode
 - GITLAB
 - GITHUB
 - Ansible Galaxy
 - HashiCorp Terraform cloud
+
+## [Create the server in Linode](ansible/tasks/100-create_server.yml)
 
 ## Artifacts
 
