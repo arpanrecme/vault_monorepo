@@ -11,7 +11,8 @@ include:
 terraform_apply:
   stage: vault-action
   rules:
-    - changes:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
         - terraform/**/*
         - ansible/**/*
         - files/**/*
@@ -20,7 +21,6 @@ terraform_apply:
         - requirements.txt
         - ansible.cfg
         - Dockerfile
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   before_script:
     - bw login --apikey --quiet
     - export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
