@@ -1,5 +1,5 @@
 ---
-- name: Vault Post Install Steps | Initialize | Get Vault Health Status
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Get Vault Health Status
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   ansible.builtin.uri:
@@ -12,7 +12,7 @@
     validate_certs: true
   register: vault_mono_health
 
-- name: Vault Post Install Steps | Initialize | Initialize
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Initialize
   when: not vault_mono_health.json.initialized
   no_log: "{{ vault_mono_debug_no_log }}"
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
@@ -32,13 +32,13 @@
   register: vault_mono_sys_init
   changed_when: true
 
-- name: Vault Monorepo | Initialize | Reset init secret
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Reset init secret
   no_log: "{{ vault_mono_debug_no_log }}"
   when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
   ansible.builtin.set_fact:
     vault_mono_init_secrets: "{{ vault_mono_sys_init.json }}"
 
-- name: Vault Monorepo | Initialize | Write init secrets To File
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Write init secrets To File
   when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.copy:
@@ -47,7 +47,7 @@
     dest: "{{ vault_mono_local_file_vault_init_secrets }}"
     mode: "0400"
 
-- name: Vault Post Install Steps | Initialize | Unseal
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Unseal
   when: >
     (
       vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
@@ -76,7 +76,7 @@
     - "{{ vault_mono_init_secrets['keys'][1] }}"
     - "{{ vault_mono_init_secrets['keys'][2] }}"
 
-- name: Vault Post Install Steps | Initialize | Fail if not active
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Fail if not active
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   ansible.builtin.uri:

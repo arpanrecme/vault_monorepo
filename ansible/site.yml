@@ -33,7 +33,7 @@
       tags:
         - always
 
-    - name: Vault Monorepo | Get Server Information | Get prerequisites
+    - name: Vault Monorepo | Get Server Information | Get Prerequisite Files
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/011-get_prerequisite.yml"
       tags:
         - always
@@ -47,7 +47,7 @@
         - install_vault
         - vault_tls
 
-    - name: Vault Monorepo | Get Server Information | Create serevr
+    - name: Vault Monorepo | Get Server Information | Create Server
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-create_server.yml"
       tags:
         - patch_server
@@ -78,7 +78,7 @@
       tags:
         - install_vault
 
-    - name: Vault Monorepo | Setup Vault Server | Setup Hashicorp Vault TLS Certificate
+    - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-vault_tls.yml"
       tags:
         - vault_tls
@@ -105,13 +105,13 @@
       tags:
         - always
 
-    - name: Vault Monorepo | Configure Vault | Setup client certificate
+    - name: Vault Monorepo | Configure Vault | Setup Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
       tags:
         - vault_init_unseal
         - codified_vault
 
-    - name: Vault Monorepo | Configure Vault | Get Vault initial secret
+    - name: Vault Monorepo | Configure Vault | Get Vault Initial Secret
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/550-get_vault_init_secret.yml"
       tags:
         - vault_init_unseal

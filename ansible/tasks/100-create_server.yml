@@ -1,87 +1,89 @@
 ---
-- name: Setup Vault | Server in linode | Create a new linode
-  no_log: "{{ vault_mono_debug_no_log }}"
-  community.general.linode_v4:
-    label: "vault_server"
-    access_token: "{{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) }}"
-    type: g6-nanode-1
-    region: ap-west
-    image: linode/debian11
-    authorized_keys:
-      - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
-    state: present
-    tags:
-      - vault
-      - bullseye
-      - prod
-      - hashicorp_vault
-      - not_in_terraform
-  register: vault_mono_linode_server
+- name: Vault Monorepo | Get Server Information | Create Server | Linode
+  block:
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Create a new linode
+      no_log: "{{ vault_mono_debug_no_log }}"
+      community.general.linode_v4:
+        label: "vault_server"
+        access_token: "{{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) }}"
+        type: g6-nanode-1
+        region: ap-west
+        image: linode/debian11
+        authorized_keys:
+          - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
+        state: present
+        tags:
+          - vault
+          - bullseye
+          - prod
+          - hashicorp_vault
+          - not_in_terraform
+      register: vault_mono_linode_server
 
-- name: Setup Vault | Server in linode | Set new IP address
-  ansible.builtin.set_fact:
-    vault_mono_vault_server_public_ip: "{{ vault_mono_linode_server.instance.ipv4[0] }}"
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Set new IP address
+      ansible.builtin.set_fact:
+        vault_mono_vault_server_public_ip: "{{ vault_mono_linode_server.instance.ipv4[0] }}"
 
-- name: Setup Vault | Server in linode | Get existing RDNS
-  no_log: "{{ vault_mono_debug_no_log }}"
-  ansible.builtin.uri:
-    url: "https://api.linode.com/v4/networking/ips/{{ vault_mono_vault_server_public_ip }}"
-    headers:
-      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
-    method: GET
-  register: vault_mono_linode_ipv4_rdns
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Get existing RDNS
+      no_log: "{{ vault_mono_debug_no_log }}"
+      ansible.builtin.uri:
+        url: "https://api.linode.com/v4/networking/ips/{{ vault_mono_vault_server_public_ip }}"
+        headers:
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
+        method: GET
+      register: vault_mono_linode_ipv4_rdns
 
-- name: Setup Vault | Server in linode | Update existing RDNS
-  no_log: "{{ vault_mono_debug_no_log }}"
-  when: vault_mono_linode_ipv4_rdns['json']['rdns'] != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
-  ansible.builtin.uri:
-    url: "https://api.linode.com/v4/networking/ips/{{ vault_mono_vault_server_public_ip }}"
-    headers:
-      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
-    body_format: json
-    body:
-      rdns: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
-    method: PUT
-  register: vault_mono_linode_ipv4_rdns
-  changed_when: vault_mono_linode_ipv4_rdns.status == 200
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Update existing RDNS
+      no_log: "{{ vault_mono_debug_no_log }}"
+      when: vault_mono_linode_ipv4_rdns['json']['rdns'] != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+      ansible.builtin.uri:
+        url: "https://api.linode.com/v4/networking/ips/{{ vault_mono_vault_server_public_ip }}"
+        headers:
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_linode_cli_prod_token) | trim }}"
+        body_format: json
+        body:
+          rdns: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+        method: PUT
+      register: vault_mono_linode_ipv4_rdns
+      changed_when: vault_mono_linode_ipv4_rdns.status == 200
 
-- name: Setup Vault | Server in linode | Wait for the host to come online
-  ansible.builtin.wait_for:
-    port: 22
-    host: "{{ vault_mono_vault_server_public_ip }}"
-    timeout: 3
-  register: vault_mono_server_ping_test
-  retries: 100
-  delay: 3
-  until: 'vault_mono_server_ping_test.state is defined and vault_mono_server_ping_test.state == "started"'
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Wait for the host to come online
+      ansible.builtin.wait_for:
+        port: 22
+        host: "{{ vault_mono_vault_server_public_ip }}"
+        timeout: 3
+      register: vault_mono_server_ping_test
+      retries: 100
+      delay: 3
+      until: 'vault_mono_server_ping_test.state is defined and vault_mono_server_ping_test.state == "started"'
 
-- name: Vault Monorepo | Server in linode | Adding dynamic host
-  ansible.builtin.add_host:
-    hostname: "{{ vault_mono_server_ansible_inventory_name }}"
-    ansible_host: "{{ vault_mono_vault_server_public_ip }}"
-    ansible_connection: "ssh"
-    ansible_port: 22
-    ansible_user: root
-    ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
-    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Adding dynamic host
+      ansible.builtin.add_host:
+        hostname: "{{ vault_mono_server_ansible_inventory_name }}"
+        ansible_host: "{{ vault_mono_vault_server_public_ip }}"
+        ansible_connection: "ssh"
+        ansible_port: 22
+        ansible_user: root
+        ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
-- name: Vault Monorepo | Server in linode | Verify dynamic host
-  delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
-  ansible.builtin.ping:
-  ignore_unreachable: true
-  register: vault_mono_dynamic_host_ping
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Verify dynamic host
+      delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
+      ansible.builtin.ping:
+      ignore_unreachable: true
+      register: vault_mono_dynamic_host_ping
 
-- name: Vault Monorepo | Server in linode | Adding dynamic host with new user {{ vault_mono_server_login_user_username }}
-  ansible.builtin.add_host:
-    hostname: "{{ vault_mono_server_ansible_inventory_name }}"
-    ansible_host: "{{ vault_mono_vault_server_public_ip }}"
-    ansible_connection: "ssh"
-    ansible_port: 22
-    ansible_user: "{{ vault_mono_server_login_user_username }}"
-    ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
-    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-  when: vault_mono_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_dynamic_host_ping.msg'
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Adding dynamic host with new user {{ vault_mono_server_login_user_username }}
+      ansible.builtin.add_host:
+        hostname: "{{ vault_mono_server_ansible_inventory_name }}"
+        ansible_host: "{{ vault_mono_vault_server_public_ip }}"
+        ansible_connection: "ssh"
+        ansible_port: 22
+        ansible_user: "{{ vault_mono_server_login_user_username }}"
+        ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+      when: vault_mono_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_dynamic_host_ping.msg'
 
-- name: Vault Monorepo | Server in linode | Verify dynamic host with {{ vault_mono_server_login_user_username }}
-  delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
-  ansible.builtin.ping:
+    - name: Vault Monorepo | Get Server Information | Create Server | Linode | Verify dynamic host with {{ vault_mono_server_login_user_username }}
+      delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
+      ansible.builtin.ping:
