@@ -232,7 +232,7 @@
   with_items: [NetworkManager, systemd-timesyncd, systemd-resolved, ufw, cron]
 
 - name: Linux Patching | Patch System | Apply Vault UFW Rule
-  template:
+  ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/ufw-vault.j2"
     dest: /etc/ufw/applications.d/ufw-vault
     mode: "0644"
