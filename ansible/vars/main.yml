@@ -59,3 +59,11 @@ vault_mono_client_passphrase_pkcs12_certificate: password
 ## Terraform
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/../terraform"
 ## Terraform
+
+## Minio Settings
+vault_mono_server_minio_group: minio_user
+vault_mono_server_minio_user: minio_user
+vault_mono_server_minio_dir: /opt/minio
+vault_mono_server_port: 9000
+vault_mono_server_gui_port: 41231
+vault_mono_envfile_local_download_temp_path: "{{ vault_mono_local_tmp_files_dir }}/secrets.minio.existing.tmp.properties"

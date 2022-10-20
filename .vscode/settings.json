@@ -12,6 +12,7 @@
         "MAINPID",
         "MASTERPASSWORD",
         "MEMLOCK",
+        "minio",
         "mlock",
         "mradmin",
         "nanode",

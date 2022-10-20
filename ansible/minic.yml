@@ -1,0 +1,17 @@
+- name: Get Server Information
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "{{ playbook_dir }}/vars/main.yml"
+  tasks:
+    - name: create bucket
+      become: false
+      delegate_to: localhost
+      amazon.aws.aws_s3:
+        bucket: mybucket
+        mode: create
+        permission: public-read
+        aws_access_key: UGh2YlEqMHQ1JVJr
+        aws_secret_key: ZEphW3dzZGU8fjg2
+        s3_url: http://192.168.77.143:9000
+        region: us-east-1
