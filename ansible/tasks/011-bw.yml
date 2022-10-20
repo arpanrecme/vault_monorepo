@@ -5,7 +5,7 @@
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Private key
       ansible.builtin.shell: |-
         bw get attachment id_rsa \
-        --itemid $(bw get item 'F6x3hDIMdersLA/lwMaaJZMx3c0uowgw7Bv5xX2NFa0' \
+        --itemid $(bw get item 'Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0' \
         --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_openssh_private_key }}"
         chmod 400 "{{ vault_mono_local_file_openssh_private_key }}"
@@ -15,7 +15,7 @@
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Download Public key
       ansible.builtin.shell: |-
         bw get attachment id_rsa.pub \
-        --itemid $(bw get item 'F6x3hDIMdersLA/lwMaaJZMx3c0uowgw7Bv5xX2NFa0' \
+        --itemid $(bw get item 'Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0' \
         --raw | jq .id -r) \
         --output {{ vault_mono_local_file_openssh_public_key }}
         chmod 400 {{ vault_mono_local_file_openssh_public_key }}
@@ -24,7 +24,7 @@
 
     - name: Vault Monorepo | Bitwarden | OPENSSH PRIVATE KEY | Get private key passphrase
       ansible.builtin.shell: |-
-        bw get password 'F6x3hDIMdersLA/lwMaaJZMx3c0uowgw7Bv5xX2NFa0' > {{ vault_mono_local_file_openssh_private_key_passphrase }}
+        bw get password 'Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0' > {{ vault_mono_local_file_openssh_private_key_passphrase }}
       args:
         creates: "{{ vault_mono_local_file_openssh_private_key_passphrase }}"
 
@@ -45,22 +45,22 @@
     - name: Vault Monorepo | Bitwarden | ROOT CA | Download Private key
       ansible.builtin.shell: |-
         bw get attachment key.pem \
-        --itemid $(bw get item '33:9a:2d:7c:48:4d:1a:d1:18:ee:b7:60:f8:d2:18:70:7e:a3:b9:fb' --raw | jq .id -r) \
+        --itemid $(bw get item '16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9' --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_root_ca_private_key }}"
       args:
         creates: "{{ vault_mono_local_file_root_ca_private_key }}"
 
     - name: Vault Monorepo | Bitwarden | ROOT CA | Download Certificate
       ansible.builtin.shell: |-
-        bw get attachment cert.pem \
-        --itemid $(bw get item '33:9a:2d:7c:48:4d:1a:d1:18:ee:b7:60:f8:d2:18:70:7e:a3:b9:fb' --raw | jq .id -r) \
+        bw get attachment cert_full_chain.pem \
+        --itemid $(bw get item '16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9' --raw | jq .id -r) \
         --output "{{ vault_mono_local_file_root_ca_certificate }}"
       args:
         creates: "{{ vault_mono_local_file_root_ca_certificate }}"
 
     - name: Vault Monorepo | Bitwarden | ROOT CA | Get private key passphrase
       ansible.builtin.shell: |-
-        bw get password '33:9a:2d:7c:48:4d:1a:d1:18:ee:b7:60:f8:d2:18:70:7e:a3:b9:fb' > {{ vault_mono_local_file_root_ca_private_key_passphrase }}
+        bw get password '16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9' > {{ vault_mono_local_file_root_ca_private_key_passphrase }}
       args:
         creates: "{{ vault_mono_local_file_root_ca_private_key_passphrase }}"
 
@@ -102,6 +102,17 @@
       args:
         creates: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
 
+- name: Vault Monorepo | Bitwarden | Ansible Galaxy API Key
+  no_log: "{{ vault_mono_debug_no_log }}"
+  ansible.builtin.shell: >
+    bw get item 'Ansible galaxy' --raw |
+    jq '.fields |
+    .[] |
+    select(.name == "GALAXY_API_KEY") |
+    .value' -r > {{ vault_mono_local_file_ansible_galaxy_api_key }}
+  args:
+    creates: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
+
 - name: Vault Monorepo | Bitwarden | HashiCorp Terraform cloud API Token
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.shell: >
@@ -123,4 +134,5 @@
     - "{{ vault_mono_local_file_linode_cli_prod_token }}"
     - "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
     - "{{ vault_mono_local_file_github_gh_prod_api_token }}"
+    - "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
     - "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
