@@ -1,15 +1,15 @@
 ---
-- name: Vault Monorepo | Client Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
   community.crypto.openssl_privatekey:
     path: "{{ vault_mono_local_file_client_private_key }}"
     mode: "0600"
 
-- name: Vault Monorepo | Client Certificate | Check existing certificate file
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Check existing certificate file
   ansible.builtin.stat:
     path: "{{ vault_mono_local_file_client_certificate }}"
   register: vault_mono_server_vault_certificate_file_stat
 
-- name: Vault Monorepo | Client Certificate | Get information on generated certificate
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Get information on generated certificate
   when: vault_mono_server_vault_certificate_file_stat.stat.exists
   community.crypto.x509_certificate_info:
     path: "{{ vault_mono_local_file_client_certificate }}"
@@ -17,7 +17,7 @@
       point_1: "+1d"
   register: vault_mono_server_vault_x509_certificate_info
 
-- name: Vault Monorepo | Client Certificate | Generate an OpenSSL Certificate Signing Request
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL Certificate Signing Request
   when: >
     (
       not vault_mono_server_vault_certificate_file_stat.stat.exists
@@ -57,7 +57,7 @@
     extended_key_usage_critical: true
   register: vault_mono_server_vault_openssl_csr_pipe
 
-- name: Vault Monorepo | Client Certificate | Generate an OpenSSL certificate signed with your own CA certificate
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL certificate signed with your own CA certificate
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
@@ -68,14 +68,14 @@
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_client_x509_certificate_pipe
 
-- name: Vault Monorepo | Client Certificate | Write Certificate To File
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Write Certificate To File
   when: vault_mono_server_vault_client_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
     content: "{{ vault_mono_server_vault_client_x509_certificate_pipe.certificate }}"
     dest: "{{ vault_mono_local_file_client_certificate }}"
     mode: "0600"
 
-- name: Vault Monorepo | Client Certificate | Write Certificate Chain To File
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Write Certificate Chain To File
   when: vault_mono_server_vault_client_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
     content: |
@@ -84,7 +84,7 @@
     dest: "{{ vault_mono_local_file_client_chain_certificate }}"
     mode: "0600"
 
-- name: Vault Monorepo | Client Certificate | Generate PKCS#12 file
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate PKCS#12 file
   community.crypto.openssl_pkcs12:
     action: export
     path: "{{ vault_mono_local_file_client_chain_pkcs12_certificate }}"

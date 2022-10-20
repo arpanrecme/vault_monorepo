@@ -8,7 +8,7 @@
     - "{{ playbook_dir }}/vars/main.yml"
     - "{{ playbook_dir }}/vars/vault_install.yml"
   tasks:
-    - name: Vault Monorepo | Check for tools
+    - name: Vault Monorepo | Get Server Information | Check for tools
       run_once: true
       ansible.builtin.shell: "command -v {{ item }} >/dev/null 2>&1"
       changed_when: false
@@ -20,7 +20,7 @@
       tags:
         - always
 
-    - name: Vault Monorepo | Mandatory directories
+    - name: Vault Monorepo | Get Server Information | Create mandatory directories
       run_once: true
       ansible.builtin.file:
         state: directory
@@ -33,15 +33,22 @@
       tags:
         - always
 
-    - name: Vault Monorepo | Common Tasks
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
+    - name: Vault Monorepo | Get Server Information | Get Prerequisite Files
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/011-get_prerequisite.yml"
+      tags:
+        - always
+
+    - name: Vault Monorepo | Get Server Information | Get global configuration
+      run_once: true
+      ansible.builtin.set_fact:
+        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
       tags:
         - patch_server
         - install_vault
         - vault_tls
 
-    - name: Vault Monorepo | Create serevr
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-server_in_linode.yml"
+    - name: Vault Monorepo | Get Server Information | Create Server
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-create_server.yml"
       tags:
         - patch_server
         - install_vault
@@ -55,32 +62,29 @@
     - "{{ playbook_dir }}/vars/main.yml"
     - "{{ playbook_dir }}/vars/vault_install.yml"
   tasks:
-    - name: Vault Monorepo | Common Tasks
-      delegate_to: localhost
-      become: false
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
+    - name: Vault Monorepo | Setup Vault Server | Get global configuration
+      ansible.builtin.set_fact:
+        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
       tags:
-        - patch_server
-        - install_vault
-        - vault_tls
+        - always
 
-    - name: Vault Monorepo | Patch System
+    - name: Vault Monorepo | Setup Vault Server | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
       tags:
         - patch_server
 
-    - name: Vault Monorepo | Install Hashicorp Vault
+    - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/300-install_vault.yml"
       tags:
         - install_vault
 
-    - name: Vault Monorepo | Setup Hashicorp Vault TLS Certificate
+    - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/400-vault_tls.yml"
       tags:
         - vault_tls
 
   handlers:
-    - name: Vault Monorepo | Handlers | Restart Vault
+    - name: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
       ansible.builtin.service:
         name: "{{ vault_mono_systemd_service_name }}"
         state: "{{ item }}"
@@ -88,42 +92,42 @@
         - reloaded
         - restarted
 
-- name: Client setup
+- name: Configure Vault
   hosts: localhost
   gather_facts: false
   become: false
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
   tasks:
-    - name: Vault Monorepo | Common Tasks
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/010-common.yml"
+    - name: Vault Monorepo | Configure Vault | Get global configuration
+      ansible.builtin.set_fact:
+        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
       tags:
-        - vault_init_unseal
-        - codified_vault
+        - always
 
-    - name: Vault Monorepo | Client Certificate
+    - name: Vault Monorepo | Configure Vault | Setup Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
       tags:
         - vault_init_unseal
         - codified_vault
 
-    - name: Vault Monorepo | Vault Init Secret Get
+    - name: Vault Monorepo | Configure Vault | Get Vault Initial Secret
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/550-get_vault_init_secret.yml"
       tags:
         - vault_init_unseal
         - codified_vault
 
-    - name: Vault Monorepo | Initialize
+    - name: Vault Monorepo | Configure Vault | Initialize and Unseal
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/600-vault_init_unseal.yml"
       tags:
         - vault_init_unseal
 
-    - name: Vault Monorepo | Vault Init Secret Update
+    - name: Vault Monorepo | Configure Vault | Update Vault initial secret
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/650-update_vault_init_secret.yml"
       tags:
         - vault_init_unseal
 
-    - name: Vault Monorepo | Terraform Codified Vault
+    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/700-codified_vault_gitlab.yml"
       tags:
         - codified_vault
