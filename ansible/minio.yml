@@ -72,6 +72,15 @@
         minio_access_key: "{{ lookup('ansible.builtin.ini', 'MINIO_ROOT_USER', type='properties', file=vault_mono_envfile_local_download_temp_path) }}"
         minio_access_secret: "{{ lookup('ansible.builtin.ini', 'MINIO_ROOT_PASSWORD', type='properties', file=vault_mono_envfile_local_download_temp_path) }}"
 
+    - name: Vault Monorepo | Minio | Server TLS Certificate | Get IP Address from DNS
+      ansible.builtin.set_fact:
+        vault_mono_server_minio_dig: "{{ lookup('community.general.dig', vault_mono_global_config.S3.SERVER_DOMAIN_NAME) }}"
+
+    - name: Vault Monorepo | Minio | Server TLS Certificate | Get Public IP Address
+      ansible.builtin.uri:
+        url: https://ifconfig.me/all.json
+      register: vault_mono_server_minio_ifconfig_me
+
     - name: Vault Monorepo | Minio | Server TLS Certificate | Generate an OpenSSL private key for tls_key_file
       community.crypto.openssl_privatekey:
         path: "{{ vault_mono_server_minio_cert_private_key_path }}"
@@ -121,6 +130,9 @@
         common_name: "{{ vault_mono_global_config.S3.SERVER_DOMAIN_NAME }}"
         subject_alt_name:
           - "DNS:{{ vault_mono_global_config.S3.SERVER_DOMAIN_NAME }}"
+          - "IP:{{ vault_mono_server_minio_dig }}"
+          - "IP:{{ vault_mono_server_minio_ifconfig_me.json.ip_addr }}"
+          - "IP:192.168.77.128"
           - "IP:192.168.77.143"
         subject_alt_name_critical: true
         basic_constraints: CA:FALSE
@@ -187,7 +199,7 @@
       become: false
       delegate_to: localhost
       amazon.aws.aws_s3:
-        bucket: mybucket
+        bucket: terraform
         mode: create
         aws_access_key: "{{ minio_access_key }}"
         aws_secret_key: "{{ minio_access_secret }}"
