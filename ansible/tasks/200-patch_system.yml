@@ -100,13 +100,16 @@
     - file_loc: 1200-wheel
       rule: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL"
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Vault Groups
+- name: Vault Monorepo | Setup Vault Server | Patch System | Vault System group {{ vault_mono_server_vault_systemd_group }}
   ansible.builtin.group:
     name: "{{ vault_mono_server_vault_systemd_group }}"
     state: present
-  with_items:
-    - "{{ vault_mono_server_vault_systemd_group }}"
-    - "{{ vault_mono_server_login_user_groupname }}"
+    system: true
+
+- name: Vault Monorepo | Setup Vault Server | Patch System | Vault login group {{ vault_mono_server_login_user_groupname }}
+  ansible.builtin.group:
+    name: "{{ vault_mono_server_login_user_groupname }}"
+    state: present
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Add login user {{ vault_mono_server_login_user_username }}
   ansible.builtin.user:

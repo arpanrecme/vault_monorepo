@@ -34,6 +34,7 @@
         - "{{ vault_mono_server_minio_certs_dir }}"
         - "{{ vault_mono_server_minio_dir }}"
         - "{{ vault_mono_server_minio_bin_dir }}"
+        - "{{ vault_mono_server_minio_volumes }}"
 
     - name: Vault Monorepo | Minio | Download bin
       when: false
@@ -107,7 +108,7 @@
             )
             or
             (
-              vault_mono_server_minio_x509_certificate_info.subject.commonName != vault_mono_global_config.S3_SERVER_DOMAIN_NAME
+              vault_mono_server_minio_x509_certificate_info.subject.commonName != vault_mono_global_config.S3.SERVER_DOMAIN_NAME
             )
           )
         )
@@ -117,9 +118,10 @@
         )
       community.crypto.openssl_csr_pipe:
         privatekey_path: "{{ vault_mono_server_minio_cert_private_key_path }}"
-        common_name: "{{ vault_mono_global_config.S3_SERVER_DOMAIN_NAME }}"
+        common_name: "{{ vault_mono_global_config.S3.SERVER_DOMAIN_NAME }}"
         subject_alt_name:
-          - "DNS:{{ vault_mono_global_config.S3_SERVER_DOMAIN_NAME }}"
+          - "DNS:{{ vault_mono_global_config.S3.SERVER_DOMAIN_NAME }}"
+          - "IP:192.168.77.143"
         subject_alt_name_critical: true
         basic_constraints: CA:FALSE
         basic_constraints_critical: true
@@ -167,16 +169,13 @@
     - name: Vault Monorepo | Minio | Create systemd file
       ansible.builtin.template:
         src: "{{ vault_mono_local_templates_dir }}/minio-service.j2"
-        dest: "/etc/systemd/system/minio.service"
+        dest: "{{ vault_mono_server_systemd_service_file_path }}"
         mode: "0644"
 
     - name: Vault Monorepo | Minio | Restart minio
       ansible.builtin.service:
-        name: minio
-        state: "{{ item }}"
-      with_items:
-        #  - reloaded
-        - restarted
+        name: "{{ vault_mono_server_systemd_name }}"
+        state: restarted
 
     - ansible.builtin.debug:
         var: "{{ item }}"
@@ -192,8 +191,8 @@
         mode: create
         aws_access_key: "{{ minio_access_key }}"
         aws_secret_key: "{{ minio_access_secret }}"
-        s3_url: "https://192.168.77.143:{{ vault_mono_global_config.S3_SERVER_PORT }}"
-        region: us-east-1
+        s3_url: "https://{{ vault_mono_global_config.S3.SERVER_DOMAIN_NAME }}:{{ vault_mono_global_config.S3.SERVER_PORT }}"
+        region: "{{ vault_mono_global_config.S3.REGION }}"
         permission: private
         validate_certs: true
         aws_ca_bundle: "{{ vault_mono_local_file_root_ca_certificate }}"
