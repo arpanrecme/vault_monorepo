@@ -69,6 +69,23 @@
   environment:
     PATH: /usr/sbin:{{ ansible_env.PATH }}
 
+- name: Vault Monorepo | Setup Vault Server | Patch System | Create certificate directory
+  ansible.builtin.file:
+    path: /usr/local/share/ca-certificates
+    state: directory
+
+- name: Vault Monorepo | Setup Vault Server | Patch System | Copy Certificate
+  ansible.builtin.copy:
+    src: "{{ vault_mono_local_file_root_ca_certificate }}"
+    dest: "/usr/local/share/ca-certificates/{{ vault_mono_local_file_root_ca_certificate | basename }}"
+    remote_src: false
+  register: vault_mono_root_certificate_copied
+
+- name: Vault Monorepo | Setup Vault Server | Patch System | Update CA Trust
+  when: >
+    vault_mono_root_certificate_copied.changed
+  ansible.builtin.command: update-ca-certificates
+
 - name: Vault Monorepo | Setup Vault Server | Patch System | Create wheel and sudo groups
   ansible.builtin.group:
     name: "{{ item }}"
@@ -236,8 +253,8 @@
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Apply Vault UFW Rule
   ansible.builtin.template:
-    src: "{{ vault_mono_local_templates_dir }}/ufw-vault.j2"
-    dest: /etc/ufw/applications.d/ufw-vault
+    src: "{{ vault_mono_local_templates_dir }}/ufw-apps-vaultssot.j2"
+    dest: /etc/ufw/applications.d/ufw-apps-vaultssot
     mode: "0644"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Enable network services
@@ -248,6 +265,8 @@
   with_items:
     - OpenSSH
     - "{{ vault_mono_ufw_rule_name }}"
+    - postgresql-db
+    - "{{ vault_mono_server_minio_firewall_rule_name }}"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Allow Other Ports
   community.general.ufw:
@@ -255,6 +274,3 @@
     port: "{{ item }}"
   with_items:
     - 8088
-    - 5432
-    - 9000
-    - 9095

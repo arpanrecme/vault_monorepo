@@ -1,0 +1,12 @@
+[{{ vault_mono_ufw_rule_name }}]
+title=Vault
+description=HashiCorp Vault - A tool for managing secrets.
+ports={{ vault_mono_global_config["VAULT_ADDR_PORT"] }}/tcp
+[{{ vault_mono_server_minio_firewall_rule_name }}]
+title=Vault
+description=Minio S3.
+ports={{ vault_mono_global_config.S3.SERVER_PORT }}/tcp|{{ vault_mono_global_config.S3.MINIO_CONSOLE_PORT }}/tcp
+[postgresql-db]
+title=Vault
+description=PostgreSQL: The world's most advanced open source database.
+ports=5432/tcp
