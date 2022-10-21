@@ -56,21 +56,13 @@ vault_mono_local_file_client_chain_pkcs12_certificate: "{{ vault_mono_mutual_tls
 vault_mono_client_passphrase_pkcs12_certificate: password
 ## Mutual TLS
 
+## Vault Init Secrets
+vault_mono_init_secret_bucket_name: vaultssot
+vault_mono_init_secret_bucket_key: init_secret/shares.json
+## Vault Init Secrets
+
 ## Terraform
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/../terraform"
+vault_mono_codified_vault_bucket_name: "{{ vault_mono_init_secret_bucket_name }}"
+vault_mono_codified_vault_bucket_key: codified_vault/main.tfstate
 ## Terraform
-
-## Minio Settings
-vault_mono_server_minio_user: miniossot
-vault_mono_server_minio_dir: "/opt/{{ vault_mono_server_minio_user }}"
-vault_mono_server_minio_volumes: "{{ vault_mono_server_minio_dir }}/data_volume"
-vault_mono_server_minio_bin_dir: "{{ vault_mono_server_minio_dir }}/bin"
-vault_mono_server_minio_server_bin_path: "{{ vault_mono_server_minio_bin_dir }}/minio"
-vault_mono_server_minio_group: "{{ vault_mono_server_minio_user }}"
-vault_mono_server_systemd_name: "{{ vault_mono_server_minio_user }}"
-vault_mono_server_systemd_service_file_path: "/etc/systemd/system/{{ vault_mono_server_systemd_name }}.service"
-vault_mono_envfile_local_download_temp_path: "{{ vault_mono_local_tmp_files_dir }}/secrets.minio.existing.tmp.properties"
-vault_mono_server_minio_certs_dir: "{{ vault_mono_server_minio_dir }}/certs"
-vault_mono_server_minio_cert_private_key_path: "{{ vault_mono_server_minio_certs_dir }}/private.key"
-vault_mono_server_minio_cert_path: "{{ vault_mono_server_minio_certs_dir }}/public.crt"
-vault_mono_server_minio_server_env_file_path: "{{ vault_mono_server_minio_dir }}/minio.env"

@@ -1,27 +1,10 @@
-# docker build . -t arpanrec/vaultmonorepo:4
+# docker build . -t arpanrec/vaultmonorepo:5
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update
-
-RUN apt-get install -y apt-utils
-
-RUN apt-get upgrade -y
-
-RUN apt-get install -y python3-pip
-
-RUN apt-get install -y npm
-
-RUN apt-get install -y jq
-
-RUN apt-get install -y gnupg
-
-RUN apt-get install -y software-properties-common
-
-RUN apt-get install -y wget
-
-RUN apt-get install -y curl
+RUN apt-get update && apt-get install -y apt-utils && apt-get upgrade -y && \
+    apt-get install -y python3-pip npm jq gnupg software-properties-common wget curl git
 
 RUN npm install -g @bitwarden/cli
 
@@ -41,14 +24,4 @@ RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
 
 RUN apt-get update && apt-get install terraform -y
 
-RUN apt-get install -y git
-
 RUN apt-get clean all && rm -rf /var/cache/apt
-
-# RUN useradd -d /home/vault-mono -m -s /bin/bash vault-mono
-
-# USER vault-mono
-
-# WORKDIR /home/vault-mono/repo
-
-# COPY . .

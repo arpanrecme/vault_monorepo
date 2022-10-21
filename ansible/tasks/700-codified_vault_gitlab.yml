@@ -1,16 +1,12 @@
 ---
-- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | GitLab
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend
   block:
-    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | GitLab | Include variables
+    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend | Include variables
       ansible.builtin.include_vars:
         file: "{{ playbook_dir }}/vars/gitlab_artifacts.yml"
-
-    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | GitLab | Terraform Apply
-      community.general.terraform:
-        project_path: "{{ vault_mono_codified_vault_dir }}"
-        state: present
-        force_init: true
-        backend_config:
+    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend | Set Backend config
+      ansible.builtin.set_fact:
+        vault_backend_config:
           address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}"
           lock_address: "{{ vault_mono_gitlab_artifacts_tf_http_lock_address }}"
           lock_method: "{{ vault_mono_gitlab_artifacts_tf_http_lock_method }}"
@@ -19,49 +15,56 @@
           username: "{{ lookup('ansible.builtin.file', vault_mono_local_file_github_username) | trim }}"
           password: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_gl_prod_api_key) | trim }}"
           retry_wait_min: "{{ vault_mono_gitlab_artifacts_tf_http_retry_wait_min }}"
-      environment:
-        TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_init_secrets.root_token }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE: "{{ vault_mono_local_file_client_certificate }}"
-        # prerequisite
-        ## Open SSH
-        TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_private_key }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PUBLIC_KEY: "{{ vault_mono_local_file_openssh_public_key }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY_PASSPHRASE: "{{ vault_mono_local_file_openssh_private_key_passphrase }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
-        ## Linode
-        TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
-        ## ROOT CA
-        TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS: "{{ vault_mono_local_file_root_ca_private_key_no_pass }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_private_key }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE: "{{ vault_mono_local_file_root_ca_private_key_passphrase }}"
-        ## GITLAB
-        TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME: "{{ vault_mono_local_file_gitlab_username }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
-        ## GITHUB
-        TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME: "{{ vault_mono_local_file_github_username }}"
-        TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
-        ## Ansible Galaxy
-        TF_VAR_VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
-        ## Terraform Cloud
-        TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
-      register: vault_mono_codified_vault_output
-      ignore_errors: true
 
-    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | GitLab Error | Terraform Error
-      when: vault_mono_codified_vault_output.failed
-      ansible.builtin.debug:
-        msg: "{{ item | regex_replace('\\u001b.*0m', '') | trim }}"
-      register: vault_mono_codified_vault_output_debug
-      changed_when: vault_mono_codified_vault_output.changed
-      with_items:
-        - "{{ vault_mono_codified_vault_output.stdout_lines | default(omit) }}"
-        - "{{ vault_mono_codified_vault_output.stderr_lines | default(omit) }}"
-        - "{{ vault_mono_codified_vault_output.msg | default(omit) }}"
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Apply
+  community.general.terraform:
+    project_path: "{{ vault_mono_codified_vault_dir }}"
+    state: present
+    force_init: true
+    backend_config: "{{ vault_backend_config }}"
+  environment:
+    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_init_secrets.root_token }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE: "{{ vault_mono_local_file_client_certificate }}"
+    # prerequisite
+    ## Open SSH
+    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_private_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PUBLIC_KEY: "{{ vault_mono_local_file_openssh_public_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY_PASSPHRASE: "{{ vault_mono_local_file_openssh_private_key_passphrase }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
+    ## Linode
+    TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
+    ## ROOT CA
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS: "{{ vault_mono_local_file_root_ca_private_key_no_pass }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_private_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE: "{{ vault_mono_local_file_root_ca_private_key_passphrase }}"
+    ## GITLAB
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME: "{{ vault_mono_local_file_gitlab_username }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
+    ## GITHUB
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME: "{{ vault_mono_local_file_github_username }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
+    ## Ansible Galaxy
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
+    ## Terraform Cloud
+    TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
+  register: vault_mono_codified_vault_output
+  ignore_errors: true
 
-    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | GitLab Error | Terraform Fail
-      when: vault_mono_codified_vault_output.failed
-      ansible.builtin.fail:
-        msg: "Terraform Apply Failed, Check above errors"
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Error
+  when: vault_mono_codified_vault_output.failed
+  ansible.builtin.debug:
+    msg: "{{ item | regex_replace('\\u001b.*0m', '') | trim }}"
+  register: vault_mono_codified_vault_output_debug
+  changed_when: vault_mono_codified_vault_output.changed
+  with_items:
+    - "{{ vault_mono_codified_vault_output.stdout_lines | default(omit) }}"
+    - "{{ vault_mono_codified_vault_output.stderr_lines | default(omit) }}"
+    - "{{ vault_mono_codified_vault_output.msg | default(omit) }}"
+
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Fail
+  when: vault_mono_codified_vault_output.failed
+  ansible.builtin.fail:
+    msg: "Terraform Apply Failed, Check above errors"

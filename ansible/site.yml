@@ -61,6 +61,7 @@
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
     - "{{ playbook_dir }}/vars/vault_install.yml"
+    - "{{ playbook_dir }}/vars/minio_install.yml"
   tasks:
     - name: Vault Monorepo | Setup Vault Server | Get global configuration
       ansible.builtin.set_fact:
@@ -72,6 +73,13 @@
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
       tags:
         - patch_server
+
+    - name: Vault Monorepo | Minio
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/250-minio.yml"
+      tags:
+        - patch_server
+        - install_vault
+        - vault_tls
 
     - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/300-install_vault.yml"

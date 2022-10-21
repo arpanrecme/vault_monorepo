@@ -1,5 +1,5 @@
 ---
-image: arpanrec/vaultmonorepo:4
+image: arpanrec/vaultmonorepo:5
 stages:
   - test
   - vault-action

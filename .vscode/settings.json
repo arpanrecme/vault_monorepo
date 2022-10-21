@@ -28,6 +28,7 @@
     "tfvars",
     "timestamping",
     "unauth",
-    "vaultmonorepo"
+    "vaultmonorepo",
+    "vmuser"
   ]
 }
