@@ -3,18 +3,18 @@ Description=MinIO
 Documentation=https://min.io/docs/minio/linux/index.html
 Wants=network-online.target
 After=network-online.target
-# AssertFileIsExecutable=/usr/local/bin/minio
+AssertFileIsExecutable={{ vault_mono_server_minio_server_bin_path }}
 
 [Service]
-WorkingDirectory=/usr/local
+WorkingDirectory={{ vault_mono_server_minio_dir }}
 
 User={{ vault_mono_server_minio_user }}
 Group={{ vault_mono_server_minio_group }}
 ProtectProc=invisible
 
-EnvironmentFile=-/etc/default/minio
+EnvironmentFile=-{{ vault_mono_server_minio_server_env_file_path }}
 ExecStartPre=/bin/bash -c "if [ -z \"${MINIO_VOLUMES}\" ]; then echo \"Variable MINIO_VOLUMES not set in /etc/default/minio\"; exit 1; fi"
-ExecStart={{ vault_mono_server_minio_dir }}/minio server $MINIO_OPTS $MINIO_VOLUMES
+ExecStart={{ vault_mono_server_minio_server_bin_path }} server $MINIO_OPTS $MINIO_VOLUMES
 
 # Let systemd restart this service always
 Restart=always
