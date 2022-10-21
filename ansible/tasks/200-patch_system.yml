@@ -251,13 +251,20 @@
     state: started
   with_items: [NetworkManager, systemd-timesyncd, systemd-resolved, ufw, cron]
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Apply Vault UFW Rule
+- name: Vault Monorepo | Setup Vault Server | Patch System | Create UFW application rules
   ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/ufw-apps-vaultssot.j2"
     dest: /etc/ufw/applications.d/ufw-apps-vaultssot
     mode: "0644"
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Enable network services
+- name: Vault Monorepo | Setup Vault Server | Patch System | Disable ufw IPv6
+  ansible.builtin.lineinfile:
+    path: /etc/default/ufw
+    regexp: "^IPV6="
+    line: "IPV6=no"
+    state: present
+
+- name: Vault Monorepo | Setup Vault Server | Patch System | UFW Application Ports
   community.general.ufw:
     rule: allow
     name: "{{ item }}"
