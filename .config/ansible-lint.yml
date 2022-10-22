@@ -1,4 +1,2 @@
 skip_list: # or 'skip_list' to silence them completely
-  - risky-shell-pipe # Shells that use pipes should set the pipefail option.
-  - template-instead-of-copy # Templated files should use template instead of copy
-  - ignore-errors
+  - None

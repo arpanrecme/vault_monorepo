@@ -28,6 +28,7 @@
     state: directory
     owner: "{{ vault_mono_server_minio_user }}"
     group: "{{ vault_mono_server_minio_group }}"
+    mode: "0750"
   with_items:
     - "{{ vault_mono_server_minio_certs_dir }}"
     - "{{ vault_mono_server_minio_dir }}"

@@ -73,18 +73,21 @@
   ansible.builtin.file:
     path: /usr/local/share/ca-certificates
     state: directory
+    mode: "0750"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Copy Certificate
   ansible.builtin.copy:
     src: "{{ vault_mono_local_file_root_ca_certificate }}"
     dest: "/usr/local/share/ca-certificates/{{ vault_mono_local_file_root_ca_certificate | basename }}"
     remote_src: false
+    mode: "0644"
   register: vault_mono_root_certificate_copied
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Update CA Trust
-  when: >
-    vault_mono_root_certificate_copied.changed
   ansible.builtin.command: update-ca-certificates
+  register: vault_mono_system_patch_add_root_ca_result
+  changed_when: >
+    "0 added, 0 removed" not in vault_mono_system_patch_add_root_ca_result.stdout
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Create wheel and sudo groups
   ansible.builtin.group:
