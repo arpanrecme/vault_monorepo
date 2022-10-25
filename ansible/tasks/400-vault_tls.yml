@@ -16,7 +16,7 @@
     group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0400"
     remote_src: false
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Generate an OpenSSL private key for tls_key_file
   community.crypto.openssl_privatekey:
@@ -24,7 +24,7 @@
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0400"
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Check existing certificate file for tls_cert_file
   ansible.builtin.stat:
@@ -97,7 +97,7 @@
     provider: ownca
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_x509_certificate_pipe
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Set certificate chain
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
@@ -114,7 +114,7 @@
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0400"
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Write Cert To File
   ansible.builtin.meta: flush_handlers

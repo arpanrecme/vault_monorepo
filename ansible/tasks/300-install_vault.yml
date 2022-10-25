@@ -19,7 +19,7 @@
     - "{{ vault_mono_config_dir_path }}"
     - "{{ vault_mono_bin_dir_path }}"
     - "{{ vault_mono_install_tmp_dir_path }}"
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Config File
   ansible.builtin.template:
@@ -28,7 +28,7 @@
     mode: "0644"
     group: "{{ vault_mono_server_vault_systemd_group }}"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Download Vault (local) → {{ vault_mono_vault_zip_url }}
   ansible.builtin.get_url:
@@ -40,7 +40,7 @@
     mode: "0600"
     group: "{{ vault_mono_server_vault_systemd_group }}"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Unarchive Vault (local)
   ansible.builtin.unarchive:
@@ -51,7 +51,7 @@
     group: "{{ vault_mono_server_vault_systemd_group }}"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     remote_src: true
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Install Vault
   ansible.builtin.copy:
@@ -61,7 +61,7 @@
     group: "{{ vault_mono_server_vault_systemd_group }}"
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     remote_src: true
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | cap_ipc_lock=ep
   community.general.capabilities:
@@ -76,4 +76,4 @@
     mode: "0644"
     group: root
     owner: root
-  notify: Vault Monorepo | Handlers | Restart Vault
+  notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
