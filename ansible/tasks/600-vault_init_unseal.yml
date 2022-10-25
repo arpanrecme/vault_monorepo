@@ -87,3 +87,18 @@
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     status_code: 200
     validate_certs: true
+
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Remove Root Token
+  environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
+    SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
+  ansible.builtin.uri:
+    url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/auth/token/revoke-self"
+    method: POST
+    # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
+    client_cert: "{{ vault_mono_local_file_client_certificate }}"
+    client_key: "{{ vault_mono_local_file_client_private_key }}"
+    status_code: 204
+    validate_certs: true
+    return_content: true
+    headers:
+      "X-Vault-Token": "{{ vault_mono_init_secrets.root_token }}"

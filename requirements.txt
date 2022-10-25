@@ -3,3 +3,4 @@ linode_api4
 dnspython
 python-gitlab
 boto3
+hvac
