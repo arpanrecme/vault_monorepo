@@ -38,15 +38,6 @@
       tags:
         - always
 
-    - name: Vault Monorepo | Get Server Information | Get global configuration
-      run_once: true
-      ansible.builtin.set_fact:
-        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
-      tags:
-        - patch_server
-        - install_vault
-        - vault_tls
-
     - name: Vault Monorepo | Get Server Information | Create Server
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/100-create_server.yml"
       tags:
@@ -63,12 +54,6 @@
     - "{{ playbook_dir }}/vars/vault_install.yml"
     - "{{ playbook_dir }}/vars/minio_install.yml"
   tasks:
-    - name: Vault Monorepo | Setup Vault Server | Get global configuration
-      ansible.builtin.set_fact:
-        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
-      tags:
-        - always
-
     - name: Vault Monorepo | Setup Vault Server | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
       tags:
@@ -107,12 +92,6 @@
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
   tasks:
-    - name: Vault Monorepo | Configure Vault | Get global configuration
-      ansible.builtin.set_fact:
-        vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
-      tags:
-        - always
-
     - name: Vault Monorepo | Configure Vault | Setup Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/500-client_cert.yml"
       tags:
