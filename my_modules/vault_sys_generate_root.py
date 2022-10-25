@@ -3,11 +3,9 @@
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
 from __future__ import (absolute_import, division, print_function)
-import time
-from ansible.module_utils.basic import AnsibleModule
-from hvac import Client
-from ansible.errors import AnsibleError
 import base64
+from hvac import Client
+from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
 
 DOCUMENTATION = r'''
@@ -62,9 +60,9 @@ EXAMPLES = r'''
   vault_sys_generate_root:
     unseal_keys:
         [
-        "safgasgasgasgasgasgasga",
-        "asgasgasgasgasgasgasg",
-        "agasgasgasgasgasgasgasg",
+        "xxxxx",
+        "yyyyy",
+        "zzzzz",
         ]
     vault_addr: https://vault.com:8200
     vault_client_cert: "vault_client_auth.crt"
@@ -125,16 +123,9 @@ def root_gen(unseal_keys=None,
 
     start_generate_root_response = vault_client.sys.start_root_token_generation()
 
-    retry_count = 0
-    while retry_count < 10:
-        read_root_generation_progress_response = vault_client.sys.read_root_generation_progress()
-        if read_root_generation_progress_response["started"]:
-            break
-        retry_count += 1
     result['changed'] = True
     otp = start_generate_root_response["otp"]
     nonce = start_generate_root_response["nonce"]
-    print(start_generate_root_response)
     result["otp"] = otp
     for unseal_key in unseal_keys:
         generate_root_response = vault_client.sys.generate_root(
@@ -142,11 +133,17 @@ def root_gen(unseal_keys=None,
             nonce=nonce,
         )
 
+        if generate_root_response["progress"] == generate_root_response["required"]:
+            break
+
     result["generate_root_response"] = generate_root_response
     encoded_root_token = generate_root_response["encoded_root_token"]
+
     if not encoded_root_token:
         return {"error": 'Encoded root token not found', "result": result}
+
     result["encoded_root_token"] = encoded_root_token
+
     if calculate_new_root:
         _root_token = base64.b64decode(bytearray(encoded_root_token, "ascii") + b'==')
         _otp_bytes = bytearray(otp, "ascii")
@@ -193,18 +190,12 @@ def run_module():
 
     if "error" in mod.keys():
         return module.fail_json(msg=mod["error"], **mod["result"])
-    module.exit_json(**mod["result"])
+
+    module.exit_json(**mod)
 
 
 def main():
-    new_mod_res = root_gen(unseal_keys=[],
-                           vault_addr="https://vault.arpanrec.com:8200",
-                           vault_client_cert=".tmp/mutual_tls_certs/client_certificate.crt",
-                           vault_client_key=".tmp/mutual_tls_certs/secrets.client_private_key.key",
-                           vault_capath=".tmp/prerequisite/root_ca_certificate.crt",
-                           cancel_root_generation=True,
-                           calculate_new_root=True)
-    print(new_mod_res)
+    run_module()
 
 
 if __name__ == '__main__':
