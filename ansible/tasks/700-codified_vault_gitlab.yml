@@ -4,7 +4,9 @@
     - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend | Include variables
       ansible.builtin.include_vars:
         file: "{{ playbook_dir }}/vars/gitlab_artifacts.yml"
+
     - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend | Set Backend config
+      no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.set_fact:
         vault_backend_config:
           address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}"
@@ -16,14 +18,27 @@
           password: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_gl_prod_api_key) | trim }}"
           retry_wait_min: "{{ vault_mono_gitlab_artifacts_tf_http_retry_wait_min }}"
 
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
+  no_log: "{{ vault_mono_debug_no_log }}"
+  vault_sys_generate_root:
+    unseal_keys: "{{ vault_mono_init_secrets['keys'] }}"
+    vault_addr: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}"
+    vault_client_cert: "{{ vault_mono_local_file_client_certificate }}"
+    vault_client_key: "{{ vault_mono_local_file_client_private_key }}"
+    vault_capath: "{{ vault_mono_local_file_root_ca_certificate }}"
+    cancel_root_generation: true
+    calculate_new_root: true
+  register: vault_mono_codified_vault_root_token
+
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Apply
+  no_log: "{{ vault_mono_debug_no_log }}"
   community.general.terraform:
     project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present
     force_init: true
     backend_config: "{{ vault_backend_config }}"
   environment:
-    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_init_secrets.root_token }}"
+    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_root_token.new_root }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE: "{{ vault_mono_local_file_client_certificate }}"
@@ -52,6 +67,24 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
   register: vault_mono_codified_vault_output
   ignore_errors: true
+
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Remove Root Token
+  no_log: "{{ vault_mono_debug_no_log }}"
+  environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
+    SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
+  ansible.builtin.uri:
+    url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/auth/token/revoke-self"
+    method: POST
+    # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
+    client_cert: "{{ vault_mono_local_file_client_certificate }}"
+    client_key: "{{ vault_mono_local_file_client_private_key }}"
+    status_code: [204, 403]
+    validate_certs: true
+    return_content: true
+    headers:
+      "X-Vault-Token": "{{ vault_mono_codified_vault_root_token.new_root }}"
+  register: vault_mono_remove_root_token
+  changed_when: vault_mono_remove_root_token.status == 204
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Error
   when: vault_mono_codified_vault_output.failed
