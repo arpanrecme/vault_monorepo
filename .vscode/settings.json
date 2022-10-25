@@ -9,6 +9,7 @@
     "healthify",
     "keyrings",
     "lineinfile",
+    "lookupfile",
     "MAINPID",
     "MASTERPASSWORD",
     "MEMLOCK",
