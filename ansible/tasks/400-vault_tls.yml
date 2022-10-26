@@ -87,12 +87,11 @@
   register: vault_mono_server_vault_openssl_csr_pipe
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Generate an OpenSSL certificate signed with your own CA certificate
-  delegate_to: localhost
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
     ownca_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}"
-    ownca_privatekey_path: "{{ vault_mono_local_file_root_ca_private_key }}"
+    ownca_privatekey_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_private_key) }}"
     ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_private_key_passphrase) }}"
     provider: ownca
     ownca_not_after: "+30d"

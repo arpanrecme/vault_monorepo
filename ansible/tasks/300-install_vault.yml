@@ -30,7 +30,7 @@
     owner: "{{ vault_mono_server_vault_systemd_user }}"
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Download Vault (local) → {{ vault_mono_vault_zip_url }}
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Download Vault bin from {{ vault_mono_vault_zip_url }}
   ansible.builtin.get_url:
     url: "{{ vault_mono_vault_zip_url }}"
     dest: "{{ vault_mono_install_tmp_dir_path }}/{{ vault_mono_vault_pkg }}"

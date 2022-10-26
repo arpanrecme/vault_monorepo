@@ -9,10 +9,12 @@ vault_mono_vault_architecture: "{{ vault_mono_vault_architecture_map[ansible_arc
 vault_mono_vault_os: "{{ ansible_system | lower }}"
 vault_mono_vault_pkg: "vault_{{ vault_mono_vault_version }}_{{ vault_mono_vault_os }}_{{ vault_mono_vault_architecture }}.zip"
 vault_mono_vault_shasums: "vault_{{ vault_mono_vault_version }}_SHA256SUMS"
-vault_mono_vault_zip_url: >-
-  "https://releases.hashicorp.com/vault/{{ vault_mono_vault_version }}\
+vault_mono_vault_zip_url: "https://releases.hashicorp.com/vault\
+  /{{ vault_mono_vault_version }}\
   /vault_{{ vault_mono_vault_version }}_{{ vault_mono_vault_os }}_{{ vault_mono_vault_architecture }}.zip"
-vault_mono_vault_checksum_file_url: "https://releases.hashicorp.com/vault/{{ vault_mono_vault_version }}/vault_{{ vault_mono_vault_version }}_SHA256SUMS"
+vault_mono_vault_checksum_file_url: "https://releases.hashicorp.com/\
+  vault/{{ vault_mono_vault_version }}\
+  /vault_{{ vault_mono_vault_version }}_SHA256SUMS"
 vault_mono_server_vault_systemd_user: vaultssot
 vault_mono_server_vault_systemd_group: "{{ vault_mono_server_vault_systemd_user }}"
 vault_mono_ufw_rule_name: "{{ vault_mono_server_vault_systemd_user }}"
