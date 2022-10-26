@@ -3,3 +3,4 @@
 secrets*
 *.pyc
 test.yml
+*.log
