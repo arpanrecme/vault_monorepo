@@ -243,9 +243,9 @@
     regexp: "{{ item.regexp }}"
   loop:
     - regexp: '^127\.0\.0\.1'
-      line: "127.0.0.1\tlocalhost"
+      line: "127.0.0.1    localhost"
     - regexp: '^127\.0\.1\.1'
-      line: "127.0.1.1\t{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+      line: "127.0.1.1    {{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Enable network services
   ansible.builtin.service:
