@@ -6,7 +6,7 @@ resource "vault_kv_secret_v2" "secret_prerequisite_openssh" {
       private_key        = file(var.VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY)
       public_key         = file(var.VAULT_MONO_LOCAL_FILE_OPENSSH_PUBLIC_KEY)
       private_nopass_key = file(var.VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY)
-      passphrase         = file(var.VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY_PASSPHRASE)
+      passphrase         = file(var.VAULT_MONO_LOCAL_FILE_OPENSSH_PASSPHRASE_PRIVATE_KEY)
     }
   )
 }
