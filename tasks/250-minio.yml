@@ -57,7 +57,7 @@
 
 - name: Vault Monorepo | Minio | Create environment file
   ansible.builtin.template:
-    src: "{{ vault_mono_local_templates_dir }}/minio-env.js"
+    src: "{{ vault_mono_local_templates_dir }}/minio-env.j2"
     dest: "{{ vault_mono_server_minio_server_env_file_path }}"
     mode: "0644"
     owner: "{{ vault_mono_server_minio_user }}"
