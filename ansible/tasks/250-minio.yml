@@ -22,6 +22,18 @@
     mode: "0644"
     state: touch
 
+- name: Vault Monorepo | Minio | Create UFW Minio application rules
+  ansible.builtin.template:
+    src: "{{ vault_mono_local_templates_dir }}/ufw-minio.j2"
+    dest: /etc/ufw/applications.d/ufw-minio
+    mode: "0644"
+
+- name: Vault Monorepo | Minio | Enable Minio Application Port
+  community.general.ufw:
+    rule: allow
+    name: "{{ vault_mono_server_minio_firewall_rule_name }}"
+    state: enabled
+
 - name: Vault Monorepo | Minio | Create directories
   ansible.builtin.file:
     path: "{{ item }}"

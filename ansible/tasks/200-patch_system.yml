@@ -81,7 +81,6 @@
     dest: "/usr/local/share/ca-certificates/{{ vault_mono_local_file_root_ca_certificate | basename }}"
     remote_src: false
     mode: "0644"
-  register: vault_mono_root_certificate_copied
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Update CA Trust
   ansible.builtin.command: update-ca-certificates
@@ -120,12 +119,6 @@
     - file_loc: 1200-wheel
       rule: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL"
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Vault System group {{ vault_mono_server_vault_systemd_group }}
-  ansible.builtin.group:
-    name: "{{ vault_mono_server_vault_systemd_group }}"
-    state: present
-    system: true
-
 - name: Vault Monorepo | Setup Vault Server | Patch System | Vault login group {{ vault_mono_server_login_user_groupname }}
   ansible.builtin.group:
     name: "{{ vault_mono_server_login_user_groupname }}"
@@ -151,30 +144,13 @@
   with_items:
     - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Add systemd new user
-  ansible.builtin.user:
-    name: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_group }}"
-    create_home: true
-    home: "{{ vault_mono_install_path }}"
-    shell: /bin/zsh
-    system: true
-  register: vault_mono_server_systemd_user_homedir_result
-
 - name: Vault Monorepo | Setup Vault Server | Patch System | Create zshrc file
   ansible.builtin.file:
-    group: "{{ item.group }}"
-    path: "{{ item.file }}"
-    owner: "{{ item.user }}"
+    group: "{{ vault_mono_server_login_user_groupname }}"
+    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
+    owner: "{{ vault_mono_server_login_user_username }}"
     mode: "0644"
     state: touch
-  with_items:
-    - file: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
-      group: "{{ vault_mono_server_login_user_groupname }}"
-      user: "{{ vault_mono_server_login_user_username }}"
-    - file: "{{ vault_mono_server_systemd_user_homedir_result.home }}/.zshrc"
-      group: "{{ vault_mono_server_vault_systemd_group }}"
-      user: "{{ vault_mono_server_vault_systemd_user }}"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | SSHD Hardening Disable Password Authentication
   ansible.builtin.lineinfile:
@@ -254,10 +230,10 @@
     state: started
   with_items: [NetworkManager, systemd-timesyncd, systemd-resolved, ufw, cron]
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Create UFW application rules
+- name: Vault Monorepo | Setup Vault Server | Patch System | Create UFW postgresql application rules
   ansible.builtin.template:
-    src: "{{ vault_mono_local_templates_dir }}/ufw-apps-vaultssot.j2"
-    dest: /etc/ufw/applications.d/ufw-apps-vaultssot
+    src: "{{ vault_mono_local_templates_dir }}/ufw-postgresql-db.j2"
+    dest: /etc/ufw/applications.d/ufw-postgresql-db
     mode: "0644"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Disable ufw IPv6
@@ -274,9 +250,7 @@
     state: enabled
   with_items:
     - OpenSSH
-    - "{{ vault_mono_ufw_rule_name }}"
     - postgresql-db
-    - "{{ vault_mono_server_minio_firewall_rule_name }}"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Allow Other Ports
   community.general.ufw:

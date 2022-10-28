@@ -1,5 +1,41 @@
 ---
 # tasks file for hashicorp_vault
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Vault Systemd group {{ vault_mono_server_vault_systemd_group }}
+  ansible.builtin.group:
+    name: "{{ vault_mono_server_vault_systemd_group }}"
+    state: present
+    system: true
+
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Add systemd new user
+  ansible.builtin.user:
+    name: "{{ vault_mono_server_vault_systemd_user }}"
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    create_home: true
+    home: "{{ vault_mono_install_path }}"
+    shell: /bin/zsh
+    system: true
+  register: vault_mono_server_systemd_user_homedir_result
+
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Create zshrc file
+  ansible.builtin.file:
+    group: "{{ vault_mono_server_vault_systemd_group }}"
+    path: "{{ vault_mono_server_systemd_user_homedir_result.home }}/.zshrc"
+    owner: "{{ vault_mono_server_vault_systemd_user }}"
+    mode: "0644"
+    state: touch
+
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Create UFW Vault application rules
+  ansible.builtin.template:
+    src: "{{ vault_mono_local_templates_dir }}/ufw-vault.j2"
+    dest: /etc/ufw/applications.d/ufw-vault
+    mode: "0644"
+
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Enable Vault Application Port
+  community.general.ufw:
+    rule: allow
+    name: "{{ vault_mono_ufw_rule_name }}"
+    state: enabled
+
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Remove OS Package Vault
   ansible.builtin.apt:
     name: vault
@@ -34,7 +70,8 @@
   ansible.builtin.get_url:
     url: "{{ vault_mono_vault_zip_url }}"
     dest: "{{ vault_mono_install_tmp_dir_path }}/{{ vault_mono_vault_pkg }}"
-    checksum: "sha256:{{ (lookup('url', vault_mono_vault_checksum_file_url, wantlist=true) \
+    checksum:
+      "sha256:{{ (lookup('url', vault_mono_vault_checksum_file_url, wantlist=true) \
       | select('match', '.*' + vault_mono_vault_pkg + '$') | first).split()[0] }}"
     timeout: "42"
     mode: "0600"
