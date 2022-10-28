@@ -154,6 +154,6 @@
     openssl rsa -in {{ vault_mono_local_file_root_ca_private_key }} \
         -passin pass:{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_passphrase_private_key) }} \
         -passout pass:"" \
-        -out {{ vault_mono_local_file_root_ca_private_key_no_pass }}
+        -out {{ vault_mono_local_file_root_ca_no_pass_private_key }}
   args:
-    creates: "{{ vault_mono_local_file_root_ca_private_key_no_pass }}"
+    creates: "{{ vault_mono_local_file_root_ca_no_pass_private_key }}"
