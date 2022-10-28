@@ -136,6 +136,20 @@
     shell: /bin/zsh
   register: vault_mono_server_login_user_homedir_result
 
+- name: Vault Monorepo | Setup Vault Server | Patch System | Check zshrc file
+  ansible.builtin.stat:
+    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
+  register: vault_mono_server_login_user_homedir_zshrc_stat
+
+- name: Vault Monorepo | Setup Vault Server | Patch System | Create zshrc file
+  when: not vault_mono_server_login_user_homedir_zshrc_stat.stat.exists
+  ansible.builtin.file:
+    group: "{{ vault_mono_server_login_user_groupname }}"
+    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
+    owner: "{{ vault_mono_server_login_user_username }}"
+    mode: "0644"
+    state: touch
+
 - name: Vault Monorepo | Setup Vault Server | Patch System | Set authorized key for login user {{ vault_mono_server_login_user_username }}
   ansible.posix.authorized_key:
     user: "{{ vault_mono_server_login_user_username }}"
@@ -143,14 +157,6 @@
     key: "{{ item }}"
   with_items:
     - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
-
-- name: Vault Monorepo | Setup Vault Server | Patch System | Create zshrc file
-  ansible.builtin.file:
-    group: "{{ vault_mono_server_login_user_groupname }}"
-    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
-    owner: "{{ vault_mono_server_login_user_username }}"
-    mode: "0644"
-    state: touch
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | SSHD Hardening Disable Password Authentication
   ansible.builtin.lineinfile:

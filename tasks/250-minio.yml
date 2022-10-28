@@ -14,7 +14,13 @@
     shell: /bin/zsh
   register: vault_mono_server_minio_homedir_result
 
+- name: Vault Monorepo | Minio | Check zshrc file
+  ansible.builtin.stat:
+    path: "{{ vault_mono_server_minio_homedir_result.home }}/.zshrc"
+  register: vault_mono_server_minio_homedir_zshrc_stat
+
 - name: Vault Monorepo | Minio | Create zshrc file
+  when: not vault_mono_server_minio_homedir_zshrc_stat.stat.exists
   ansible.builtin.file:
     group: "{{ vault_mono_server_minio_group }}"
     path: "{{ vault_mono_server_minio_homedir_result.home }}/.zshrc"
