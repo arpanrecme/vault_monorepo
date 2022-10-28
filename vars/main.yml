@@ -62,8 +62,8 @@ vault_mono_init_secret_bucket_name: vaultssot
 vault_mono_init_secret_bucket_key: init_secret/shares.json
 ## Vault Init Secrets
 
-## Terraform
-vault_mono_codified_vault_dir: "{{ playbook_dir }}/terraform"
+## codified_vault
+vault_mono_codified_vault_dir: "{{ playbook_dir }}/codified_vault"
 vault_mono_codified_vault_bucket_name: "{{ vault_mono_init_secret_bucket_name }}"
 vault_mono_codified_vault_bucket_key: codified_vault/main.tfstate
-## Terraform
+## codified_vault

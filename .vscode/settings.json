@@ -23,17 +23,21 @@
     "nanode",
     "NOFILE",
     "noninteractive",
+    "nopass",
     "NOPASSWD",
     "OCSP",
     "OPENPGP",
+    "pkcs",
     "posix",
     "SAST",
     "SIGINT",
     "sourceshift",
+    "tfstate",
     "tfvars",
     "timestamping",
     "unauth",
     "vaultmonorepo",
+    "vaultssot",
     "vmuser"
   ]
 }
