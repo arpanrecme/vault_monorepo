@@ -1,11 +1,1 @@
-{
-    "VAULT_ADDR_DOMAIN_NAME": "vault.arpanrec.com",
-    "VAULT_ADDR_PORT": 8200,
-    "EMAIL": "me@arpanrec.com",
-    "S3": {
-        "SERVER_DOMAIN_NAME": "s3.arpanrec.com",
-        "SERVER_PORT": 9000,
-        "MINIO_CONSOLE_PORT": 9095,
-        "REGION": "us-east-1"
-    }
-}
+{"CONTACT_EMAIL":"arpanrec@gmail.com","VAULT_ADDR_DOMAIN_NAME":"vault.arpanrec.com","VAULT_ADDR_PORT":8200,"EMAIL":"me@arpanrec.com","S3":{"ENCRYPTION":false,"SKIP_CREDENTIALS_VALIDATION":true,"DESCRIPTION":"Main S3 storage","SERVER_DOMAIN_NAME":"s3.arpanrec.com","SERVER_PORT":9000,"MINIO_CONSOLE_PORT":9095,"REGION":"us-east-1","":""},"":""}
