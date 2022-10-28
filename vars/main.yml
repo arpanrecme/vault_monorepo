@@ -2,16 +2,16 @@
 vault_mono_debug_no_log: "{{ lookup('ansible.builtin.env', 'VAULT_MONO_DEBUG_NO_LOG') | default(true, true) | bool }}"
 
 # Template Files
-vault_mono_local_templates_dir: "{{ playbook_dir | dirname }}/templates"
+vault_mono_local_templates_dir: "{{ playbook_dir }}/templates"
 
 # Local Files
-vault_mono_local_files_dir: "{{ playbook_dir | dirname }}/files"
+vault_mono_local_files_dir: "{{ playbook_dir }}/files"
 
 vault_mono_local_file_global_config: "{{ vault_mono_local_files_dir }}/config.json"
 
 vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
 
-vault_mono_local_tmp_files_dir: "{{ playbook_dir | dirname }}/.tmp"
+vault_mono_local_tmp_files_dir: "{{ playbook_dir }}/.tmp"
 
 vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_tmp_files_dir }}/secrets.backup.update.vault_init_secrets.json"
 
@@ -63,7 +63,7 @@ vault_mono_init_secret_bucket_key: init_secret/shares.json
 ## Vault Init Secrets
 
 ## Terraform
-vault_mono_codified_vault_dir: "{{ playbook_dir }}/../terraform"
+vault_mono_codified_vault_dir: "{{ playbook_dir }}/terraform"
 vault_mono_codified_vault_bucket_name: "{{ vault_mono_init_secret_bucket_name }}"
 vault_mono_codified_vault_bucket_key: codified_vault/main.tfstate
 ## Terraform
