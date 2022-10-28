@@ -46,5 +46,5 @@ class LookupModule(LookupBase):
             for i, j in zip(_root_token, _otp_bytes):
                 _final_root_token_bytes.append(i ^ j)
         except BaseException as ex:
-            raise AnsibleError(f"could not locate file in lookup: {ex}")
+            raise AnsibleError(f"could not locate file in lookup: {ex}") from ex
         return [str(_final_root_token_bytes.decode("utf-8"))]
