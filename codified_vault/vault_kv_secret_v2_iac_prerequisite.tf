@@ -26,10 +26,10 @@ resource "vault_kv_secret_v2" "secret_prerequisite_rootca" {
   name  = "iac/prerequisite/rootca"
   data_json = jsonencode(
     {
-      private_key_no_pass = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS)
+      private_key_no_pass = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY)
       certificate         = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE)
       private_key         = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY)
-      passphrase          = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE)
+      passphrase          = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY)
     }
   )
 }

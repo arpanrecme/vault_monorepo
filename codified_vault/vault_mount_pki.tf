@@ -29,7 +29,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "pki_csr" {
 resource "tls_locally_signed_cert" "pki_intermediate_cert" {
   depends_on         = [vault_pki_secret_backend_intermediate_cert_request.pki_csr]
   cert_request_pem   = vault_pki_secret_backend_intermediate_cert_request.pki_csr.csr
-  ca_private_key_pem = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS)
+  ca_private_key_pem = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY)
   ca_cert_pem        = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE)
 
   validity_period_hours = (365 * 24) # 1 year

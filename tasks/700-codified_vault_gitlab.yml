@@ -53,10 +53,10 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
     ## Linode
     ## ROOT CA
-    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS: "{{ vault_mono_local_file_root_ca_no_pass_private_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_no_pass_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_private_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
     ## ROOT CA
     ## GITLAB
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME: "{{ vault_mono_local_file_gitlab_username }}"

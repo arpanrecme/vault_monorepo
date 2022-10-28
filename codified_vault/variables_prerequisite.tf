@@ -43,11 +43,11 @@ variable "VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS" {
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY" {
   type    = string
   default = "../.tmp/prerequisite/secrets.root_ca_private_key_no_pass.key"
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_NO_PASS) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY) > 1
     error_message = "Missing Root CA Private key file path"
   }
 }
@@ -61,11 +61,11 @@ variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE" {
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY" {
   type    = string
   default = "../.tmp/prerequisite/secrets.root_ca_private_key_passphrase.txt"
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY_PASSPHRASE) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY) > 1
     error_message = "Missing Root CA Private key file path"
   }
 }
