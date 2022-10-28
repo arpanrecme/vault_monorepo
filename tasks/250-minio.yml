@@ -151,7 +151,7 @@
     csr_content: "{{ vault_mono_server_minio_openssl_csr_pipe.csr }}"
     ownca_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}"
     ownca_privatekey_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_private_key) }}"
-    ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_private_key_passphrase) }}"
+    ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_passphrase_private_key) }}"
     provider: ownca
     ownca_not_after: "+30d"
   register: vault_mono_server_minio_x509_certificate_pipe
