@@ -133,11 +133,12 @@ variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN" {
-  type    = string
-  default = "/home/arpan/Downloads/xcd.json"
+variable "VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN" {
+  type      = string
+  default   = null
+  sensitive = true
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN) > 1
+    condition     = length(var.VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN) > 1
     error_message = "Missing root CA certificate file path"
   }
 }

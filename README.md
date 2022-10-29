@@ -13,11 +13,36 @@
 
 ```json
 {
-    "oauth_client": "<OAuth Client Json Secret>",
-    "service_account": "<Service Account Credentials Json>",
-    "gsuite_admin_impersonate": "<Super Admin Email>",
-    "gsuite_vault_admin_group_mail": "<Vault Admin Group Email>"
+  "oauth_client": {
+    "web": {
+      "client_id": "000000000-xxxxxxxxxxxxx.apps.googleusercontent.com",
+      "project_id": "xxxx-xxxx-xxxxxx",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://oauth2.googleapis.com/token",
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "client_secret": "xxxxxx-xxxxxxxxxxxxxx",
+      "redirect_uris": [
+        "https://xxxxxxxxx:8200/ui/vault/auth/xxxxxxxxxx/oidc/callback",
+        "http://localhost:8250/oidc/callback"
+      ]
+    }
+  },
+  "service_account": {
+    "type": "service_account",
+    "project_id": "xxxxx-xxxx-xxxx",
+    "private_key_id": "xxxxxxxxxxxxxxxxxxx",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkxxxxxxxxxx3MKey9ywXabd15oA=\n-----END PRIVATE KEY-----\n",
+    "client_email": "xxxxxxx@xxxxxx-xxxxx-xxxxx.xxxx.gserviceaccount.com",
+    "client_id": "xxxxxxxxxxxxxx",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/xxxxxx-xxxxx%xxxxxx-xxxx-xxxxx.iam.gserviceaccount.com"
+  },
+  "gsuite_admin_impersonate": "xxxxxx@xxxx.com",
+  "gsuite_vault_admin_group_mail": "xxxxxxxx@xxxxxxxx.com"
 }
+
 ```
 
 ## [Create the server in Linode](tasks/100-create_server.yml)
@@ -37,16 +62,16 @@ with change in Concent Screen User Type to Internal
 
 - Vault Auth Mount: `gsuite_admin`, Type JWT/OIDC
 
-- Create a project in [Google Cloud Console](https://console.cloud.google.com): `Master Production Applications`
+- Create a project in [Google Cloud Console](https://console.cloud.google.com).
 - Enable [Admin SDK API](https://console.developers.google.com/apis/api/admin.googleapis.com/overview)
-- Service account: `vault-admin@master-prod-apps.iam.gserviceaccount.com`
+- Service account: `xxxx-xxxxx@xxxxxxxx.iam.gserviceaccount.com`
 - OAuth Client ID: `Hashicorp Vault`
   - Redirect Uris
     - `<VAULT_ADDR>/ui/vault/auth/<AUTH_MOUNT_PATH>/oidc/callback`,
     - `http://localhost:8250/oidc/callback`
 - OAuth consent screen: `arpanrec production application authentication` **User type: `Internal`
 - [Domain-wide Delegation](https://admin.google.com/ac/owl/domainwidedelegation)
-  - Add New -> Client id of `vault-admin@master-prod-apps.iam.gserviceaccount.com` and below scopes
+  - Add New -> Client id of `xxxx-xxxxx@xxxxxxxx.iam.gserviceaccount.com` and below scopes
     - `https://www.googleapis.com/auth/admin.directory.group.readonly`
     - `https://www.googleapis.com/auth/admin.directory.user.readonly`
-- Create AD group in [Google Workspace](https://admin.google.com/ac/groups): `vault_admin` [mailto:vault_admin@arpanrec.com]
+- Create AD group in [Google Workspace](https://admin.google.com/ac/groups): `vault_admin`
