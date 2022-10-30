@@ -72,6 +72,10 @@
     ## Terraform Cloud
     TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
     ## Terraform Cloud
+    ## GSUITE OIDC
+    TF_VAR_VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN:
+      "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin) | string }}"
+    ## GSUITE OIDC
   register: vault_mono_codified_vault_output
   ignore_errors: true
 

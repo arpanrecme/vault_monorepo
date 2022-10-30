@@ -1,5 +1,6 @@
 ---
-vault_mono_debug_no_log: "{{ lookup('ansible.builtin.env', 'VAULT_MONO_DEBUG_NO_LOG') | default(true, true) | bool }}"
+global_debug: "{{ lookup('ansible.builtin.env', 'DEBUG') | default(false, true) | bool }}"
+vault_mono_debug_no_log: "{{ not global_debug }}"
 
 # Template Files
 vault_mono_local_templates_dir: "{{ playbook_dir }}/templates"
@@ -45,6 +46,10 @@ vault_mono_local_file_ansible_galaxy_api_key: "{{ vault_mono_prerequisite_files_
 
 ### HashiCorp Terraform cloud
 vault_mono_local_file_terraform_cloud_tf_prod_token: "{{ vault_mono_prerequisite_files_dir }}/secrets.terraform_cloud_tf_prod_token.txt"
+
+### Gsuite Auth
+vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin: "{{ vault_mono_prerequisite_files_dir }}/secrets.vault_gsuite_oidc_conf.json"
+### Gsuite Auth
 
 ## from bitwarden
 

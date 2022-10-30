@@ -126,6 +126,14 @@
       args:
         creates: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
 
+    - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Vault GSuite OIDC File
+      ansible.builtin.shell: |-
+        bw get attachment vault_gsuite_oidc_auth_configuration.json \
+        --itemid $(bw get item 'Workspace Admin' --raw | jq .id -r) \
+        --output "{{ vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
+      args:
+        creates: "{{ vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
+
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Remove empty lines from files
       ansible.builtin.replace:
         path: "{{ item }}"
