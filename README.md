@@ -4,10 +4,11 @@
 
 - OPENSSH KEY - SHA256:Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0
   - Private Key: `id_rsa`
+  - Private Key Passphrase
 - CA ROOT - RSA PRIVATE KEY and CERTIFICATE - 16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9
   - Private Key: `key.pem`
-  - Certificate: `cert_full_chain.pem`
   - Private Key Passphrase
+  - Certificate: `cert_full_chain.pem`
 - Linode: `LINODE_CLI_PROD_TOKEN`
 - GITLAB: `GL_PROD_API_KEY`
 - GITHUB: `GH_PROD_API_TOKEN`
