@@ -1,16 +1,18 @@
 module "pki" {
-  source                                            = "./pki"
-  vault_mono_vault_addr                             = local.vault_mono_vault_addr
-  VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY = var.VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY
-  VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE         = var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE
+  source = "./pki"
+
   providers = {
     vault = vault
   }
 
+  vault_mono_vault_addr                             = local.vault_mono_vault_addr
+  VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY = var.VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY
+  VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE         = var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE
 }
 
 module "policy" {
   source = "./policy"
+
   providers = {
     vault = vault
   }
@@ -18,9 +20,11 @@ module "policy" {
 
 module "auth" {
   source = "./auth"
+
   providers = {
     vault = vault
   }
+
   vault_mono_vault_addr = local.vault_mono_vault_addr
   ADMIN_POLICY_NAME     = module.policy.admin
   SCM_CICD_POLICY_NAME  = module.policy.scm_cicd
@@ -28,9 +32,11 @@ module "auth" {
 
 module "kv2" {
   source = "./kv2"
+
   providers = {
     vault = vault
   }
+
   VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN                    = var.VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN
   VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY                   = var.VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY
   VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN                 = var.VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN
