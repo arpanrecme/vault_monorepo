@@ -11,6 +11,7 @@ variable "VAULT_MONO_VAULT_ROOT_TOKEN" {
 variable "VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY" {
   type    = string
   default = "../.tmp/mutual_tls_certs/secrets.client_private_key.key"
+  sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY) > 1
     error_message = "Missing vault mutual TLS auth private key file path"
