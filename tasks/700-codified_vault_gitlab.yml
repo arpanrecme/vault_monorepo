@@ -11,13 +11,12 @@
         vault_backend_config:
           address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}"
           lock_address: "{{ vault_mono_gitlab_artifacts_tf_http_lock_address }}"
-          lock_method: "{{ vault_mono_gitlab_artifacts_tf_http_lock_method }}"
           unlock_address: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_address }}"
-          unlock_method: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_method }}"
           username: "{{ lookup('ansible.builtin.file', vault_mono_local_file_github_username) | trim }}"
           password: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_gl_prod_api_key) | trim }}"
+          lock_method: "{{ vault_mono_gitlab_artifacts_tf_http_lock_method }}"
+          unlock_method: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_method }}"
           retry_wait_min: "{{ vault_mono_gitlab_artifacts_tf_http_retry_wait_min }}"
-
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
   vault_sys_generate_root:
@@ -38,32 +37,22 @@
     force_init: true
     backend_config: "{{ vault_backend_config }}"
   environment:
-    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_root_token.new_root }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
+    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_root_token.new_root }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE: "{{ vault_mono_local_file_client_certificate }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CHAIN_CERTIFICATE: "{{ vault_mono_local_file_client_chain_certificate }}"
     # prerequisite
-    ## Open SSH
-    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_private_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PUBLIC_KEY: "{{ vault_mono_local_file_openssh_public_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_PASSPHRASE_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_passphrase_private_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
-    ## Open SSH
     ## Linode
     TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
     ## Linode
     ## ROOT CA
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_no_pass_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_private_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
     ## ROOT CA
     ## GITLAB
-    TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME: "{{ vault_mono_local_file_gitlab_username }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
     ## GITLAB
     ## GITHUB
-    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME: "{{ vault_mono_local_file_github_username }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
     ## GITHUB
     ## Ansible Galaxy
@@ -73,8 +62,7 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
     ## Terraform Cloud
     ## GSUITE OIDC
-    TF_VAR_VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN:
-      "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin) | string }}"
+    TF_VAR_VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin) | string }}"
     ## GSUITE OIDC
   register: vault_mono_codified_vault_output
   ignore_errors: true

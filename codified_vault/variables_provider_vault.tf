@@ -18,11 +18,11 @@ variable "VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE" {
+variable "VAULT_MONO_LOCAL_FILE_CLIENT_CHAIN_CERTIFICATE" {
   type    = string
   default = "../.tmp/mutual_tls_certs/client_certificate_chain.crt"
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_CLIENT_CERTIFICATE) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_CLIENT_CHAIN_CERTIFICATE) > 1
     error_message = "Missing vault mutual TLS auth client certificate file path"
   }
 }
