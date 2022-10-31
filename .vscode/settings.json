@@ -36,6 +36,7 @@
     "OPENPGP",
     "pkcs",
     "posix",
+    "prettytable",
     "SAST",
     "SIGINT",
     "sourceshift",

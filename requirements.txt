@@ -4,3 +4,4 @@ dnspython
 python-gitlab
 boto3
 hvac
+prettytable
