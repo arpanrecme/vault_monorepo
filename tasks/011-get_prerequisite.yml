@@ -66,43 +66,27 @@
           args:
             creates: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
 
-    - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Gitlab
-      no_log: "{{ vault_mono_debug_no_log }}"
-      block:
-        - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Gitlab Username
-          ansible.builtin.shell: >
-            bw get username 'Gitlab' --raw > {{ vault_mono_local_file_gitlab_username }}
-          args:
-            creates: "{{ vault_mono_local_file_gitlab_username }}"
+- name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Gitlab GL_PROD_API_KEY
+  no_log: "{{ vault_mono_debug_no_log }}"
+  ansible.builtin.shell: >
+    bw get item 'Gitlab' --raw |
+    jq '.fields |
+    .[] |
+    select(.name == "GL_PROD_API_KEY") |
+    .value' -r > {{ vault_mono_local_file_gitlab_gl_prod_api_key }}
+  args:
+    creates: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
 
-        - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Gitlab GL_PROD_API_KEY
-          ansible.builtin.shell: >
-            bw get item 'Gitlab' --raw |
-            jq '.fields |
-            .[] |
-            select(.name == "GL_PROD_API_KEY") |
-            .value' -r > {{ vault_mono_local_file_gitlab_gl_prod_api_key }}
-          args:
-            creates: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
-
-    - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Github
-      no_log: "{{ vault_mono_debug_no_log }}"
-      block:
-        - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Github | Username
-          ansible.builtin.shell: >
-            bw get username 'Github' --raw > {{ vault_mono_local_file_github_username }}
-          args:
-            creates: "{{ vault_mono_local_file_github_username }}"
-
-        - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Github | GH_PROD_API_TOKEN
-          ansible.builtin.shell: >
-            bw get item 'Github' --raw |
-            jq '.fields |
-            .[] |
-            select(.name == "GH_PROD_API_TOKEN") |
-            .value' -r > {{ vault_mono_local_file_github_gh_prod_api_token }}
-          args:
-            creates: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
+- name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Github GH_PROD_API_TOKEN
+  no_log: "{{ vault_mono_debug_no_log }}"
+  ansible.builtin.shell: >
+    bw get item 'Github' --raw |
+    jq '.fields |
+    .[] |
+    select(.name == "GH_PROD_API_TOKEN") |
+    .value' -r > {{ vault_mono_local_file_github_gh_prod_api_token }}
+  args:
+    creates: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Ansible Galaxy API Key
       no_log: "{{ vault_mono_debug_no_log }}"
