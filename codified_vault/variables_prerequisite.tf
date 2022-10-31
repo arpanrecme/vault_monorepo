@@ -1,6 +1,6 @@
 variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.openssh_rsa_id.key"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.openssh_rsa_id.key"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY) > 1
@@ -9,8 +9,8 @@ variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PRIVATE_KEY" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PASSPHRASE_PRIVATE_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.openssh_rsa_id_passphrase.txt"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.openssh_rsa_id_passphrase.txt"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_OPENSSH_PASSPHRASE_PRIVATE_KEY) > 1
@@ -19,8 +19,8 @@ variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PASSPHRASE_PRIVATE_KEY" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.openssh_nopass_rsa_id.key"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.openssh_nopass_rsa_id.key"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_OPENSSH_NOPASS_PRIVATE_KEY) > 1
@@ -38,8 +38,8 @@ variable "VAULT_MONO_LOCAL_FILE_OPENSSH_PUBLIC_KEY" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.linode_cli_prod_token.txt"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.linode_cli_prod_token.txt"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN) > 1
@@ -48,8 +48,8 @@ variable "VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.root_ca_private_key_no_pass.key"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.root_ca_private_key_no_pass.key"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY) > 1
@@ -58,8 +58,8 @@ variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.root_ca_private_key.key"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.root_ca_private_key.key"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY) > 1
@@ -68,8 +68,8 @@ variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.root_ca_private_key_passphrase.txt"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.root_ca_private_key_passphrase.txt"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY) > 1
@@ -87,8 +87,8 @@ variable "VAULT_MONO_LOCAL_FILE_GITLAB_USERNAME" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.gitlab_gl_prod_api_key.txt"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.gitlab_gl_prod_api_key.txt"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY) > 1
@@ -106,8 +106,8 @@ variable "VAULT_MONO_LOCAL_FILE_GITHUB_USERNAME" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.github_gh_prod_api_token.txt"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.github_gh_prod_api_token.txt"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN) > 1
@@ -116,8 +116,8 @@ variable "VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.ansible_galaxy_api_key.txt"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.ansible_galaxy_api_key.txt"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY) > 1
@@ -126,8 +126,8 @@ variable "VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY" {
 }
 
 variable "VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN" {
-  type    = string
-  default = "../.tmp/prerequisite/secrets.terraform_cloud_tf_prod_token.txt"
+  type      = string
+  default   = "../.tmp/prerequisite/secrets.terraform_cloud_tf_prod_token.txt"
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN) > 1
