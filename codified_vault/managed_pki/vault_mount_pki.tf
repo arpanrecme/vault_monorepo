@@ -8,8 +8,8 @@ resource "vault_mount" "pki" {
 
 resource "vault_pki_secret_backend_config_urls" "config_urls" {
   backend                 = vault_mount.pki.path
-  issuing_certificates    = [format("%s%s", local.vault_mono_vault_addr, "/v1/pki/ca")]
-  crl_distribution_points = [format("%s%s", local.vault_mono_vault_addr, "/v1/pki/crl")]
+  issuing_certificates    = [format("%s%s", var.vault_mono_vault_addr, "/v1/pki/ca")]
+  crl_distribution_points = [format("%s%s", var.vault_mono_vault_addr, "/v1/pki/crl")]
 }
 
 resource "vault_pki_secret_backend_crl_config" "crl_config" {
