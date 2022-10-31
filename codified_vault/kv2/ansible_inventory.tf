@@ -1,7 +1,7 @@
-resource "vault_mount" "managed_prerequisite" {
-  path        = "managed_prerequisite"
+resource "vault_mount" "ansible_inventory" {
+  path        = "ansible_inventory"
   type        = "kv-v2"
-  description = "prerequisite Secret Data Store"
+  description = "Ansible Inventory"
   options = {
     version              = 2
     cas_required         = false
