@@ -108,10 +108,10 @@ def root_gen(unseal_keys=None,
     vault_client = Client(**vault_client_config)
 
     read_root_generation_progress_response = vault_client.sys.read_root_generation_progress()
-    required = read_root_generation_progress_response["required"]
+    required_num_of_unseal_keys = read_root_generation_progress_response["required"]
     provided_num_of_unseal_keys = len(unseal_keys)
-    if provided_num_of_unseal_keys < required:
-        return {"error": f"Required unseal keys {required}, but provided {provided_num_of_unseal_keys}", "result":
+    if provided_num_of_unseal_keys < required_num_of_unseal_keys:
+        return {"error": f"Required unseal keys {required_num_of_unseal_keys}, but provided {provided_num_of_unseal_keys}", "result":
                 result}
 
     if read_root_generation_progress_response["started"]:
@@ -151,7 +151,7 @@ def root_gen(unseal_keys=None,
         for i, j in zip(_root_token, _otp_bytes):
             _final_root_token_bytes.append(i ^ j)
         result["new_root"] = str(_final_root_token_bytes.decode("utf-8"))
-    return result
+    return {"result": result}
 
 
 def run_module():
@@ -171,27 +171,19 @@ def run_module():
         supports_check_mode=False
     )
 
-    unseal_keys = module.params['unseal_keys']
-    vault_addr = module.params['vault_addr']
-    vault_client_cert = module.params['vault_client_cert']
-    vault_client_key = module.params['vault_client_key']
-    vault_capath = module.params['vault_capath']
-    cancel_root_generation = module.params['cancel_root_generation']
-    calculate_new_root = module.params['calculate_new_root']
+    root_gen_result = root_gen(unseal_keys=module.params['unseal_keys'],
+                               vault_addr=module.params['vault_addr'],
+                               vault_client_cert=module.params['vault_client_cert'],
+                               vault_client_key=module.params['vault_client_key'],
+                               vault_capath=module.params['vault_capath'],
+                               cancel_root_generation=module.params['cancel_root_generation'],
+                               calculate_new_root=module.params['calculate_new_root']
+                               )
 
-    mod = root_gen(unseal_keys=unseal_keys,
-                   vault_addr=vault_addr,
-                   vault_client_cert=vault_client_cert,
-                   vault_client_key=vault_client_key,
-                   vault_capath=vault_capath,
-                   cancel_root_generation=cancel_root_generation,
-                   calculate_new_root=calculate_new_root
-                   )
+    if "error" in root_gen_result.keys():
+        return module.fail_json(msg=root_gen_result["error"], **root_gen_result["result"])
 
-    if "error" in mod.keys():
-        return module.fail_json(msg=mod["error"], **mod["result"])
-
-    module.exit_json(**mod)
+    module.exit_json(**root_gen_result['result'])
 
 
 def main():

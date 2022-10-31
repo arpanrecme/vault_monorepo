@@ -1,5 +1,5 @@
 resource "vault_kv_secret_v2" "secret_prerequisite_openssh" {
-  mount = vault_mount.prerequisite.path
+  mount = vault_mount.managed_prerequisite.path
   name  = "openssh"
   data_json = jsonencode(
     {
@@ -12,7 +12,7 @@ resource "vault_kv_secret_v2" "secret_prerequisite_openssh" {
 }
 
 resource "vault_kv_secret_v2" "secret_prerequisite_linode" {
-  mount = vault_mount.prerequisite.path
+  mount = vault_mount.managed_prerequisite.path
   name  = "linode"
   data_json = jsonencode(
     {
@@ -21,21 +21,8 @@ resource "vault_kv_secret_v2" "secret_prerequisite_linode" {
   )
 }
 
-resource "vault_kv_secret_v2" "secret_prerequisite_rootca" {
-  mount = vault_mount.prerequisite.path
-  name  = "rootca"
-  data_json = jsonencode(
-    {
-      private_key_no_pass = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY)
-      certificate         = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE)
-      private_key         = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PRIVATE_KEY)
-      passphrase          = file(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_PASSPHRASE_PRIVATE_KEY)
-    }
-  )
-}
-
 resource "vault_kv_secret_v2" "secret_prerequisite_gitlab" {
-  mount = vault_mount.prerequisite.path
+  mount = vault_mount.managed_prerequisite.path
   name  = "gitlab"
   data_json = jsonencode(
     {
@@ -46,7 +33,7 @@ resource "vault_kv_secret_v2" "secret_prerequisite_gitlab" {
 }
 
 resource "vault_kv_secret_v2" "secret_prerequisite_github" {
-  mount = vault_mount.prerequisite.path
+  mount = vault_mount.managed_prerequisite.path
   name  = "github"
   data_json = jsonencode(
     {
@@ -57,7 +44,7 @@ resource "vault_kv_secret_v2" "secret_prerequisite_github" {
 }
 
 resource "vault_kv_secret_v2" "secret_prerequisite_ansibe_galaxy" {
-  mount = vault_mount.prerequisite.path
+  mount = vault_mount.managed_prerequisite.path
   name  = "ansibe_galaxy"
   data_json = jsonencode(
     {
@@ -67,7 +54,7 @@ resource "vault_kv_secret_v2" "secret_prerequisite_ansibe_galaxy" {
 }
 
 resource "vault_kv_secret_v2" "secret_prerequisite_terraform_cloud" {
-  mount = vault_mount.prerequisite.path
+  mount = vault_mount.managed_prerequisite.path
   name  = "terraform_cloud"
   data_json = jsonencode(
     {

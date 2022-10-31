@@ -1,5 +1,5 @@
-resource "vault_mount" "prerequisite" {
-  path        = "prerequisite"
+resource "vault_mount" "managed_prerequisite" {
+  path        = "managed_prerequisite"
   type        = "kv-v2"
   description = "prerequisite Secret Data Store"
   options = {
