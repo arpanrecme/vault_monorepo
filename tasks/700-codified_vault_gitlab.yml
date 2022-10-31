@@ -12,11 +12,12 @@
           address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}"
           lock_address: "{{ vault_mono_gitlab_artifacts_tf_http_lock_address }}"
           unlock_address: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_address }}"
-          username: "{{ lookup('ansible.builtin.file', vault_mono_local_file_github_username) | trim }}"
-          password: "{{ lookup('ansible.builtin.file', vault_mono_local_file_gitlab_gl_prod_api_key) | trim }}"
+          username: "{{ vault_mono_gitlab_artifacts_tf_http_username }}"
+          password: "{{ vault_mono_gitlab_artifacts_tf_http_password }}"
           lock_method: "{{ vault_mono_gitlab_artifacts_tf_http_lock_method }}"
           unlock_method: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_method }}"
           retry_wait_min: "{{ vault_mono_gitlab_artifacts_tf_http_retry_wait_min }}"
+
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
   vault_sys_generate_root:
@@ -62,7 +63,8 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
     ## Terraform Cloud
     ## GSUITE OIDC
-    TF_VAR_VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN: "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin) | string }}"
+    TF_VAR_VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN:
+      "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin) | string }}"
     ## GSUITE OIDC
   register: vault_mono_codified_vault_output
   ignore_errors: true
