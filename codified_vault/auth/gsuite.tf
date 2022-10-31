@@ -1,10 +1,10 @@
 locals {
-  gsuite_auth_admin_details                = jsondecode(file(var.VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN))
-  gsuite_admin_oidc_client_id              = local.gsuite_auth_admin_details["oauth_client"]["web"]["client_id"]
-  gsuite_admin_oidc_client_secret          = local.gsuite_auth_admin_details["oauth_client"]["web"]["client_secret"]
-  gsuite_admin_gsuite_admin_impersonate    = local.gsuite_auth_admin_details["gsuite_admin_impersonate"]
-  gsuite_admin_gsuite_service_account      = jsonencode(local.gsuite_auth_admin_details["service_account"])
-  gsuite_admin_gsuite_admin_vault_ad_group = local.gsuite_auth_admin_details["gsuite_vault_admin_group_mail"]
+  gsuite_auth_admin_details       = jsondecode(file(var.VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN))
+  gsuite_admin_oidc_client_id     = local.gsuite_auth_admin_details["oauth_client"]["web"]["client_id"]
+  gsuite_admin_oidc_client_secret = local.gsuite_auth_admin_details["oauth_client"]["web"]["client_secret"]
+  gsuite_admin_impersonate        = local.gsuite_auth_admin_details["gsuite_admin_impersonate"]
+  gsuite_admin_service_account    = jsonencode(local.gsuite_auth_admin_details["service_account"])
+  gsuite_admin_vault_ad_group     = local.gsuite_auth_admin_details["gsuite_vault_admin_group_mail"]
 }
 
 resource "vault_jwt_auth_backend" "gsuite_admin" {
@@ -22,12 +22,12 @@ resource "vault_jwt_auth_backend" "gsuite_admin" {
     token_type         = "default-service"
   }
   provider_config = {
-    provider                 = "gsuite"
-    fetch_groups             = true
-    fetch_user_info          = true
-    groups_recurse_max_depth = 5
-    gsuite_service_account   = local.gsuite_admin_gsuite_service_account,
-    gsuite_admin_impersonate = local.gsuite_admin_gsuite_admin_impersonate
+    provider                     = "gsuite"
+    fetch_groups                 = true
+    fetch_user_info              = true
+    groups_recurse_max_depth     = 5
+    gsuite_admin_service_account = local.gsuite_admin_service_account,
+    gsuite_admin_impersonate     = local.gsuite_admin_impersonate
   }
 }
 
@@ -56,7 +56,7 @@ resource "vault_identity_group" "gsuite_admin_vault_ad_group" {
   depends_on = [
     vault_jwt_auth_backend_role.gsuite_admin_default_role
   ]
-  name     = local.gsuite_admin_gsuite_admin_vault_ad_group
+  name     = local.gsuite_admin_vault_ad_group
   type     = "external"
   policies = [var.ADMIN_POLICY_NAME]
 
@@ -69,7 +69,7 @@ resource "vault_identity_group_alias" "gsuite_admin_vault_ad_group_alias" {
   depends_on = [
     vault_identity_group.gsuite_admin_vault_ad_group
   ]
-  name           = local.gsuite_admin_gsuite_admin_vault_ad_group
+  name           = local.gsuite_admin_vault_ad_group
   mount_accessor = vault_jwt_auth_backend.gsuite_admin.accessor
   canonical_id   = vault_identity_group.gsuite_admin_vault_ad_group.id
 }
