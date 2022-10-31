@@ -13,28 +13,3 @@ resource "vault_policy" "admin" {
 output "admin" {
   value = vault_policy.admin.name
 }
-
-# data "vault_policy_document" "mradmin" {
-#   rule {
-#     path         = "database/creds/mysql_healthify*"
-#     capabilities = ["read"]
-#     description  = "Allow to create database user for mysql healthify db"
-#   }
-#   rule {
-#     path         = "database/secret/healthify*"
-#     capabilities = ["read", "list", "update", "delete", "create"]
-#     description  = "Allow to access healthify secret space"
-#   }
-# }
-
-# resource "vault_policy" "mradmin" {
-#   name   = "mradmin"
-#   policy = data.vault_policy_document.mradmin.hcl
-#   /* file("sys/policies/admin.hcl") */
-# }
-
-# Use Vault provider
-/* resource "vault_policy" "default" {
-  name = "default"
-  policy = file("sys/policies/default.hcl")
-} */
