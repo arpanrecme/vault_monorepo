@@ -10,6 +10,10 @@ resource "vault_policy" "admin" {
   policy = data.vault_policy_document.admin.hcl
 }
 
+output "admin" {
+  value = vault_policy.admin.name
+}
+
 # data "vault_policy_document" "mradmin" {
 #   rule {
 #     path         = "database/creds/mysql_healthify*"

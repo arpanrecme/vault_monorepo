@@ -33,7 +33,7 @@ resource "vault_jwt_auth_backend" "gsuite_admin" {
 
 resource "vault_jwt_auth_backend_role" "gsuite_admin_default_role" {
   depends_on = [
-    vault_jwt_auth_backend.gsuite_admin, vault_policy.admin
+    vault_jwt_auth_backend.gsuite_admin
   ]
   backend               = vault_jwt_auth_backend.gsuite_admin.path
   role_name             = vault_jwt_auth_backend.gsuite_admin.default_role
@@ -53,9 +53,13 @@ resource "vault_jwt_auth_backend_role" "gsuite_admin_default_role" {
 }
 
 resource "vault_identity_group" "gsuite_admin_vault_ad_group" {
+  depends_on = [
+    vault_jwt_auth_backend_role.gsuite_admin_default_role,
+    module.policy.admin
+  ]
   name     = local.gsuite_admin_gsuite_admin_vault_ad_group
   type     = "external"
-  policies = [vault_policy.admin.name]
+  policies = [module.policy.admin]
 
   metadata = {
     responsibility = "Vault Admin"
@@ -63,6 +67,9 @@ resource "vault_identity_group" "gsuite_admin_vault_ad_group" {
 }
 
 resource "vault_identity_group_alias" "gsuite_admin_vault_ad_group_alias" {
+  depends_on = [
+    vault_identity_group.gsuite_admin_vault_ad_group
+  ]
   name           = local.gsuite_admin_gsuite_admin_vault_ad_group
   mount_accessor = vault_jwt_auth_backend.gsuite_admin.accessor
   canonical_id   = vault_identity_group.gsuite_admin_vault_ad_group.id
