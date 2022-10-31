@@ -42,7 +42,7 @@ resource "vault_jwt_auth_backend_role" "gsuite_admin_default_role" {
   user_claim            = "sub"
   role_type             = "oidc"
   oidc_scopes           = ["profile", "email", "openid"]
-  allowed_redirect_uris = ["${local.vault_mono_vault_addr}/ui/vault/auth/${vault_jwt_auth_backend.gsuite_admin.path}/oidc/callback", "http://localhost:8250/oidc/callback"]
+  allowed_redirect_uris = ["${var.vault_mono_vault_addr}/ui/vault/auth/${vault_jwt_auth_backend.gsuite_admin.path}/oidc/callback", "http://localhost:8250/oidc/callback"]
   # bound_claims = {
   #   groups = "vault_admin@arpanrec.com"
   #   hd = var.hd
@@ -54,12 +54,11 @@ resource "vault_jwt_auth_backend_role" "gsuite_admin_default_role" {
 
 resource "vault_identity_group" "gsuite_admin_vault_ad_group" {
   depends_on = [
-    vault_jwt_auth_backend_role.gsuite_admin_default_role,
-    module.policy.admin
+    vault_jwt_auth_backend_role.gsuite_admin_default_role
   ]
   name     = local.gsuite_admin_gsuite_admin_vault_ad_group
   type     = "external"
-  policies = [module.policy.admin]
+  policies = [var.ADMIN_POLICY_NAME]
 
   metadata = {
     responsibility = "Vault Admin"

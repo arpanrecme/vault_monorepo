@@ -150,6 +150,6 @@ variable "VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN" {
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN) > 1
-    error_message = "Missing root CA certificate file path"
+    error_message = "Missing Google Workspcae OIDC configuration file"
   }
 }

@@ -15,3 +15,13 @@ module "policy" {
     vault = vault
   }
 }
+
+module "auth" {
+  source = "./auth"
+  providers = {
+    vault = vault
+  }
+  vault_mono_vault_addr = local.vault_mono_vault_addr
+  ADMIN_POLICY_NAME     = module.policy.admin
+  SCM_CICD_POLICY_NAME  = module.policy.scm_cicd
+}
