@@ -1,8 +1,2 @@
-.devcontainer
-archive
-.gitattributes
-.gitignore
-.gitlab-ci.yml
-License
-README.md
-Dockerfile
+./*
+!requirements.txt

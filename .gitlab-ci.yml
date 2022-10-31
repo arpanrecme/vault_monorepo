@@ -1,5 +1,5 @@
 ---
-image: arpanrec/vaultmonorepo:6
+image: arpanrec/vaultmonorepo:7
 stages:
   - test
   - vault-action
@@ -14,13 +14,18 @@ terraform_apply:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       changes:
         - terraform/**/*
-        - ansible/**/*
+        - codified_vault/**/*
         - files/**/*
+        - plugins/**/*
+        - tasks/**/*
+        - templates/**/*
+        - vars/**/*
         - .gitlab-ci.yml
-        - inventory.yml
-        - requirements.txt
         - ansible.cfg
         - Dockerfile
+        - inventory.yml
+        - requirements.txt
+        - site.yml
   before_script:
     - bw login --apikey --quiet
     - export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
