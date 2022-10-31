@@ -31,24 +31,24 @@
 with change in Concent Screen User Type to Internal
 [Also see](https://vagarwal2.medium.com/hashicorp-vault-groups-integration-with-google-g-suite-6df8951d7573)
 
-- Vault Auth Mount: `gsuite_admin`, Type JWT/OIDC
-
+- [Vault Auth Mount: `gsuite_admin`, Type JWT/OIDC.](codified_vault/auth/gsuite.tf)
+- Work with a Google Workspace Super Admin User, AKA `gsuite_admin_impersonate`.
 - Create a project in [Google Cloud Console](https://console.cloud.google.com).
-- Enable [Admin SDK API](https://console.developers.google.com/apis/api/admin.googleapis.com/overview)
-- Service account: `xxxx-xxxxx@xxxxxxxx.iam.gserviceaccount.com`
-- OAuth Client ID: `Hashicorp Vault`
+- Enable [Admin SDK API](https://console.developers.google.com/apis/api/admin.googleapis.com/overview).
+- Create a Service account: `xxxx-xxxxx@xxxxxxxx.iam.gserviceaccount.com`.
+- Create a OAuth Client: `Hashicorp Vault`.
   - Redirect Uris
     - `<VAULT_ADDR>/ui/vault/auth/<AUTH_MOUNT_PATH>/oidc/callback`,
-    - `http://localhost:8250/oidc/callback`
-- OAuth consent screen: `arpanrec production application authentication` **User type: `Internal`
-- [Domain-wide Delegation](https://admin.google.com/ac/owl/domainwidedelegation)
-  - Add New -> Client id of `xxxx-xxxxx@xxxxxxxx.iam.gserviceaccount.com` and below scopes
+    - `http://localhost:8250/oidc/callback`.
+- OAuth consent screen: `arpanrec production application authentication`. **User type: `Internal`
+- [Domain-wide Delegation](https://admin.google.com/ac/owl/domainwidedelegation).
+  - Add New -> Client id of Service account: `xxxx-xxxxx@xxxxxxxx.iam.gserviceaccount.com`, and below scopes.
     - `https://www.googleapis.com/auth/admin.directory.group.readonly`
     - `https://www.googleapis.com/auth/admin.directory.user.readonly`
-- Create AD group in [Google Workspace](https://admin.google.com/ac/groups): `vault_admin`
-  - Create a email id for the group. *Likely to be auto created
+- Create AD group in [Google Workspace](https://admin.google.com/ac/groups): `vault_admin`.
+  - Create a email id for the group. *Likely to be auto created.
 
-- Create json combining the above data
+- Create json `vault_gsuite_oidc_auth_configuration.json` combining the above data.
 
 ```json
 {
