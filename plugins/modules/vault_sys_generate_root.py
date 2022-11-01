@@ -111,7 +111,9 @@ def root_gen(unseal_keys=None,
     required_num_of_unseal_keys = read_root_generation_progress_response["required"]
     provided_num_of_unseal_keys = len(unseal_keys)
     if provided_num_of_unseal_keys < required_num_of_unseal_keys:
-        return {"error": f"Required unseal keys {required_num_of_unseal_keys}, but provided {provided_num_of_unseal_keys}", "result":
+        return {"error":
+                f"Required unseal keys {required_num_of_unseal_keys}, but provided {provided_num_of_unseal_keys}",
+                "result":
                 result}
 
     if read_root_generation_progress_response["started"]:
