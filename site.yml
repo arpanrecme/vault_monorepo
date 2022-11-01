@@ -17,6 +17,7 @@
         - bw
         - jq
         - gpg
+        - ssh-keygen
       tags:
         - always
 

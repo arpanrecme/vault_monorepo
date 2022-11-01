@@ -1,11 +1,11 @@
-# docker build . -t arpanrec/vaultmonorepo:7
+# docker build . -t arpanrec/vaultmonorepo:8
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y python3-pip \
-    npm jq gnupg software-properties-common wget curl git && \
+    npm jq gnupg software-properties-common wget curl git openssh-client && \
     apt-get clean all && rm -rf /var/cache/apt
 
 RUN npm install -g @bitwarden/cli
