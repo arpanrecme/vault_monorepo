@@ -21,7 +21,7 @@
 
 ## Artifacts
 
-[GitLab info](ansible/vars/gitlab_artifacts.yml)
+[GitLab info](vars/gitlab_artifacts.yml)
 
 - Vault init secrets stored in gitlab CI/CD variables
 - Terraform state stored in gitlab
