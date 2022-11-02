@@ -24,8 +24,8 @@
     project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present
     force_init: true
-    backend_config_files:
-      - "{{ vault_mono_codified_vault_local_file_tfbackend }}"
+    # backend_config_files:
+    #   - "{{ vault_mono_codified_vault_local_file_tfbackend }}"
   environment:
     TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
     TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_root_token.new_root }}"
