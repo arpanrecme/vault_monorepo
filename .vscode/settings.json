@@ -20,6 +20,7 @@
     "hvac",
     "keyrings",
     "lineinfile",
+    "linodeusercontent",
     "lookupfile",
     "MAINPID",
     "Mandal",

@@ -1,6 +1,6 @@
 {
   "EMAIL": "arpan.rec@gmail.com",
-  "VAULT_ADDR_DOMAIN_NAME": "vault.arpanrec.com",
+  "VAULT_ADDR_DOMAIN_NAME": "172-105-47-176.ip.linodeusercontent.com",
   "VAULT_ADDR_PORT": 8200,
   "SUPER_ADMIN_EMAIL": "me@arpanrec.com",
   "S3": {
