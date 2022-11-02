@@ -18,7 +18,7 @@ variable "ADMIN_POLICY_NAME" {
 
 variable "VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN" {
   type      = string
-  default   = "../.tmp/prerequisite/secrets.vault_gsuite_oidc_conf.json"
+  default   = null
   sensitive = true
   validation {
     condition     = length(var.VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN) > 1
