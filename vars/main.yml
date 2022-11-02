@@ -90,4 +90,7 @@ vault_mono_codified_vault_remote_tfbackend_jinja_file: config.remote.tfbackend.j
 
 # System Patch
 vault_mono_codified_system_patch_hostname: vaultssothost
+vault_mono_server_login_user_username: vault_mono
+vault_mono_server_login_user_groupname: "{{ vault_mono_server_login_user_username }}"
+vault_mono_server_login_user_homedir: "/home/{{ vault_mono_server_login_user_username }}"
 # System Patch

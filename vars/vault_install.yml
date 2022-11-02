@@ -36,7 +36,3 @@ vault_mono_env_file_path: "{{ vault_mono_config_dir_path }}/vault.env"
 vault_mono_bin_dir_path: "{{ vault_mono_install_path }}/bin"
 vault_mono_bin_file_path: "{{ vault_mono_bin_dir_path }}/vault"
 vault_mono_systemd_service_name: "{{ vault_mono_server_vault_systemd_user }}"
-
-vault_mono_server_login_user_username: vault_mono
-vault_mono_server_login_user_groupname: "{{ vault_mono_server_login_user_username }}"
-vault_mono_server_login_user_homedir: "/home/{{ vault_mono_server_login_user_username }}"

@@ -72,7 +72,7 @@
 - name: Vault Monorepo | Minio | Get existing environment file
   ansible.builtin.fetch:
     src: "{{ vault_mono_server_minio_server_env_file_path }}"
-    dest: "{{ vault_mono_envfile_local_download_temp_path }}"
+    dest: "{{ vault_mono_server_minio_envfile_local_download_temp_path }}"
     flat: true
 
 - name: Vault Monorepo | Minio | Server TLS Certificate | Get IP Address from DNS
@@ -181,16 +181,16 @@
 - name: Vault Monorepo | Minio | Create systemd file
   ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/minio-service.j2"
-    dest: "{{ vault_mono_server_systemd_service_file_path }}"
+    dest: "{{ vault_mono_server_minio_systemd_service_file_path }}"
     mode: "0644"
 
 - name: Vault Monorepo | Minio | Restart minio
   ansible.builtin.service:
-    name: "{{ vault_mono_server_systemd_name }}"
+    name: "{{ vault_mono_server_minio_systemd_name }}"
     state: restarted
 
 - name: Vault Monorepo | Minio | Read credentials from fetched file
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.set_fact:
-    minio_access_key: "{{ lookup('ansible.builtin.ini', 'MINIO_ROOT_USER', type='properties', file=vault_mono_envfile_local_download_temp_path) }}"
-    minio_access_secret: "{{ lookup('ansible.builtin.ini', 'MINIO_ROOT_PASSWORD', type='properties', file=vault_mono_envfile_local_download_temp_path) }}"
+    minio_access_key: "{{ lookup('ansible.builtin.ini', 'MINIO_ROOT_USER', type='properties', file=vault_mono_server_minio_envfile_local_download_temp_path) }}"
+    minio_access_secret: "{{ lookup('ansible.builtin.ini', 'MINIO_ROOT_PASSWORD', type='properties', file=vault_mono_server_minio_envfile_local_download_temp_path) }}"
