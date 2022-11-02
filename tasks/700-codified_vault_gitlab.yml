@@ -1,24 +1,4 @@
 ---
-- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend
-  when: false
-  block:
-    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend | Include variables
-      ansible.builtin.include_vars:
-        file: "{{ playbook_dir }}/vars/gitlab_artifacts.yml"
-
-    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend | Set Backend config
-      no_log: "{{ vault_mono_debug_no_log }}"
-      ansible.builtin.set_fact:
-        vault_backend_config:
-          address: "{{ vault_mono_gitlab_artifacts_tf_http_address }}"
-          lock_address: "{{ vault_mono_gitlab_artifacts_tf_http_lock_address }}"
-          unlock_address: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_address }}"
-          username: "{{ vault_mono_gitlab_artifacts_tf_http_username }}"
-          password: "{{ vault_mono_gitlab_artifacts_tf_http_password }}"
-          lock_method: "{{ vault_mono_gitlab_artifacts_tf_http_lock_method }}"
-          unlock_method: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_method }}"
-          retry_wait_min: "{{ vault_mono_gitlab_artifacts_tf_http_retry_wait_min }}"
-
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Set Backend config
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.template:

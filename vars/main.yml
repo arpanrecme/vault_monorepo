@@ -69,6 +69,6 @@ vault_mono_codified_vault_tfe_org_workspace_name: vault_mono_codified_vault
 vault_mono_codified_vault_tfe_org_workspace_auto_apply: true
 vault_mono_codified_vault_tfe_org_workspace_execution_mode: local
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/codified_vault"
-vault_mono_codified_vault_local_file_tfbackend: "{{ vault_mono_local_tmp_files_dir }}/config.tfbackend"
+vault_mono_codified_vault_local_file_tfbackend: "{{ vault_mono_codified_vault_dir }}/secret.ansible_auto.backend.tf"
 vault_mono_codified_vault_remote_tfbackend_jinja_file: config.remote.tfbackend.j2
 ## codified_vault

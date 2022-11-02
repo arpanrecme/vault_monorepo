@@ -19,11 +19,21 @@
 
 ## [Create the server in Linode](tasks/100-create_server.yml)
 
+## [Vault Configuration using Terraform](codified_vault/)
+
+Source: [Codify Management of HCP Vault](https://developer.hashicorp.com/vault/tutorials/cloud-ops/vault-codify-mgmt)
+
+Setup vault configuration using terraform
+
+Backend state is stored in [Terraform Cloud](https://app.terraform.io/app/arpanrecme/workspaces/vault_mono_codified_vault)
+
+- Organization: `arpanrecme`
+  - Workspace: `two_factor_mandatory`
+
 ## Artifacts
 
 [GitLab info](vars/gitlab_artifacts.yml)
 
-- Vault init secrets stored in gitlab CI/CD variables
 - Terraform state stored in gitlab
 
 ## Vault Authentication - Google Workspace
