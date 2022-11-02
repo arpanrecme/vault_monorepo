@@ -1,5 +1,6 @@
 ---
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend
+  when: false
   block:
     - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Set GitLab backend | Include variables
       ansible.builtin.include_vars:
@@ -17,6 +18,13 @@
           lock_method: "{{ vault_mono_gitlab_artifacts_tf_http_lock_method }}"
           unlock_method: "{{ vault_mono_gitlab_artifacts_tf_http_unlock_method }}"
           retry_wait_min: "{{ vault_mono_gitlab_artifacts_tf_http_retry_wait_min }}"
+
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Set Backend config
+  no_log: "{{ vault_mono_debug_no_log }}"
+  ansible.builtin.template:
+    src: "{{ vault_mono_local_templates_dir }}/{{ vault_mono_codified_vault_remote_tfbackend_jinja_file }}"
+    dest: "{{ vault_mono_codified_vault_local_file_tfbackend }}"
+    mode: "0644"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
@@ -36,7 +44,8 @@
     project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present
     force_init: true
-    backend_config: "{{ vault_backend_config }}"
+    backend_config_files:
+      - "{{ vault_mono_codified_vault_local_file_tfbackend }}"
   environment:
     TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
     TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_root_token.new_root }}"
@@ -63,8 +72,7 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
     ## Terraform Cloud
     ## GSUITE OIDC
-    TF_VAR_VAULT_MONO_JSON_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN:
-      "{{ lookup('ansible.builtin.file', vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin) | string }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN: "{{ vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
     ## GSUITE OIDC
   register: vault_mono_codified_vault_output
   ignore_errors: true

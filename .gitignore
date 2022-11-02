@@ -1,7 +1,4 @@
 .terraform*
 .tmp
-secrets*
 *.pyc
-test.yml
 *.log
-test_uri.yml

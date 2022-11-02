@@ -1,0 +1,10 @@
+terraform {
+  backend "remote" {
+    hostname      = "app.terraform.io"
+    organization  = "{{ vault_mono_codified_vault_tfe_org_name }}"
+    token         = "{{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+    workspaces {
+      name = "{{ vault_mono_codified_vault_tfe_org_workspace_name }}"
+    }
+  }
+}
