@@ -45,7 +45,6 @@
         - patch_server
         - install_vault
         - vault_tls
-        - install_minio
 
 - name: Setup Vault Server
   hosts: vault_mono_server_ansible_inventory
@@ -54,7 +53,6 @@
   vars_files:
     - "{{ playbook_dir }}/vars/main.yml"
     - "{{ playbook_dir }}/vars/vault_install.yml"
-    - "{{ playbook_dir }}/vars/minio_install.yml"
   tasks:
     - name: Vault Monorepo | Setup Vault Server | Fail
       ansible.builtin.fail:
@@ -68,11 +66,6 @@
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/200-patch_system.yml"
       tags:
         - patch_server
-
-    - name: Vault Monorepo | Minio
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/250-minio.yml"
-      tags:
-        - install_minio
 
     - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/300-install_vault.yml"
