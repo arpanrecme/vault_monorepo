@@ -24,12 +24,19 @@
     owner: "{{ vault_mono_server_vault_systemd_user }}"
     group: "{{ vault_mono_server_vault_systemd_group }}"
     mode: "0400"
+  register: vault_mono_server_vault_certificate_private_key
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Check existing certificate file for tls_cert_file
   ansible.builtin.stat:
     path: "{{ vault_mono_tls_vault_tls_cert_file }}"
   register: vault_mono_server_vault_certificate_file_stat
+
+- name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get information on ROOT CA Certificate
+  community.crypto.x509_certificate_info:
+    content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}"
+  register: vault_mono_server_vault_x509_root_ca_certificate_info
+  ignore_errors: true
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get information on generated certificate for tls_cert_file
   when: vault_mono_server_vault_certificate_file_stat.stat.exists
@@ -47,21 +54,34 @@
     )
     or
     (
-      vault_mono_server_vault_x509_certificate_info.valid_at is defined
-      and
+      vault_mono_server_vault_x509_certificate_info.failed is defined and vault_mono_server_vault_x509_certificate_info.failed
+    )
+    or
+    (
+      not
       (
-        (
-          not vault_mono_server_vault_x509_certificate_info.valid_at.point_1
-        )
-        or
-        (
-          vault_mono_server_vault_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
-        )
+        vault_mono_server_vault_x509_certificate_info.valid_at is defined
+        and
+        vault_mono_server_vault_x509_certificate_info.valid_at.point_1
       )
     )
     or
     (
-      vault_mono_server_vault_x509_certificate_info.failed is defined and vault_mono_server_vault_x509_certificate_info.failed
+      (
+        vault_mono_server_vault_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+      )
+      or
+      (
+        vault_mono_server_vault_certificate_private_key['diff']['after']['public_key_fingerprints']['sha256']
+        !=
+        vault_mono_server_vault_x509_certificate_info['public_key_fingerprints']['sha256']
+      )
+      or
+      (
+        vault_mono_server_vault_x509_root_ca_certificate_info['subject_key_identifier']
+        !=
+        vault_mono_server_vault_x509_certificate_info['authority_key_identifier']
+      )
     )
   community.crypto.openssl_csr_pipe:
     privatekey_path: "{{ vault_mono_tls_vault_tls_key_file }}"

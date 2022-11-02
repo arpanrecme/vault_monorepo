@@ -35,9 +35,9 @@
       register: vault_mono_linode_ipv4_rdns
 
     - name: Vault Monorepo | Get Server Information | Create Server | Linode | Update existing RDNS
-      when: false
       no_log: "{{ vault_mono_debug_no_log }}"
-      when: vault_mono_linode_ipv4_rdns['json']['rdns'] != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+      when: false
+      # when: vault_mono_linode_ipv4_rdns['json']['rdns'] != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
       ansible.builtin.uri:
         url: "https://api.linode.com/v4/networking/ips/{{ vault_mono_vault_server_public_ip }}"
         headers:

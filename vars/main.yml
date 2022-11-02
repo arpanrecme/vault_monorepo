@@ -2,65 +2,80 @@
 global_debug: "{{ lookup('ansible.builtin.env', 'DEBUG') | default(false, true) | bool }}"
 vault_mono_debug_no_log: "{{ not global_debug }}"
 
-# Template Files
+# Template Files Directory
 vault_mono_local_templates_dir: "{{ playbook_dir }}/templates"
+# Template Files Directory
 
-# Local Files
+# Local Files Directory
 vault_mono_local_files_dir: "{{ playbook_dir }}/files"
+# Local Files Directory
 
+# Global Configuration
 vault_mono_local_file_global_config: "{{ vault_mono_local_files_dir }}/config.json"
 
 vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
+# Global Configuration
 
+# Temporary Files Directory
 vault_mono_local_tmp_files_dir: "{{ playbook_dir }}/.tmp"
+# Temporary Files Directory
 
+# Vault Init and Unseal
 vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_tmp_files_dir }}/secrets.backup.update.vault_init_secrets.json"
+# Vault Init and Unseal
 
+# Prerequisite
 vault_mono_prerequisite_files_dir: "{{ vault_mono_local_tmp_files_dir }}/prerequisite"
-## from bitwarden
-### OPENSSH
+
+## OPENSSH
 vault_mono_local_file_openssh_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.openssh_rsa_id.key"
 vault_mono_local_file_openssh_public_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_rsa_id.key.pub"
 vault_mono_local_file_openssh_passphrase_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.openssh_rsa_id_passphrase.txt"
 vault_mono_local_file_openssh_nopass_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.openssh_nopass_rsa_id.key"
+## OPENSSH
 
-### Linode
+## Linode
 vault_mono_local_file_linode_cli_prod_token: "{{ vault_mono_prerequisite_files_dir }}/secrets.linode_cli_prod_token.txt"
+## Linode
 
-### ROOT CA
+## ROOT CA
 vault_mono_local_file_root_ca_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.root_ca_private_key.key"
 vault_mono_local_file_root_ca_certificate: "{{ vault_mono_prerequisite_files_dir }}/root_ca_certificate.crt"
 vault_mono_local_file_root_ca_passphrase_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.root_ca_private_key_passphrase.txt"
 vault_mono_local_file_root_ca_no_pass_private_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.root_ca_private_key_no_pass.key"
+## ROOT CA
 
-### GITLAB
+## GITLAB
 vault_mono_local_file_gitlab_gl_prod_api_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.gitlab_gl_prod_api_key.txt"
+## GITLAB
 
-### GITHUB
+## GITHUB
 vault_mono_local_file_github_gh_prod_api_token: "{{ vault_mono_prerequisite_files_dir }}/secrets.github_gh_prod_api_token.txt"
+## GITHUB
 
-### Ansible Galaxy
+## Ansible Galaxy
 vault_mono_local_file_ansible_galaxy_api_key: "{{ vault_mono_prerequisite_files_dir }}/secrets.ansible_galaxy_api_key.txt"
+## Ansible Galaxy
 
-### HashiCorp Terraform cloud
+## HashiCorp Terraform cloud
 vault_mono_local_file_terraform_cloud_tf_prod_token: "{{ vault_mono_prerequisite_files_dir }}/secrets.terraform_cloud_tf_prod_token.txt"
+## HashiCorp Terraform cloud
 
-### Gsuite Auth
+## Gsuite Auth
 vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin: "{{ vault_mono_prerequisite_files_dir }}/secrets.vault_gsuite_oidc_conf.json"
-### Gsuite Auth
+## Gsuite Auth
+# Prerequisite
 
-## from bitwarden
-
-## Mutual TLS
+# Mutual TLS
 vault_mono_mutual_tls_files_dir: "{{ vault_mono_local_tmp_files_dir }}/mutual_tls_certs"
 vault_mono_local_file_client_private_key: "{{ vault_mono_mutual_tls_files_dir }}/secrets.client_private_key.key"
 vault_mono_local_file_client_certificate: "{{ vault_mono_mutual_tls_files_dir }}/client_certificate.crt"
 vault_mono_local_file_client_chain_certificate: "{{ vault_mono_mutual_tls_files_dir }}/client_certificate_chain.crt"
 vault_mono_local_file_client_chain_pkcs12_certificate: "{{ vault_mono_mutual_tls_files_dir }}/secrets.client_certificate_chain.p12"
 vault_mono_client_passphrase_pkcs12_certificate: password
-## Mutual TLS
+# Mutual TLS
 
-## codified_vault
+# codified_vault
 rl_tef_api_endpoint: https://app.terraform.io/api/v2
 vault_mono_codified_vault_tfe_org_name: arpanrecme
 vault_mono_codified_vault_tfe_org_email: arpan.rec@gmail.com
@@ -71,4 +86,8 @@ vault_mono_codified_vault_tfe_org_workspace_execution_mode: local
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/codified_vault"
 vault_mono_codified_vault_local_file_tfbackend: "{{ vault_mono_codified_vault_dir }}/secret.ansible_auto.backend.tf"
 vault_mono_codified_vault_remote_tfbackend_jinja_file: config.remote.tfbackend.j2
-## codified_vault
+# codified_vault
+
+# System Patch
+vault_mono_codified_system_patch_hostname: vaultssothost
+# System Patch

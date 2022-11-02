@@ -212,7 +212,7 @@
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Set a hostname
   ansible.builtin.hostname:
-    name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+    name: "{{ vault_mono_codified_system_patch_hostname }}"
     use: debian
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Set Hosts file
@@ -227,7 +227,7 @@
     - regexp: '^127\.0\.0\.1'
       line: "127.0.0.1    localhost"
     - regexp: '^127\.0\.1\.1'
-      line: "127.0.1.1    {{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+      line: "127.0.1.1    {{ vault_mono_codified_system_patch_hostname }}"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Enable network services
   ansible.builtin.service:
