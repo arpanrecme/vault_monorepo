@@ -25,7 +25,7 @@ resource "vault_kv_secret_v2" "prerequisite_gitlab" {
   name  = "gitlab"
   data_json = jsonencode(
     {
-      GL_PROD_API_KEY = file(var.VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY)
+      GL_PROD_API_KEY = file(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_GITLAB_GL_PROD_API_KEY)
     }
   )
 }
@@ -35,7 +35,7 @@ resource "vault_kv_secret_v2" "prerequisite_github" {
   name  = "github"
   data_json = jsonencode(
     {
-      GH_PROD_API_TOKEN = file(var.VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN)
+      GH_PROD_API_TOKEN = file(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN)
     }
   )
 }
@@ -45,7 +45,7 @@ resource "vault_kv_secret_v2" "prerequisite_ansibe_galaxy" {
   name  = "ansibe_galaxy"
   data_json = jsonencode(
     {
-      GALAXY_API_KEY = file(var.VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY)
+      GALAXY_API_KEY = file(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY)
     }
   )
 }
@@ -55,7 +55,7 @@ resource "vault_kv_secret_v2" "prerequisite_terraform_cloud" {
   name  = "terraform_cloud"
   data_json = jsonencode(
     {
-      TF_PROD_TOKEN = file(var.VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN)
+      TF_PROD_TOKEN = file(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN)
     }
   )
 }

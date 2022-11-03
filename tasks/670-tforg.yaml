@@ -8,7 +8,7 @@
   ansible.builtin.uri:
     url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
     headers:
-      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
       content-type: "application/vnd.api+json"
     status_code: 200,404
   register: vault_mono_tfe_tmp_api_org_details
@@ -31,7 +31,7 @@
               collaborator-auth-policy: "{{ vault_mono_tfe_org_collaborator_auth_policy | default(omit) }}"
         status_code: 201
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_tfe_tmp_organization_create_response
       changed_when: vault_mono_tfe_tmp_organization_create_response.status == 201
@@ -41,7 +41,7 @@
       ansible.builtin.uri:
         url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
         status_code: 200
       register: vault_mono_tfe_tmp_new_org_details
@@ -68,7 +68,7 @@
               email: "{{ vault_mono_tfe_org_email }}"
         status_code: 200
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_tfe_tmp_org_update_email_response
       changed_when: vault_mono_tfe_tmp_org_update_email_response.status == 200
@@ -91,7 +91,7 @@
               collaborator-auth-policy: "{{ vault_mono_tfe_org_collaborator_auth_policy }}"
         status_code: 200
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_tfe_tmp_org_update_mfa_response
       changed_when: vault_mono_tfe_tmp_org_update_mfa_response.status == 200
@@ -108,7 +108,7 @@
   ansible.builtin.uri:
     url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
     headers:
-      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
       content-type: "application/vnd.api+json"
     status_code: 200,404
   register: vault_mono_tfe_tmp_workspace_response
@@ -131,7 +131,7 @@
               execution-mode: "{{ vault_mono_tfe_org_workspace_execution_mode | default(omit) }}"
         status_code: 201
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_tfe_tmp_workspace_create_response
       changed_when: vault_mono_tfe_tmp_workspace_create_response.status == 201
@@ -142,7 +142,7 @@
       ansible.builtin.uri:
         url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
         status_code: 200
       register: vault_mono_tfe_tmp_workspace_details_response
@@ -170,7 +170,7 @@
               auto-apply: "{{ vault_mono_tfe_org_workspace_auto_apply | default(omit) | bool }}"
         status_code: 200
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_tfe_tmp_workspace_update_auto_apply_response
       changed_when: vault_mono_tfe_tmp_workspace_update_auto_apply_response.status == 200
@@ -198,7 +198,7 @@
               execution-mode: "{{ vault_mono_tfe_org_workspace_execution_mode }}"
         status_code: 200
         headers:
-          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_tfe_tmp_workspace_update_auto_apply_response
       changed_when: vault_mono_tfe_tmp_workspace_update_auto_apply_response.status == 200

@@ -61,9 +61,9 @@
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
-    ownca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
-    ownca_privatekey_path: "{{ vault_mono_local_file_root_ca_private_key }}"
-    ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_passphrase_private_key) }}"
+    ownca_path: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    ownca_privatekey_path: "{{ vault_mono_prerequisite_local_file_root_ca_private_key }}"
+    ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_passphrase_private_key) }}"
     provider: ownca
     ownca_not_after: "+30d"
   register: vault_mono_server_vault_client_x509_certificate_pipe
@@ -80,7 +80,7 @@
   ansible.builtin.copy:
     content: |
       {{ vault_mono_server_vault_client_x509_certificate_pipe.certificate | trim }}
-      {{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}
+      {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_certificate) }}
     dest: "{{ vault_mono_local_file_client_chain_certificate }}"
     mode: "0600"
 
@@ -94,5 +94,5 @@
     certificate_path: "{{ vault_mono_local_file_client_certificate }}"
     other_certificates_parse_all: true
     other_certificates:
-      - "{{ vault_mono_local_file_root_ca_certificate }}"
+      - "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
     state: present

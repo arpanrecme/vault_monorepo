@@ -38,23 +38,24 @@
           ansible.builtin.shell: |-
             bw get attachment key.pem \
             --itemid $(bw get item '16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9' --raw | jq .id -r) \
-            --output "{{ vault_mono_local_file_root_ca_private_key }}"
+            --output "{{ vault_mono_prerequisite_local_file_root_ca_private_key }}"
           args:
-            creates: "{{ vault_mono_local_file_root_ca_private_key }}"
+            creates: "{{ vault_mono_prerequisite_local_file_root_ca_private_key }}"
 
         - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | ROOT CA | Download Certificate
           ansible.builtin.shell: |-
             bw get attachment cert_full_chain.pem \
             --itemid $(bw get item '16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9' --raw | jq .id -r) \
-            --output "{{ vault_mono_local_file_root_ca_certificate }}"
+            --output "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
           args:
-            creates: "{{ vault_mono_local_file_root_ca_certificate }}"
+            creates: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
 
         - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | ROOT CA | Get private key passphrase
           ansible.builtin.shell: |-
-            bw get password '16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9' > {{ vault_mono_local_file_root_ca_passphrase_private_key }}
+            bw get password \
+             '16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9' > {{ vault_mono_prerequisite_local_file_root_ca_passphrase_private_key }}
           args:
-            creates: "{{ vault_mono_local_file_root_ca_passphrase_private_key }}"
+            creates: "{{ vault_mono_prerequisite_local_file_root_ca_passphrase_private_key }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Gitlab GL_PROD_API_KEY
       no_log: "{{ vault_mono_debug_no_log }}"
@@ -63,9 +64,9 @@
         jq '.fields |
         .[] |
         select(.name == "GL_PROD_API_KEY") |
-        .value' -r > {{ vault_mono_local_file_gitlab_gl_prod_api_key }}
+        .value' -r > {{ vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key }}
       args:
-        creates: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
+        creates: "{{ vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Github GH_PROD_API_TOKEN
       no_log: "{{ vault_mono_debug_no_log }}"
@@ -74,9 +75,9 @@
         jq '.fields |
         .[] |
         select(.name == "GH_PROD_API_TOKEN") |
-        .value' -r > {{ vault_mono_local_file_github_gh_prod_api_token }}
+        .value' -r > {{ vault_mono_prerequisite_local_file_github_gh_prod_api_token }}
       args:
-        creates: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
+        creates: "{{ vault_mono_prerequisite_local_file_github_gh_prod_api_token }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Ansible Galaxy API Key
       no_log: "{{ vault_mono_debug_no_log }}"
@@ -85,9 +86,9 @@
         jq '.fields |
         .[] |
         select(.name == "GALAXY_API_KEY") |
-        .value' -r > {{ vault_mono_local_file_ansible_galaxy_api_key }}
+        .value' -r > {{ vault_mono_prerequisite_local_file_ansible_galaxy_api_key }}
       args:
-        creates: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
+        creates: "{{ vault_mono_prerequisite_local_file_ansible_galaxy_api_key }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | HashiCorp Terraform Cloud API Token
       no_log: "{{ vault_mono_debug_no_log }}"
@@ -96,17 +97,17 @@
         jq '.fields |
         .[] |
         select(.name == "TF_PROD_TOKEN") |
-        .value' -r > {{ vault_mono_local_file_terraform_cloud_tf_prod_token }}
+        .value' -r > {{ vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token }}
       args:
-        creates: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
+        creates: "{{ vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Vault GSuite OIDC File
       ansible.builtin.shell: |-
         bw get attachment vault_gsuite_oidc_auth_configuration.json \
         --itemid $(bw get item 'Workspace Admin' --raw | jq .id -r) \
-        --output "{{ vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
+        --output "{{ vault_mono_prerequisite_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
       args:
-        creates: "{{ vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
+        creates: "{{ vault_mono_prerequisite_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Remove empty lines from files
       ansible.builtin.replace:
@@ -116,10 +117,10 @@
         mode: "600"
       with_items:
         - "{{ vault_mono_prerequisite_local_file_linode_cli_prod_token }}"
-        - "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
-        - "{{ vault_mono_local_file_github_gh_prod_api_token }}"
-        - "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
-        - "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
+        - "{{ vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key }}"
+        - "{{ vault_mono_prerequisite_local_file_github_gh_prod_api_token }}"
+        - "{{ vault_mono_prerequisite_local_file_ansible_galaxy_api_key }}"
+        - "{{ vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token }}"
 
 - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Remove Password from OPENSSH PRIVATE KEY
   ansible.builtin.shell: |+
@@ -132,7 +133,7 @@
     creates: "{{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}"
 
 # TODO: Remove empty line at end of file
-- name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Create Openssh Public key from {{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}
+- name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Create Openssh Public key
   ansible.builtin.shell: |-
     __public_key=$(ssh-keygen -y -f {{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }})
     echo -n "${__public_key}" > {{ vault_mono_prerequisite_local_file_openssh_public_key }}
@@ -142,9 +143,9 @@
 
 - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Remove Password from ROOT CA Private Key
   ansible.builtin.shell: |+
-    openssl rsa -in {{ vault_mono_local_file_root_ca_private_key }} \
-        -passin pass:{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_passphrase_private_key) }} \
+    openssl rsa -in {{ vault_mono_prerequisite_local_file_root_ca_private_key }} \
+        -passin pass:{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_passphrase_private_key) }} \
         -passout pass:"" \
-        -out {{ vault_mono_local_file_root_ca_no_pass_private_key }}
+        -out {{ vault_mono_prerequisite_local_file_root_ca_no_pass_private_key }}
   args:
-    creates: "{{ vault_mono_local_file_root_ca_no_pass_private_key }}"
+    creates: "{{ vault_mono_prerequisite_local_file_root_ca_no_pass_private_key }}"

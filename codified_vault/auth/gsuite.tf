@@ -1,5 +1,5 @@
 locals {
-  gsuite_admin_auth_details         = jsondecode(file(var.VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN))
+  gsuite_admin_auth_details         = jsondecode(file(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN))
   gsuite_admin_oidc_client_id       = local.gsuite_admin_auth_details["oauth_client"]["web"]["client_id"]
   gsuite_admin_oidc_client_secret   = local.gsuite_admin_auth_details["oauth_client"]["web"]["client_secret"]
   gsuite_admin_impersonate_email    = local.gsuite_admin_auth_details["gsuite_admin_impersonate"]

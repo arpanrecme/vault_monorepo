@@ -2,7 +2,7 @@ terraform {
   backend "remote" {
     hostname     = "{{ vault_mono_tfe_hostname }}"
     organization = "{{ vault_mono_tfe_org_name }}"
-    token        = "{{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
+    token        = "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
     workspaces {
       name = "{{ vault_mono_tfe_org_workspace_name }}"
     }

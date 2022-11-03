@@ -77,8 +77,8 @@
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Copy Certificate
   ansible.builtin.copy:
-    src: "{{ vault_mono_local_file_root_ca_certificate }}"
-    dest: "/usr/local/share/ca-certificates/{{ vault_mono_local_file_root_ca_certificate | basename }}"
+    src: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    dest: "/usr/local/share/ca-certificates/{{ vault_mono_prerequisite_local_file_root_ca_certificate | basename }}"
     remote_src: false
     mode: "0644"
 

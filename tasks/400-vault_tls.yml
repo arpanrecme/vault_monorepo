@@ -10,7 +10,7 @@
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Write TLS Client CA Certificate To File for tls_client_ca_file
   ansible.builtin.copy:
-    src: "{{ vault_mono_local_file_root_ca_certificate }}"
+    src: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
     dest: "{{ vault_mono_tls_client_ca_file }}"
     owner: "{{ vault_mono_install_systemd_user }}"
     group: "{{ vault_mono_install_systemd_group }}"
@@ -34,7 +34,7 @@
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get information on ROOT CA Certificate
   community.crypto.x509_certificate_info:
-    content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}"
+    content: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_certificate) }}"
   register: vault_mono_tls_tmp_x509_root_ca_certificate_info
   ignore_errors: true
 
@@ -110,9 +110,9 @@
   when: vault_mono_tls_tmp_openssl_csr_pipe_result.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_tls_tmp_openssl_csr_pipe_result.csr }}"
-    ownca_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}"
-    ownca_privatekey_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_private_key) }}"
-    ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_passphrase_private_key) }}"
+    ownca_content: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_certificate) }}"
+    ownca_privatekey_content: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_private_key) }}"
+    ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_passphrase_private_key) }}"
     provider: ownca
     ownca_not_after: "+30d"
   register: vault_mono_tls_tmp_x509_certificate_pipe_result
@@ -123,7 +123,7 @@
   ansible.builtin.set_fact:
     vault_mono_server_vault_chain_x509_certificate: |+
       {{ vault_mono_tls_tmp_x509_certificate_pipe_result.certificate | trim }}
-      {{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}
+      {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_root_ca_certificate) }}
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Write Certificate Chain To File
   when: vault_mono_tls_tmp_x509_certificate_pipe_result.certificate is defined

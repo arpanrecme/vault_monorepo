@@ -16,12 +16,12 @@ variable "ADMIN_POLICY_NAME" {
   }
 }
 
-variable "VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN" {
+variable "VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN" {
   type      = string
   default   = null
   sensitive = true
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN) > 1
+    condition     = length(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN) > 1
     error_message = "Missing Google Workspcae OIDC configuration file"
   }
 }

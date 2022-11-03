@@ -15,7 +15,7 @@
       {{ vault_mono_global_config.VAULT.PORT }}"
     vault_client_cert: "{{ vault_mono_local_file_client_certificate }}"
     vault_client_key: "{{ vault_mono_local_file_client_private_key }}"
-    vault_capath: "{{ vault_mono_local_file_root_ca_certificate }}"
+    vault_capath: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
     cancel_root_generation: true
     calculate_new_root: true
   register: vault_mono_codified_vault_tmp_root_token
@@ -38,23 +38,24 @@
     TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_prerequisite_local_file_linode_cli_prod_token }}"
     ## Linode
     ## ROOT CA
-    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_no_pass_private_key }}"
-    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_local_file_root_ca_certificate }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY: "{{ vault_mono_prerequisite_local_file_root_ca_no_pass_private_key }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
     ## ROOT CA
     ## GITLAB
-    TF_VAR_VAULT_MONO_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key }}"
     ## GITLAB
     ## GITHUB
-    TF_VAR_VAULT_MONO_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN: "{{ vault_mono_local_file_github_gh_prod_api_token }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_GITHUB_GH_PROD_API_TOKEN: "{{ vault_mono_prerequisite_local_file_github_gh_prod_api_token }}"
     ## GITHUB
     ## Ansible Galaxy
-    TF_VAR_VAULT_MONO_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY: "{{ vault_mono_local_file_ansible_galaxy_api_key }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_ANSIBLE_GALAXY_API_KEY: "{{ vault_mono_prerequisite_local_file_ansible_galaxy_api_key }}"
     ## Ansible Galaxy
     ## Terraform Cloud
-    TF_VAR_VAULT_MONO_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_local_file_terraform_cloud_tf_prod_token }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token }}"
     ## Terraform Cloud
     ## GSUITE OIDC
-    TF_VAR_VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN: "{{ vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN:
+      "{{ vault_mono_prerequisite_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
     ## GSUITE OIDC
   register: vault_mono_codified_vault_tmp_output
   ignore_errors: true
@@ -62,13 +63,13 @@
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Revoke Root Token
   no_log: "{{ vault_mono_debug_no_log }}"
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
-    SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
+    SSL_CERT_FILE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
   ansible.builtin.uri:
     url:
       "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
       {{ vault_mono_global_config.VAULT.PORT }}/v1/auth/token/revoke-self"
     method: POST
-    # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
+    # ca_path: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     status_code: [204, 403]
