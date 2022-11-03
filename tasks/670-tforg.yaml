@@ -3,202 +3,201 @@
   block:
     - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Reset new org stat
       ansible.builtin.set_fact:
-        vault_mono_codified_vault_tfe_fact_org_is_newly_created: false
-        vault_mono_codified_vault_tfe_api_token: "{{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) | string }}"
+        vault_mono_tfe_fact_org_is_newly_created: false
 
     - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Get organizations
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.uri:
-        url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}"
+        url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
         headers:
-          Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
         status_code: 200,404
-      register: vault_mono_codified_vault_tfe_tmp_api_org_details
+      register: vault_mono_tfe_tmp_api_org_details
 
     - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Create organizations
-      when: vault_mono_codified_vault_tfe_tmp_api_org_details.status == 404
+      when: vault_mono_tfe_tmp_api_org_details.status == 404
       block:
         - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Create organizations | Create new org
           no_log: "{{ vault_mono_debug_no_log }}"
           ansible.builtin.uri:
             method: POST
-            url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations"
+            url: "{{ vault_mono_tfe_api_endpoint }}/organizations"
             body_format: json
             body:
               data:
                 type: "organizations"
                 attributes:
-                  name: "{{ vault_mono_codified_vault_tfe_org_name }}"
-                  email: "{{ vault_mono_codified_vault_tfe_org_email }}"
-                  collaborator-auth-policy: "{{ vault_mono_codified_vault_tfe_org_collaborator_auth_policy | default(omit) }}"
+                  name: "{{ vault_mono_tfe_org_name }}"
+                  email: "{{ vault_mono_tfe_org_email }}"
+                  collaborator-auth-policy: "{{ vault_mono_tfe_org_collaborator_auth_policy | default(omit) }}"
             status_code: 201
             headers:
-              Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+              Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
               content-type: "application/vnd.api+json"
-          register: vault_mono_codified_vault_tfe_tmp_organization_create_response
-          changed_when: vault_mono_codified_vault_tfe_tmp_organization_create_response.status == 201
-          failed_when: vault_mono_codified_vault_tfe_tmp_organization_create_response.status != 201
+          register: vault_mono_tfe_tmp_organization_create_response
+          changed_when: vault_mono_tfe_tmp_organization_create_response.status == 201
+          failed_when: vault_mono_tfe_tmp_organization_create_response.status != 201
         - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Create organizations | Get new organization details
           no_log: "{{ vault_mono_debug_no_log }}"
           ansible.builtin.uri:
-            url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}"
+            url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
             headers:
-              Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+              Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
               content-type: "application/vnd.api+json"
             status_code: 200
-          register: vault_mono_codified_vault_tfe_tmp_new_org_details
+          register: vault_mono_tfe_tmp_new_org_details
         - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Reset fact with new
           ansible.builtin.set_fact:
-            vault_mono_codified_vault_tfe_tmp_api_org_details: "{{ vault_mono_codified_vault_tfe_tmp_new_org_details }}"
-            vault_mono_codified_vault_tfe_fact_org_is_newly_created: true
-          when: vault_mono_codified_vault_tfe_tmp_organization_create_response.changed
+            vault_mono_tfe_tmp_api_org_details: "{{ vault_mono_tfe_tmp_new_org_details }}"
+            vault_mono_tfe_fact_org_is_newly_created: true
+          when: vault_mono_tfe_tmp_organization_create_response.changed
 
     - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Update organization
-      when: not vault_mono_codified_vault_tfe_fact_org_is_newly_created
+      when: not vault_mono_tfe_fact_org_is_newly_created
       block:
         - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Update organization | Update email id
           no_log: "{{ vault_mono_debug_no_log }}"
-          when: (vault_mono_codified_vault_tfe_org_email is defined) and vault_mono_codified_vault_tfe_tmp_api_org_details.json.data.attributes.email != vault_mono_codified_vault_tfe_org_email
+          when: (vault_mono_tfe_org_email is defined) and vault_mono_tfe_tmp_api_org_details.json.data.attributes.email != vault_mono_tfe_org_email
           ansible.builtin.uri:
             method: PATCH
-            url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}"
+            url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
             body_format: json
             body:
               data:
                 type: "organizations"
                 attributes:
-                  email: "{{ vault_mono_codified_vault_tfe_org_email }}"
+                  email: "{{ vault_mono_tfe_org_email }}"
             status_code: 200
             headers:
-              Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+              Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
               content-type: "application/vnd.api+json"
-          register: vault_mono_codified_vault_tfe_tmp_org_update_email_response
-          changed_when: vault_mono_codified_vault_tfe_tmp_org_update_email_response.status == 200
-          failed_when: vault_mono_codified_vault_tfe_tmp_org_update_email_response.status != 200
+          register: vault_mono_tfe_tmp_org_update_email_response
+          changed_when: vault_mono_tfe_tmp_org_update_email_response.status == 200
+          failed_when: vault_mono_tfe_tmp_org_update_email_response.status != 200
 
         - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Update organization | Update Authentication Factor
           no_log: "{{ vault_mono_debug_no_log }}"
-          when: (vault_mono_codified_vault_tfe_org_collaborator_auth_policy is defined) and vault_mono_codified_vault_tfe_tmp_api_org_details.json.data.attributes["collaborator-auth-policy"] != vault_mono_codified_vault_tfe_org_collaborator_auth_policy
+          when: (vault_mono_tfe_org_collaborator_auth_policy is defined) and vault_mono_tfe_tmp_api_org_details.json.data.attributes["collaborator-auth-policy"] != vault_mono_tfe_org_collaborator_auth_policy
           ansible.builtin.uri:
             method: PATCH
-            url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}"
+            url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
             body_format: json
             body:
               data:
                 type: "organizations"
                 attributes:
-                  collaborator-auth-policy: "{{ vault_mono_codified_vault_tfe_org_collaborator_auth_policy }}"
+                  collaborator-auth-policy: "{{ vault_mono_tfe_org_collaborator_auth_policy }}"
             status_code: 200
             headers:
-              Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+              Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
               content-type: "application/vnd.api+json"
-          register: vault_mono_codified_vault_tfe_tmp_org_update_mfa_response
-          changed_when: vault_mono_codified_vault_tfe_tmp_org_update_mfa_response.status == 200
-          failed_when: vault_mono_codified_vault_tfe_tmp_org_update_mfa_response.status != 200
+          register: vault_mono_tfe_tmp_org_update_mfa_response
+          changed_when: vault_mono_tfe_tmp_org_update_mfa_response.status == 200
+          failed_when: vault_mono_tfe_tmp_org_update_mfa_response.status != 200
 
 ## Workspace
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Reset new Workspace stat | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Reset new Workspace stat | {{ vault_mono_tfe_org_workspace_name }}
   ansible.builtin.set_fact:
-    vault_mono_codified_vault_tfe_fact_workspace_is_newly_created: false
+    vault_mono_tfe_fact_workspace_is_newly_created: false
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Get Workspaces | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Get Workspaces | {{ vault_mono_tfe_org_workspace_name }}
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.uri:
-    url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}/workspaces/{{ vault_mono_codified_vault_tfe_org_workspace_name }}"
+    url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
     headers:
-      Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+      Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
       content-type: "application/vnd.api+json"
     status_code: 200,404
-  register: vault_mono_codified_vault_tfe_tmp_workspace_response
+  register: vault_mono_tfe_tmp_workspace_response
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
-  when: vault_mono_codified_vault_tfe_tmp_workspace_response.status == 404
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | {{ vault_mono_tfe_org_workspace_name }}
+  when: vault_mono_tfe_tmp_workspace_response.status == 404
   block:
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Create new workspace | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Create new workspace | {{ vault_mono_tfe_org_workspace_name }}
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.uri:
         method: POST
-        url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}/workspaces"
+        url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces"
         body_format: json
         body:
           data:
             type: "workspaces"
             attributes:
-              name: "{{ vault_mono_codified_vault_tfe_org_workspace_name }}"
+              name: "{{ vault_mono_tfe_org_workspace_name }}"
               auto-apply: "{{ auto_apply | default(omit) | bool }}"
-              execution-mode: "{{ vault_mono_codified_vault_tfe_org_workspace_execution_mode | default(omit) }}"
+              execution-mode: "{{ vault_mono_tfe_org_workspace_execution_mode | default(omit) }}"
         status_code: 201
         headers:
-          Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
-      register: vault_mono_codified_vault_tfe_tmp_workspace_create_response
-      changed_when: vault_mono_codified_vault_tfe_tmp_workspace_create_response.status == 201
-      failed_when: vault_mono_codified_vault_tfe_tmp_workspace_create_response.status != 201
+      register: vault_mono_tfe_tmp_workspace_create_response
+      changed_when: vault_mono_tfe_tmp_workspace_create_response.status == 201
+      failed_when: vault_mono_tfe_tmp_workspace_create_response.status != 201
 
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Get new Workspace details | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Get new Workspace details | {{ vault_mono_tfe_org_workspace_name }}
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.uri:
-        url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}/workspaces/{{ vault_mono_codified_vault_tfe_org_workspace_name }}"
+        url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
         headers:
-          Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
         status_code: 200
-      register: vault_mono_codified_vault_tfe_tmp_workspace_details_response
+      register: vault_mono_tfe_tmp_workspace_details_response
 
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Reset fact with new | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Reset fact with new | {{ vault_mono_tfe_org_workspace_name }}
       ansible.builtin.set_fact:
-        vault_mono_codified_vault_tfe_tmp_workspace_response: "{{ vault_mono_codified_vault_tfe_tmp_workspace_details_response }}"
-        vault_mono_codified_vault_tfe_fact_workspace_is_newly_created: true
-      when: vault_mono_codified_vault_tfe_tmp_workspace_create_response.changed
+        vault_mono_tfe_tmp_workspace_response: "{{ vault_mono_tfe_tmp_workspace_details_response }}"
+        vault_mono_tfe_fact_workspace_is_newly_created: true
+      when: vault_mono_tfe_tmp_workspace_create_response.changed
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
-  when: not vault_mono_codified_vault_tfe_fact_workspace_is_newly_created
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | {{ vault_mono_tfe_org_workspace_name }}
+  when: not vault_mono_tfe_fact_workspace_is_newly_created
   block:
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | auto-apply | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | auto-apply | {{ vault_mono_tfe_org_workspace_name }}
       no_log: "{{ vault_mono_debug_no_log }}"
-      when: (vault_mono_codified_vault_tfe_tmp_workspace_response.json.data.attributes["auto-apply"] | bool) != (vault_mono_codified_vault_tfe_org_workspace_auto_apply | bool)
+      when: (vault_mono_tfe_tmp_workspace_response.json.data.attributes["auto-apply"] | bool) != (vault_mono_tfe_org_workspace_auto_apply | bool)
       ansible.builtin.uri:
         method: PATCH
-        url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}/workspaces/{{ vault_mono_codified_vault_tfe_org_workspace_name }}"
+        url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
         body_format: json
         body:
           data:
             type: "workspaces"
             attributes:
-              auto-apply: "{{ vault_mono_codified_vault_tfe_org_workspace_auto_apply | default(omit) | bool }}"
+              auto-apply: "{{ vault_mono_tfe_org_workspace_auto_apply | default(omit) | bool }}"
         status_code: 200
         headers:
-          Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
-      register: vault_mono_codified_vault_tfe_tmp_workspace_update_auto_apply_response
-      changed_when: vault_mono_codified_vault_tfe_tmp_workspace_update_auto_apply_response.status == 200
+      register: vault_mono_tfe_tmp_workspace_update_auto_apply_response
+      changed_when: vault_mono_tfe_tmp_workspace_update_auto_apply_response.status == 200
 
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | execution-mode | {{ vault_mono_codified_vault_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | execution-mode | {{ vault_mono_tfe_org_workspace_name }}
       no_log: "{{ vault_mono_debug_no_log }}"
       when: >
-        (vault_mono_codified_vault_tfe_org_workspace_execution_mode is defined)
+        (vault_mono_tfe_org_workspace_execution_mode is defined)
         and
-        (vault_mono_codified_vault_tfe_org_workspace_execution_mode | length > 1)
+        (vault_mono_tfe_org_workspace_execution_mode | length > 1)
         and
         (
-          (vault_mono_codified_vault_tfe_tmp_workspace_response.json.data.attributes["execution-mode"])
+          (vault_mono_tfe_tmp_workspace_response.json.data.attributes["execution-mode"])
           !=
-          (vault_mono_codified_vault_tfe_org_workspace_execution_mode)
+          (vault_mono_tfe_org_workspace_execution_mode)
         )
       ansible.builtin.uri:
         method: PATCH
-        url: "{{ vault_mono_codified_vault_tfe_api_endpoint }}/organizations/{{ vault_mono_codified_vault_tfe_org_name }}/workspaces/{{ vault_mono_codified_vault_tfe_org_workspace_name }}"
+        url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
         body_format: json
         body:
           data:
             type: "workspaces"
             attributes:
-              execution-mode: "{{ vault_mono_codified_vault_tfe_org_workspace_execution_mode }}"
+              execution-mode: "{{ vault_mono_tfe_org_workspace_execution_mode }}"
         status_code: 200
         headers:
-          Authorization: "Bearer {{ vault_mono_codified_vault_tfe_api_token }}"
+          Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
-      register: vault_mono_codified_vault_tfe_tmp_workspace_update_auto_apply_response
-      changed_when: vault_mono_codified_vault_tfe_tmp_workspace_update_auto_apply_response.status == 200
+      register: vault_mono_tfe_tmp_workspace_update_auto_apply_response
+      changed_when: vault_mono_tfe_tmp_workspace_update_auto_apply_response.status == 200
