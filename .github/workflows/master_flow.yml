@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  master_flow:
     runs-on: ubuntu-latest
     container:
       image: arpanrecme/vaultmonorepo:8
