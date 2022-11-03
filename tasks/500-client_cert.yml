@@ -32,15 +32,15 @@
         )
         or
         (
-          vault_mono_server_vault_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+          vault_mono_server_vault_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT.FQDN
         )
       )
     )
   community.crypto.openssl_csr_pipe:
     privatekey_path: "{{ vault_mono_local_file_client_private_key }}"
-    common_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+    common_name: "{{ vault_mono_global_config.VAULT.FQDN }}"
     subject_alt_name:
-      - "DNS:{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+      - "DNS:{{ vault_mono_global_config.VAULT.FQDN }}"
     subject_alt_name_critical: true
     basic_constraints: CA:FALSE
     basic_constraints_critical: true
@@ -89,7 +89,7 @@
     action: export
     path: "{{ vault_mono_local_file_client_chain_pkcs12_certificate }}"
     passphrase: "{{ vault_mono_client_passphrase_pkcs12_certificate | default(omit, true) }}"
-    friendly_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+    friendly_name: "{{ vault_mono_global_config.VAULT.FQDN }}"
     privatekey_path: "{{ vault_mono_local_file_client_private_key }}"
     certificate_path: "{{ vault_mono_local_file_client_certificate }}"
     other_certificates_parse_all: true

@@ -3,7 +3,7 @@
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   ansible.builtin.uri:
-    url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/sys/health"
+    url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/health"
     method: GET
     # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
@@ -18,7 +18,7 @@
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   ansible.builtin.uri:
-    url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/sys/init"
+    url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/init"
     method: POST
     # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
@@ -60,7 +60,7 @@
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.uri:
-    url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/sys/unseal"
+    url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/unseal"
     method: POST
     # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
@@ -80,7 +80,7 @@
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   ansible.builtin.uri:
-    url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/sys/health"
+    url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/health"
     method: GET
     # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
@@ -92,7 +92,9 @@
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   ansible.builtin.uri:
-    url: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}/v1/auth/token/revoke-self"
+    url:
+      "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
+      {{ vault_mono_global_config.VAULT.PORT }}/v1/auth/token/revoke-self"
     method: POST
     # ca_path: "{{ vault_mono_local_file_root_ca_certificate }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"

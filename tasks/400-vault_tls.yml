@@ -1,7 +1,7 @@
 ---
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get IP Address from DNS
   ansible.builtin.set_fact:
-    vault_mono_server_vault_dig: "{{ lookup('community.general.dig', vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME) }}"
+    vault_mono_server_vault_dig: "{{ lookup('community.general.dig', vault_mono_global_config.VAULT.FQDN) }}"
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get Public IP Address
   ansible.builtin.uri:
@@ -68,7 +68,7 @@
     or
     (
       (
-        vault_mono_tls_tmp_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+        vault_mono_tls_tmp_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT.FQDN
       )
       or
       (
@@ -85,9 +85,9 @@
     )
   community.crypto.openssl_csr_pipe:
     privatekey_path: "{{ vault_mono_tls_key_file }}"
-    common_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+    common_name: "{{ vault_mono_global_config.VAULT.FQDN }}"
     subject_alt_name:
-      - "DNS:{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
+      - "DNS:{{ vault_mono_global_config.VAULT.FQDN }}"
       - "IP:{{ vault_mono_server_vault_dig }}"
       - "IP:{{ vault_mono_tls_tmp_ifconfig_me.json.ip_addr }}"
     subject_alt_name_critical: true
