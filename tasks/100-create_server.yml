@@ -18,11 +18,11 @@
           - prod
           - hashicorp_vault
           - not_in_terraform
-      register: vault_mono_linode_server
+      register: vault_mono_tmp_linode_server
 
     - name: Vault Monorepo | Get Server Information | Create Server | Linode | Set new IP address
       ansible.builtin.set_fact:
-        vault_mono_vault_server_public_ip: "{{ vault_mono_linode_server.instance.ipv4[0] }}"
+        vault_mono_vault_server_public_ip: "{{ vault_mono_tmp_linode_server.instance.ipv4[0] }}"
 
     - name: Vault Monorepo | Get Server Information | Create Server | Linode | Get existing RDNS
       when: false
