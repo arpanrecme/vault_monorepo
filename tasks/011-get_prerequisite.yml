@@ -9,16 +9,16 @@
             bw get attachment id_rsa \
             --itemid $(bw get item 'Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0' \
             --raw | jq .id -r) \
-            --output "{{ vault_mono_local_file_openssh_private_key }}"
-            chmod 400 "{{ vault_mono_local_file_openssh_private_key }}"
+            --output "{{ vault_mono_prerequisite_local_file_openssh_private_key }}"
+            chmod 400 "{{ vault_mono_prerequisite_local_file_openssh_private_key }}"
           args:
-            creates: "{{ vault_mono_local_file_openssh_private_key }}"
+            creates: "{{ vault_mono_prerequisite_local_file_openssh_private_key }}"
 
         - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | OPENSSH PRIVATE KEY | Get private key passphrase
           ansible.builtin.shell: |-
-            bw get password 'Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0' > {{ vault_mono_local_file_openssh_passphrase_private_key }}
+            bw get password 'Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0' > {{ vault_mono_prerequisite_local_file_openssh_passphrase_private_key }}
           args:
-            creates: "{{ vault_mono_local_file_openssh_passphrase_private_key }}"
+            creates: "{{ vault_mono_prerequisite_local_file_openssh_passphrase_private_key }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Linode api token
       no_log: "{{ vault_mono_debug_no_log }}"
@@ -123,22 +123,22 @@
 
 - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Remove Password from OPENSSH PRIVATE KEY
   ansible.builtin.shell: |+
-    cp {{ vault_mono_local_file_openssh_private_key }} {{ vault_mono_local_file_openssh_nopass_private_key }}
-    chmod 600 {{ vault_mono_local_file_openssh_nopass_private_key }}
+    cp {{ vault_mono_prerequisite_local_file_openssh_private_key }} {{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}
+    chmod 600 {{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}
     ssh-keygen -p \
-      -P {{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_passphrase_private_key) }} \
-      -N '' -f {{ vault_mono_local_file_openssh_nopass_private_key }}
+      -P {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_openssh_passphrase_private_key) }} \
+      -N '' -f {{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}
   args:
-    creates: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
+    creates: "{{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}"
 
 # TODO: Remove empty line at end of file
-- name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Create Openssh Public key from {{ vault_mono_local_file_openssh_nopass_private_key }}
+- name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Create Openssh Public key from {{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}
   ansible.builtin.shell: |-
-    __public_key=$(ssh-keygen -y -f {{ vault_mono_local_file_openssh_nopass_private_key }})
-    echo -n "${__public_key}" > {{ vault_mono_local_file_openssh_public_key }}
-    chmod 400 {{ vault_mono_local_file_openssh_public_key }}
+    __public_key=$(ssh-keygen -y -f {{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }})
+    echo -n "${__public_key}" > {{ vault_mono_prerequisite_local_file_openssh_public_key }}
+    chmod 400 {{ vault_mono_prerequisite_local_file_openssh_public_key }}
   args:
-    creates: "{{ vault_mono_local_file_openssh_public_key }}"
+    creates: "{{ vault_mono_prerequisite_local_file_openssh_public_key }}"
 
 - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Remove Password from ROOT CA Private Key
   ansible.builtin.shell: |+

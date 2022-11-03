@@ -10,7 +10,7 @@
         region: ap-west
         image: linode/debian11
         authorized_keys:
-          - "{{ lookup('ansible.builtin.file', vault_mono_local_file_openssh_public_key) }}"
+          - "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_openssh_public_key) }}"
         state: present
         tags:
           - vault
@@ -66,7 +66,7 @@
         ansible_connection: "ssh"
         ansible_port: 22
         ansible_user: root
-        ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
+        ansible_ssh_private_key_file: "{{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}"
         ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
     - name: Vault Monorepo | Get Server Information | Create Server | Linode | Verify dynamic host
@@ -82,7 +82,7 @@
         ansible_connection: "ssh"
         ansible_port: 22
         ansible_user: "{{ vault_mono_system_patch_login_user }}"
-        ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
+        ansible_ssh_private_key_file: "{{ vault_mono_prerequisite_local_file_openssh_nopass_private_key }}"
         ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
       when: vault_mono_tmp_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_tmp_dynamic_host_ping.msg'
 
