@@ -1,5 +1,17 @@
 # Vault Monolithic Repository
 
+Flow:
+Create Server ->
+Patch System ->
+Install Hashicorp Vault ->
+Server TLS Certificate ->
+Setup Client Certificate ->
+Get Vault Initial Secret ->
+Initialize and Unseal ->
+Update Vault initial secret ->
+Terraform Cloud Setup -> Create Organization and Workspace
+Terraform Codified Vault
+
 ## Prerequisite: Download the below resources from [bitwarden](tasks/011-get_prerequisite.yml)
 
 - OPENSSH KEY - SHA256:Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0
@@ -92,5 +104,4 @@ with change in Concent Screen User Type to Internal
   "gsuite_admin_impersonate": "xxxxxx@xxxx.com",
   "gsuite_vault_admin_group_mail": "xxxxxxxx@xxxxxxxx.com"
 }
-
 ```
