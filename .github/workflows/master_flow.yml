@@ -1,7 +1,7 @@
 name: Master Application Flow
 
 "on":
-  pull_request:
+  push:
     branches: ["feature*"]
 
 permissions:
