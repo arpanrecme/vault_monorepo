@@ -115,7 +115,7 @@
       tags:
         - vault_init_unseal
 
-    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/670-tforg.yaml"
       tags:
         - codified_vault

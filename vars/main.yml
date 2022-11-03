@@ -76,7 +76,7 @@ vault_mono_client_passphrase_pkcs12_certificate: password
 # Mutual TLS
 
 # codified_vault
-rl_tef_api_endpoint: https://app.terraform.io/api/v2
+vault_mono_codified_vault_tfe_api_endpoint: https://app.terraform.io/api/v2
 vault_mono_codified_vault_tfe_org_name: arpanrecme
 vault_mono_codified_vault_tfe_org_email: arpan.rec@gmail.com
 vault_mono_codified_vault_tfe_org_collaborator_auth_policy: two_factor_mandatory
