@@ -6,6 +6,7 @@ module "pki" {
   }
 
   vault_mono_vault_addr                                          = local.vault_mono_vault_addr
+  vault_mono_global_config                                       = local.vault_mono_global_config
   VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY
   VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE         = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE
 }
@@ -25,10 +26,10 @@ module "auth" {
     vault = vault
   }
 
-  vault_mono_vault_addr = local.vault_mono_vault_addr
-  ADMIN_POLICY_NAME     = module.policy.admin
-  SCM_CICD_POLICY_NAME  = module.policy.scm_cicd
-
+  vault_mono_vault_addr                                                       = local.vault_mono_vault_addr
+  ADMIN_POLICY_NAME                                                           = module.policy.admin
+  SCM_CICD_POLICY_NAME                                                        = module.policy.scm_cicd
+  DEFAULT_LOGIN_POLICY_NAME                                                   = module.policy.default_login
   VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN
 }
 

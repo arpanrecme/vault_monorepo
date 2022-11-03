@@ -25,3 +25,12 @@ variable "VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
     error_message = "Missing root CA certificate file path"
   }
 }
+
+variable "vault_mono_global_config" {
+  type    = any
+  default = null
+  validation {
+    condition     = length(var.vault_mono_global_config) > 1
+    error_message = "Vault Global Configuration"
+  }
+}
