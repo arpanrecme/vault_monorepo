@@ -14,18 +14,18 @@
     home: "{{ vault_mono_install_path }}"
     shell: /bin/zsh
     system: true
-  register: vault_mono_server_systemd_user_homedir_result
+  register: vault_mono_install_tmp_systemd_user_create_result
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Check zshrc file
   ansible.builtin.stat:
-    path: "{{ vault_mono_server_systemd_user_homedir_result.home }}/.zshrc"
-  register: vault_mono_server_systemd_user_zshrc_stat
+    path: "{{ vault_mono_install_tmp_systemd_user_create_result.home }}/.zshrc"
+  register: vault_mono_install_tmp_systemd_user_zshrc_stat
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Create zshrc file
-  when: not vault_mono_server_systemd_user_zshrc_stat.stat.exists
+  when: not vault_mono_install_tmp_systemd_user_zshrc_stat.stat.exists
   ansible.builtin.file:
     group: "{{ vault_mono_install_systemd_group }}"
-    path: "{{ vault_mono_server_systemd_user_homedir_result.home }}/.zshrc"
+    path: "{{ vault_mono_install_tmp_systemd_user_create_result.home }}/.zshrc"
     owner: "{{ vault_mono_install_systemd_user }}"
     mode: "0644"
     state: touch

@@ -6,7 +6,7 @@
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get Public IP Address
   ansible.builtin.uri:
     url: https://ifconfig.me/all.json
-  register: vault_mono_server_vault_ifconfig_me
+  register: vault_mono_tls_tmp_ifconfig_me
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Write TLS Client CA Certificate To File for tls_client_ca_file
   ansible.builtin.copy:
@@ -24,63 +24,63 @@
     owner: "{{ vault_mono_install_systemd_user }}"
     group: "{{ vault_mono_install_systemd_group }}"
     mode: "0400"
-  register: vault_mono_server_vault_certificate_private_key
+  register: vault_mono_tls_tmp_private_key_result
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Check existing certificate file for tls_cert_file
   ansible.builtin.stat:
     path: "{{ vault_mono_tls_cert_file }}"
-  register: vault_mono_server_vault_certificate_file_stat
+  register: vault_mono_tls_tmp_certificate_file_stat
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get information on ROOT CA Certificate
   community.crypto.x509_certificate_info:
     content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}"
-  register: vault_mono_server_vault_x509_root_ca_certificate_info
+  register: vault_mono_tls_tmp_x509_root_ca_certificate_info
   ignore_errors: true
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get information on generated certificate for tls_cert_file
-  when: vault_mono_server_vault_certificate_file_stat.stat.exists
+  when: vault_mono_tls_tmp_certificate_file_stat.stat.exists
   community.crypto.x509_certificate_info:
     path: "{{ vault_mono_tls_cert_file }}"
     valid_at:
       point_1: "+1d"
-  register: vault_mono_server_vault_x509_certificate_info
+  register: vault_mono_tls_tmp_x509_certificate_info
   ignore_errors: true
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Generate an OpenSSL Certificate Signing Request for tls_cert_file
   when: >
     (
-      not vault_mono_server_vault_certificate_file_stat.stat.exists
+      not vault_mono_tls_tmp_certificate_file_stat.stat.exists
     )
     or
     (
-      vault_mono_server_vault_x509_certificate_info.failed is defined and vault_mono_server_vault_x509_certificate_info.failed
+      vault_mono_tls_tmp_x509_certificate_info.failed is defined and vault_mono_tls_tmp_x509_certificate_info.failed
     )
     or
     (
       not
       (
-        vault_mono_server_vault_x509_certificate_info.valid_at is defined
+        vault_mono_tls_tmp_x509_certificate_info.valid_at is defined
         and
-        vault_mono_server_vault_x509_certificate_info.valid_at.point_1
+        vault_mono_tls_tmp_x509_certificate_info.valid_at.point_1
       )
     )
     or
     (
       (
-        vault_mono_server_vault_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
+        vault_mono_tls_tmp_x509_certificate_info.subject.commonName != vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME
       )
       or
       (
-        vault_mono_server_vault_certificate_private_key['diff']['after']['public_key_fingerprints']['sha256']
+        vault_mono_tls_tmp_private_key_result['diff']['after']['public_key_fingerprints']['sha256']
         !=
-        vault_mono_server_vault_x509_certificate_info['public_key_fingerprints']['sha256']
+        vault_mono_tls_tmp_x509_certificate_info['public_key_fingerprints']['sha256']
       )
       or
       (
-        vault_mono_server_vault_x509_root_ca_certificate_info['subject_key_identifier']
+        vault_mono_tls_tmp_x509_root_ca_certificate_info['subject_key_identifier']
         !=
-        vault_mono_server_vault_x509_certificate_info['authority_key_identifier']
+        vault_mono_tls_tmp_x509_certificate_info['authority_key_identifier']
       )
     )
   community.crypto.openssl_csr_pipe:
@@ -89,7 +89,7 @@
     subject_alt_name:
       - "DNS:{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
       - "IP:{{ vault_mono_server_vault_dig }}"
-      - "IP:{{ vault_mono_server_vault_ifconfig_me.json.ip_addr }}"
+      - "IP:{{ vault_mono_tls_tmp_ifconfig_me.json.ip_addr }}"
     subject_alt_name_critical: true
     basic_constraints: CA:FALSE
     basic_constraints_critical: true
@@ -104,29 +104,29 @@
     extended_key_usage:
       - serverAuth
     extended_key_usage_critical: true
-  register: vault_mono_server_vault_openssl_csr_pipe
+  register: vault_mono_tls_tmp_openssl_csr_pipe_result
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Generate an OpenSSL certificate signed with your own CA certificate
-  when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
+  when: vault_mono_tls_tmp_openssl_csr_pipe_result.csr is defined
   community.crypto.x509_certificate_pipe:
-    csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"
+    csr_content: "{{ vault_mono_tls_tmp_openssl_csr_pipe_result.csr }}"
     ownca_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}"
     ownca_privatekey_content: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_private_key) }}"
     ownca_privatekey_passphrase: "{{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_passphrase_private_key) }}"
     provider: ownca
     ownca_not_after: "+30d"
-  register: vault_mono_server_vault_x509_certificate_pipe
+  register: vault_mono_tls_tmp_x509_certificate_pipe_result
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Set certificate chain
-  when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
+  when: vault_mono_tls_tmp_x509_certificate_pipe_result.certificate is defined
   ansible.builtin.set_fact:
     vault_mono_server_vault_chain_x509_certificate: |+
-      {{ vault_mono_server_vault_x509_certificate_pipe.certificate | trim }}
+      {{ vault_mono_tls_tmp_x509_certificate_pipe_result.certificate | trim }}
       {{ lookup('ansible.builtin.file', vault_mono_local_file_root_ca_certificate) }}
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Write Certificate Chain To File
-  when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
+  when: vault_mono_tls_tmp_x509_certificate_pipe_result.certificate is defined
   ansible.builtin.copy:
     content: "{{ vault_mono_server_vault_chain_x509_certificate }}"
     dest: "{{ vault_mono_tls_cert_file }}"
