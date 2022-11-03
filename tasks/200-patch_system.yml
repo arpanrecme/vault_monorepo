@@ -1,8 +1,8 @@
 ---
 - name: Vault Monorepo | Setup Vault Server | Patch System | Install upgrade and install python3-pip
   ansible.builtin.raw: apt-get update && apt-get install -y python3-pip
-  register: vault_mono_install_python_pip_result_raw
-  changed_when: "'0 upgraded, 0 newly installed' not in vault_mono_install_python_pip_result_raw.stdout_lines | last"
+  register: vault_mono_system_patch_tmp_install_pip_result
+  changed_when: "'0 upgraded, 0 newly installed' not in vault_mono_system_patch_tmp_install_pip_result.stdout_lines | last"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Set timezone as UTC
   community.general.timezone:
@@ -84,9 +84,9 @@
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Update CA Trust
   ansible.builtin.command: update-ca-certificates
-  register: vault_mono_system_patch_add_root_ca_result
+  register: vault_mono_system_patch_tmp_add_root_ca_result
   changed_when: >
-    "0 added, 0 removed" not in vault_mono_system_patch_add_root_ca_result.stdout
+    "0 added, 0 removed" not in vault_mono_system_patch_tmp_add_root_ca_result.stdout
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Create wheel and sudo groups
   ansible.builtin.group:
@@ -134,18 +134,18 @@
       - wheel
     home: "{{ vault_mono_system_patch_homedir_login_user }}"
     shell: /bin/zsh
-  register: vault_mono_system_patch_homedir_login_user_result
+  register: vault_mono_system_patch_tmp_login_user_create_result
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Check zshrc file
   ansible.builtin.stat:
-    path: "{{ vault_mono_system_patch_homedir_login_user_result.home }}/.zshrc"
-  register: vault_mono_system_patch_homedir_login_user_zshrc_stat
+    path: "{{ vault_mono_system_patch_tmp_login_user_create_result.home }}/.zshrc"
+  register: vault_mono_system_patch_tmp_login_user_zshrc_stat
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Create zshrc file
-  when: not vault_mono_system_patch_homedir_login_user_zshrc_stat.stat.exists
+  when: not vault_mono_system_patch_tmp_login_user_zshrc_stat.stat.exists
   ansible.builtin.file:
     group: "{{ vault_mono_system_patch_login_group }}"
-    path: "{{ vault_mono_system_patch_homedir_login_user_result.home }}/.zshrc"
+    path: "{{ vault_mono_system_patch_tmp_login_user_create_result.home }}/.zshrc"
     owner: "{{ vault_mono_system_patch_login_user }}"
     mode: "0644"
     state: touch
