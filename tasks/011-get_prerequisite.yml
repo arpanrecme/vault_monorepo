@@ -27,9 +27,9 @@
         jq '.fields |
         .[] |
         select(.name == "LINODE_CLI_PROD_TOKEN") |
-        .value' -r > {{ vault_mono_local_file_linode_cli_prod_token }}
+        .value' -r > {{ vault_mono_prerequisite_local_file_linode_cli_prod_token }}
       args:
-        creates: "{{ vault_mono_local_file_linode_cli_prod_token }}"
+        creates: "{{ vault_mono_prerequisite_local_file_linode_cli_prod_token }}"
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | ROOT CA
       no_log: "{{ vault_mono_debug_no_log }}"
@@ -115,7 +115,7 @@
         replace: ""
         mode: "600"
       with_items:
-        - "{{ vault_mono_local_file_linode_cli_prod_token }}"
+        - "{{ vault_mono_prerequisite_local_file_linode_cli_prod_token }}"
         - "{{ vault_mono_local_file_gitlab_gl_prod_api_key }}"
         - "{{ vault_mono_local_file_github_gh_prod_api_token }}"
         - "{{ vault_mono_local_file_ansible_galaxy_api_key }}"

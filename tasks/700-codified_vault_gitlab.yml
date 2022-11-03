@@ -35,7 +35,7 @@
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CHAIN_CERTIFICATE: "{{ vault_mono_local_file_client_chain_certificate }}"
     # prerequisite
     ## Linode
-    TF_VAR_VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_local_file_linode_cli_prod_token }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_LINODE_CLI_PROD_TOKEN: "{{ vault_mono_prerequisite_local_file_linode_cli_prod_token }}"
     ## Linode
     ## ROOT CA
     TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY: "{{ vault_mono_local_file_root_ca_no_pass_private_key }}"

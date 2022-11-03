@@ -1,9 +1,9 @@
-variable "VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN" {
+variable "VAULT_MONO_PREREQUISITE_LOCAL_FILE_LINODE_CLI_PROD_TOKEN" {
   type      = string
   default   = null
   sensitive = true
   validation {
-    condition     = length(var.VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN) > 1
+    condition     = length(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_LINODE_CLI_PROD_TOKEN) > 1
     error_message = "Missing Linode Key file path"
   }
 }

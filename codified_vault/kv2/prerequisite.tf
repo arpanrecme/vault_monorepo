@@ -15,7 +15,7 @@ resource "vault_kv_secret_v2" "prerequisite_linode" {
   name  = "linode"
   data_json = jsonencode(
     {
-      LINODE_CLI_PROD_TOKEN = file(var.VAULT_MONO_LOCAL_FILE_LINODE_CLI_PROD_TOKEN)
+      LINODE_CLI_PROD_TOKEN = file(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_LINODE_CLI_PROD_TOKEN)
     }
   )
 }

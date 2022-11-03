@@ -35,7 +35,7 @@ vault_mono_prerequisite_local_file_openssh_nopass_private_key: "{{ vault_mono_pr
 ## OPENSSH
 
 ## Linode
-vault_mono_local_file_linode_cli_prod_token: "{{ vault_mono_prerequisite_files_dir }}/secrets.linode_cli_prod_token.txt"
+vault_mono_prerequisite_local_file_linode_cli_prod_token: "{{ vault_mono_prerequisite_files_dir }}/secrets.linode_cli_prod_token.txt"
 ## Linode
 
 ## ROOT CA
