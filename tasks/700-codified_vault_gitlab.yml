@@ -9,14 +9,14 @@
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
   vault_sys_generate_root:
-    unseal_keys: "{{ vault_mono_init_secrets['keys'] }}"
+    unseal_keys: "{{ vault_mono_init_unseal_fact_init_secrets['keys'] }}"
     vault_addr: "https://{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}:{{ vault_mono_global_config.VAULT_ADDR_PORT }}"
     vault_client_cert: "{{ vault_mono_local_file_client_certificate }}"
     vault_client_key: "{{ vault_mono_local_file_client_private_key }}"
     vault_capath: "{{ vault_mono_local_file_root_ca_certificate }}"
     cancel_root_generation: true
     calculate_new_root: true
-  register: vault_mono_codified_vault_root_token
+  register: vault_mono_codified_vault_tmp_root_token
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Apply
   no_log: "{{ vault_mono_debug_no_log }}"
@@ -28,7 +28,7 @@
     #   - "{{ vault_mono_codified_vault_local_file_tfbackend }}"
   environment:
     TF_VAR_VAULT_MONO_LOCAL_FILE_GLOBAL_CONFIG: "{{ vault_mono_local_file_global_config }}"
-    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_root_token.new_root }}"
+    TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_tmp_root_token.new_root }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CHAIN_CERTIFICATE: "{{ vault_mono_local_file_client_chain_certificate }}"
     # prerequisite
@@ -54,7 +54,7 @@
     ## GSUITE OIDC
     TF_VAR_VAULT_MONO_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN: "{{ vault_mono_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
     ## GSUITE OIDC
-  register: vault_mono_codified_vault_output
+  register: vault_mono_codified_vault_tmp_output
   ignore_errors: true
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Remove Root Token
@@ -71,22 +71,21 @@
     validate_certs: true
     return_content: true
     headers:
-      "X-Vault-Token": "{{ vault_mono_codified_vault_root_token.new_root }}"
-  register: vault_mono_remove_root_token
-  changed_when: vault_mono_remove_root_token.status == 204
+      "X-Vault-Token": "{{ vault_mono_codified_vault_tmp_root_token.new_root }}"
+  register: vault_mono_codified_vault_tmp_remove_root_token
+  changed_when: vault_mono_codified_vault_tmp_remove_root_token.status == 204
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Error
-  when: vault_mono_codified_vault_output.failed
+  when: vault_mono_codified_vault_tmp_output.failed
   ansible.builtin.debug:
     msg: "{{ item | regex_replace('\\u001b.*0m', '') | trim }}"
-  register: vault_mono_codified_vault_output_debug
-  changed_when: vault_mono_codified_vault_output.changed
+  changed_when: vault_mono_codified_vault_tmp_output.changed
   with_items:
-    - "{{ vault_mono_codified_vault_output.stdout_lines | default(omit) }}"
-    - "{{ vault_mono_codified_vault_output.stderr_lines | default(omit) }}"
-    - "{{ vault_mono_codified_vault_output.msg | default(omit) }}"
+    - "{{ vault_mono_codified_vault_tmp_output.stdout_lines | default(omit) }}"
+    - "{{ vault_mono_codified_vault_tmp_output.stderr_lines | default(omit) }}"
+    - "{{ vault_mono_codified_vault_tmp_output.msg | default(omit) }}"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Fail
-  when: vault_mono_codified_vault_output.failed
+  when: vault_mono_codified_vault_tmp_output.failed
   ansible.builtin.fail:
     msg: "Terraform Apply Failed, Check above errors"

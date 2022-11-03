@@ -10,10 +10,10 @@
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     status_code: [429, 472, 473, 501, 503, 200]
     validate_certs: true
-  register: vault_mono_health
+  register: vault_mono_init_unseal_tmp_health
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Initialize
-  when: not vault_mono_health.json.initialized
+  when: not vault_mono_init_unseal_tmp_health.json.initialized
   no_log: "{{ vault_mono_debug_no_log }}"
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
@@ -29,32 +29,32 @@
     body:
       secret_shares: 5
       secret_threshold: 3
-  register: vault_mono_sys_init
+  register: vault_mono_init_unseal_tmp_sys_init
   changed_when: true
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Reset init secret
   no_log: "{{ vault_mono_debug_no_log }}"
-  when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
+  when: vault_mono_init_unseal_tmp_sys_init.json is defined and vault_mono_init_unseal_tmp_sys_init.json.root_token is defined
   ansible.builtin.set_fact:
-    vault_mono_init_secrets: "{{ vault_mono_sys_init.json }}"
+    vault_mono_init_unseal_fact_init_secrets: "{{ vault_mono_init_unseal_tmp_sys_init.json }}"
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Write init secrets To File
-  when: vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
+  when: vault_mono_init_unseal_tmp_sys_init.json is defined and vault_mono_init_unseal_tmp_sys_init.json.root_token is defined
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.copy:
     content: |
-      {{ vault_mono_sys_init.json | to_nice_json(indent=2) }}
+      {{ vault_mono_init_unseal_tmp_sys_init.json | to_nice_json(indent=2) }}
     dest: "{{ vault_mono_local_file_vault_init_secrets }}"
     mode: "0400"
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Unseal
   when: >
     (
-      vault_mono_sys_init.json is defined and vault_mono_sys_init.json.root_token is defined
+      vault_mono_init_unseal_tmp_sys_init.json is defined and vault_mono_init_unseal_tmp_sys_init.json.root_token is defined
     )
     or
     (
-      vault_mono_health.json.initialized and vault_mono_health.json.sealed
+      vault_mono_init_unseal_tmp_health.json.initialized and vault_mono_init_unseal_tmp_health.json.sealed
     )
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
@@ -72,9 +72,9 @@
       key: "{{ item }}"
   changed_when: true
   with_items:
-    - "{{ vault_mono_init_secrets['keys'][0] }}"
-    - "{{ vault_mono_init_secrets['keys'][1] }}"
-    - "{{ vault_mono_init_secrets['keys'][2] }}"
+    - "{{ vault_mono_init_unseal_fact_init_secrets['keys'][0] }}"
+    - "{{ vault_mono_init_unseal_fact_init_secrets['keys'][1] }}"
+    - "{{ vault_mono_init_unseal_fact_init_secrets['keys'][2] }}"
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Fail if not active
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
@@ -101,6 +101,6 @@
     validate_certs: true
     return_content: true
     headers:
-      "X-Vault-Token": "{{ vault_mono_init_secrets.root_token }}"
-  register: vault_mono_remove_root_token
-  changed_when: vault_mono_remove_root_token.status == 204
+      "X-Vault-Token": "{{ vault_mono_init_unseal_fact_init_secrets.root_token }}"
+  register: vault_mono_init_unseal_tmp_remove_root_token
+  changed_when: vault_mono_init_unseal_tmp_remove_root_token.status == 204
