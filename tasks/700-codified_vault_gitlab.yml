@@ -57,7 +57,7 @@
   register: vault_mono_codified_vault_tmp_output
   ignore_errors: true
 
-- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Remove Root Token
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Revoke Root Token
   no_log: "{{ vault_mono_debug_no_log }}"
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"

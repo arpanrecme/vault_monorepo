@@ -1,5 +1,5 @@
 ---
-- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL private key with the default values (4096 bits, RSA)
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL private key
   community.crypto.openssl_privatekey:
     path: "{{ vault_mono_local_file_client_private_key }}"
     mode: "0600"
@@ -57,7 +57,7 @@
     extended_key_usage_critical: true
   register: vault_mono_server_vault_openssl_csr_pipe
 
-- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL certificate signed with your own CA certificate
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL certificate signed with own CA certificate
   when: vault_mono_server_vault_openssl_csr_pipe.csr is defined
   community.crypto.x509_certificate_pipe:
     csr_content: "{{ vault_mono_server_vault_openssl_csr_pipe.csr }}"

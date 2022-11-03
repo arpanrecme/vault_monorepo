@@ -1,12 +1,12 @@
 ---
 # tasks file for hashicorp_vault
-- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Vault Systemd group {{ vault_mono_install_systemd_group }}
+- name: "Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Create Vault Systemd Group: {{ vault_mono_install_systemd_group }}"
   ansible.builtin.group:
     name: "{{ vault_mono_install_systemd_group }}"
     state: present
     system: true
 
-- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Add systemd new user
+- name: "Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Create Vault Systemd User: {{ vault_mono_install_systemd_user }}"
   ansible.builtin.user:
     name: "{{ vault_mono_install_systemd_user }}"
     group: "{{ vault_mono_install_systemd_group }}"
@@ -63,7 +63,7 @@
     - "{{ vault_mono_install_tmp_dir_path }}"
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Config File
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Add Vault server configuration file
   ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/vault.hcl.j2"
     dest: "{{ vault_mono_install_config_file_path }}"
@@ -85,7 +85,7 @@
     owner: "{{ vault_mono_install_systemd_user }}"
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
-- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Unarchive Vault (local)
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Unarchive Vault ZIP
   ansible.builtin.unarchive:
     src: "{{ vault_mono_install_tmp_dir_path }}/{{ vault_mono_install_package }}"
     dest: "{{ vault_mono_install_tmp_dir_path }}"
@@ -112,7 +112,7 @@
     capability: cap_ipc_lock=ep
     state: present
 
-- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Systemd Service File
+- name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Add Systemd Service File
   ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/vault.service.j2"
     dest: "/etc/systemd/system/{{ vault_mono_install_systemd_service_name }}.service"

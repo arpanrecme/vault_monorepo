@@ -88,7 +88,7 @@
     status_code: 200
     validate_certs: true
 
-- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Remove Root Token
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Revoke Root Token
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
     SSL_CERT_FILE: "{{ vault_mono_local_file_root_ca_certificate }}"
   ansible.builtin.uri:

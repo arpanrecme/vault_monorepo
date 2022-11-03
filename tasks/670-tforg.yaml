@@ -1,9 +1,9 @@
 ---
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Reset new org stat
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Reset new organization fact
   ansible.builtin.set_fact:
     vault_mono_tfe_fact_org_is_newly_created: false
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Get organizations
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Get organization details
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.uri:
     url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
@@ -13,10 +13,10 @@
     status_code: 200,404
   register: vault_mono_tfe_tmp_api_org_details
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Create organizations
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Create organization
   when: vault_mono_tfe_tmp_api_org_details.status == 404
   block:
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Create organizations | Create new org
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Create organization | Create new organization
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.uri:
         method: POST
@@ -45,7 +45,7 @@
           content-type: "application/vnd.api+json"
         status_code: 200
       register: vault_mono_tfe_tmp_new_org_details
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Reset fact with new
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Create workspace | Reset fact with new
       ansible.builtin.set_fact:
         vault_mono_tfe_tmp_api_org_details: "{{ vault_mono_tfe_tmp_new_org_details }}"
         vault_mono_tfe_fact_org_is_newly_created: true
@@ -76,7 +76,10 @@
 
     - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Organization | Update organization | Update Authentication Factor
       no_log: "{{ vault_mono_debug_no_log }}"
-      when: (vault_mono_tfe_org_collaborator_auth_policy is defined) and vault_mono_tfe_tmp_api_org_details.json.data.attributes["collaborator-auth-policy"] != vault_mono_tfe_org_collaborator_auth_policy
+      when: >
+        (vault_mono_tfe_org_collaborator_auth_policy is defined)
+        and
+        vault_mono_tfe_tmp_api_org_details.json.data.attributes["collaborator-auth-policy"] != vault_mono_tfe_org_collaborator_auth_policy
       ansible.builtin.uri:
         method: PATCH
         url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}"
@@ -96,11 +99,11 @@
 
 ## Workspace
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Reset new Workspace stat | {{ vault_mono_tfe_org_workspace_name }}
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Reset new workspace fact
   ansible.builtin.set_fact:
     vault_mono_tfe_fact_workspace_is_newly_created: false
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Get Workspaces | {{ vault_mono_tfe_org_workspace_name }}
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Get Workspace details
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.uri:
     url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
@@ -110,10 +113,10 @@
     status_code: 200,404
   register: vault_mono_tfe_tmp_workspace_response
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | {{ vault_mono_tfe_org_workspace_name }}
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Create workspace
   when: vault_mono_tfe_tmp_workspace_response.status == 404
   block:
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Create new workspace | {{ vault_mono_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Create workspace | Create new workspace
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.uri:
         method: POST
@@ -134,7 +137,7 @@
       changed_when: vault_mono_tfe_tmp_workspace_create_response.status == 201
       failed_when: vault_mono_tfe_tmp_workspace_create_response.status != 201
 
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Get new Workspace details | {{ vault_mono_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Create workspace | Get new Workspace details
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.uri:
         url: "{{ vault_mono_tfe_api_endpoint }}/organizations/{{ vault_mono_tfe_org_name }}/workspaces/{{ vault_mono_tfe_org_workspace_name }}"
@@ -144,16 +147,16 @@
         status_code: 200
       register: vault_mono_tfe_tmp_workspace_details_response
 
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Create workspace | Reset fact with new | {{ vault_mono_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Create workspace | Reset fact with new workspace
       ansible.builtin.set_fact:
         vault_mono_tfe_tmp_workspace_response: "{{ vault_mono_tfe_tmp_workspace_details_response }}"
         vault_mono_tfe_fact_workspace_is_newly_created: true
       when: vault_mono_tfe_tmp_workspace_create_response.changed
 
-- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | {{ vault_mono_tfe_org_workspace_name }}
+- name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Update Workspace
   when: not vault_mono_tfe_fact_workspace_is_newly_created
   block:
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | auto-apply | {{ vault_mono_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Update Workspace | auto-apply
       no_log: "{{ vault_mono_debug_no_log }}"
       when: (vault_mono_tfe_tmp_workspace_response.json.data.attributes["auto-apply"] | bool) != (vault_mono_tfe_org_workspace_auto_apply | bool)
       ansible.builtin.uri:
@@ -172,7 +175,7 @@
       register: vault_mono_tfe_tmp_workspace_update_auto_apply_response
       changed_when: vault_mono_tfe_tmp_workspace_update_auto_apply_response.status == 200
 
-    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspaces | Update Workspace | execution-mode | {{ vault_mono_tfe_org_workspace_name }}
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup | Workspace | Update Workspace | execution-mode
       no_log: "{{ vault_mono_debug_no_log }}"
       when: >
         (vault_mono_tfe_org_workspace_execution_mode is defined)
