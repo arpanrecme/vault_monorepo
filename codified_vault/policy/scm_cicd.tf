@@ -17,7 +17,12 @@ data "vault_policy_document" "scm_cicd" {
   rule {
     path         = "auth/approle/role/scm_cicd/secret-id-accessor/lookup"
     capabilities = ["update", "read"]
-    description = "Allow to create scm_cicd secret id"
+    description  = "Allow to check scm_cicd secret id accessor"
+  }
+  rule {
+    path         = "auth/approle/role/scm_cicd/secret-id"
+    capabilities = ["update", "read"]
+    description  = "Allow to create scm_cicd secret id"
   }
 }
 
