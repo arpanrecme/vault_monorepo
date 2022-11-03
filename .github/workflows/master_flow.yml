@@ -2,7 +2,7 @@ name: Master Application Flow
 
 "on":
   pull_request:
-    branches: ["feature/inprogress"]
+    branches: ["feature*"]
 
 permissions:
   contents: read
