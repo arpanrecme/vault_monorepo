@@ -1,13 +1,10 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Python application
+name: Master Application Flow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -18,16 +15,15 @@ jobs:
     container:
       image: arpanrecme/vaultmonorepo:8
     steps:
-    - uses: actions/checkout@v3
-    - name: Execute Scripe
-      run: |
-        bw login --apikey --quiet
-        export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
-        ansible-playbook site.yml
-        bw logout
-        bw status
-      env:
-        BW_CLIENTID: ${{ secrets.BW_CLIENTID }}
-        BW_CLIENTSECRET: ${{ secrets.BW_CLIENTSECRET }}
-        BW_MASTERPASSWORD: ${{ secrets.BW_MASTERPASSWORD }}
-        
+      - uses: actions/checkout@v3
+      - name: Execute Script
+        run: |
+          bw login --apikey --quiet
+          export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
+          ansible-playbook site.yml
+          bw logout
+          bw status
+        env:
+          BW_CLIENTID: ${{ secrets.BW_CLIENTID }}
+          BW_CLIENTSECRET: ${{ secrets.BW_CLIENTSECRET }}
+          BW_MASTERPASSWORD: ${{ secrets.BW_MASTERPASSWORD }}

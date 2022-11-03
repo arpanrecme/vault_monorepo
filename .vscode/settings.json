@@ -11,6 +11,8 @@
     "bitwarden",
     "capath",
     "cicd",
+    "CLIENTID",
+    "CLIENTSECRET",
     "creds",
     "dearmor",
     "envfile",
