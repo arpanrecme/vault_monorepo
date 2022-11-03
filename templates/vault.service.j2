@@ -3,15 +3,15 @@ Description="HashiCorp Vault - A tool for managing secrets"
 Documentation=https://www.vaultproject.io/docs/
 Requires=network-online.target
 After=network-online.target
-ConditionFileNotEmpty={{ vault_mono_config_file_path }}
+ConditionFileNotEmpty={{ vault_mono_install_config_file_path }}
 StartLimitIntervalSec=60
 StartLimitBurst=3
 
 [Service]
 Type=notify
-# EnvironmentFile={{ vault_mono_env_file_path }}
-User={{ vault_mono_server_vault_systemd_user }}
-Group={{ vault_mono_server_vault_systemd_group }}
+# EnvironmentFile={{ vault_mono_install_env_file_path }}
+User={{ vault_mono_install_systemd_user }}
+Group={{ vault_mono_install_systemd_group }}
 ProtectSystem=full
 ProtectHome=read-only
 PrivateTmp=yes
@@ -20,7 +20,7 @@ SecureBits=keep-caps
 AmbientCapabilities=CAP_IPC_LOCK
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart={{ vault_mono_bin_file_path }} server -config={{ vault_mono_config_file_path }}
+ExecStart={{ vault_mono_install_bin_file_path }} server -config={{ vault_mono_install_config_file_path }}
 ExecReload=/bin/kill --signal HUP $MAINPID
 KillMode=process
 KillSignal=SIGINT

@@ -80,7 +80,7 @@
   handlers:
     - name: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
       ansible.builtin.service:
-        name: "{{ vault_mono_systemd_service_name }}"
+        name: "{{ vault_mono_install_systemd_service_name }}"
         state: "{{ item }}"
       with_items:
         - reloaded

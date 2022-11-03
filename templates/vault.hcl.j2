@@ -8,12 +8,12 @@ max_lease_ttl       = "768h"
 listener "tcp" {
   address                             = "0.0.0.0:{{ vault_mono_global_config.VAULT_ADDR_PORT }}"
   tls_disable                         = false
-  tls_cert_file                       = "{{ vault_mono_tls_vault_tls_cert_file }}"
-  tls_key_file                        = "{{ vault_mono_tls_vault_tls_key_file }}"
+  tls_cert_file                       = "{{ vault_mono_tls_cert_file }}"
+  tls_key_file                        = "{{ vault_mono_tls_key_file }}"
   tls_require_and_verify_client_cert  = true
-  tls_client_ca_file                  = "{{ vault_mono_tls_vault_tls_client_ca_file }}"
+  tls_client_ca_file                  = "{{ vault_mono_tls_client_ca_file }}"
 }
 
 storage "file" {
-  path = "{{ vault_mono_data_dir_path }}"
+  path = "{{ vault_mono_install_data_dir_path }}"
 }

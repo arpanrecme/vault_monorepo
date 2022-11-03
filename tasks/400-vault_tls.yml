@@ -11,25 +11,25 @@
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Write TLS Client CA Certificate To File for tls_client_ca_file
   ansible.builtin.copy:
     src: "{{ vault_mono_local_file_root_ca_certificate }}"
-    dest: "{{ vault_mono_tls_vault_tls_client_ca_file }}"
-    owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_group }}"
+    dest: "{{ vault_mono_tls_client_ca_file }}"
+    owner: "{{ vault_mono_install_systemd_user }}"
+    group: "{{ vault_mono_install_systemd_group }}"
     mode: "0400"
     remote_src: false
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Generate an OpenSSL private key for tls_key_file
   community.crypto.openssl_privatekey:
-    path: "{{ vault_mono_tls_vault_tls_key_file }}"
-    owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_group }}"
+    path: "{{ vault_mono_tls_key_file }}"
+    owner: "{{ vault_mono_install_systemd_user }}"
+    group: "{{ vault_mono_install_systemd_group }}"
     mode: "0400"
   register: vault_mono_server_vault_certificate_private_key
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Check existing certificate file for tls_cert_file
   ansible.builtin.stat:
-    path: "{{ vault_mono_tls_vault_tls_cert_file }}"
+    path: "{{ vault_mono_tls_cert_file }}"
   register: vault_mono_server_vault_certificate_file_stat
 
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get information on ROOT CA Certificate
@@ -41,7 +41,7 @@
 - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate | Get information on generated certificate for tls_cert_file
   when: vault_mono_server_vault_certificate_file_stat.stat.exists
   community.crypto.x509_certificate_info:
-    path: "{{ vault_mono_tls_vault_tls_cert_file }}"
+    path: "{{ vault_mono_tls_cert_file }}"
     valid_at:
       point_1: "+1d"
   register: vault_mono_server_vault_x509_certificate_info
@@ -84,7 +84,7 @@
       )
     )
   community.crypto.openssl_csr_pipe:
-    privatekey_path: "{{ vault_mono_tls_vault_tls_key_file }}"
+    privatekey_path: "{{ vault_mono_tls_key_file }}"
     common_name: "{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
     subject_alt_name:
       - "DNS:{{ vault_mono_global_config.VAULT_ADDR_DOMAIN_NAME }}"
@@ -129,9 +129,9 @@
   when: vault_mono_server_vault_x509_certificate_pipe.certificate is defined
   ansible.builtin.copy:
     content: "{{ vault_mono_server_vault_chain_x509_certificate }}"
-    dest: "{{ vault_mono_tls_vault_tls_cert_file }}"
-    owner: "{{ vault_mono_server_vault_systemd_user }}"
-    group: "{{ vault_mono_server_vault_systemd_group }}"
+    dest: "{{ vault_mono_tls_cert_file }}"
+    owner: "{{ vault_mono_install_systemd_user }}"
+    group: "{{ vault_mono_install_systemd_group }}"
     mode: "0400"
   notify: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
 
