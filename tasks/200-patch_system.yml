@@ -119,40 +119,40 @@
     - file_loc: 1200-wheel
       rule: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL"
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Vault login group {{ vault_mono_server_login_user_groupname }}
+- name: Vault Monorepo | Setup Vault Server | Patch System | Vault login group {{ vault_mono_system_patch_login_group }}
   ansible.builtin.group:
-    name: "{{ vault_mono_server_login_user_groupname }}"
+    name: "{{ vault_mono_system_patch_login_group }}"
     state: present
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Add login user {{ vault_mono_server_login_user_username }}
+- name: Vault Monorepo | Setup Vault Server | Patch System | Add login user {{ vault_mono_system_patch_login_user }}
   ansible.builtin.user:
-    name: "{{ vault_mono_server_login_user_username }}"
-    group: "{{ vault_mono_server_login_user_groupname }}"
+    name: "{{ vault_mono_system_patch_login_user }}"
+    group: "{{ vault_mono_system_patch_login_group }}"
     create_home: true
     append: true
     groups:
       - wheel
-    home: "{{ vault_mono_server_login_user_homedir }}"
+    home: "{{ vault_mono_system_patch_homedir_login_user }}"
     shell: /bin/zsh
-  register: vault_mono_server_login_user_homedir_result
+  register: vault_mono_system_patch_homedir_login_user_result
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Check zshrc file
   ansible.builtin.stat:
-    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
-  register: vault_mono_server_login_user_homedir_zshrc_stat
+    path: "{{ vault_mono_system_patch_homedir_login_user_result.home }}/.zshrc"
+  register: vault_mono_system_patch_homedir_login_user_zshrc_stat
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Create zshrc file
-  when: not vault_mono_server_login_user_homedir_zshrc_stat.stat.exists
+  when: not vault_mono_system_patch_homedir_login_user_zshrc_stat.stat.exists
   ansible.builtin.file:
-    group: "{{ vault_mono_server_login_user_groupname }}"
-    path: "{{ vault_mono_server_login_user_homedir_result.home }}/.zshrc"
-    owner: "{{ vault_mono_server_login_user_username }}"
+    group: "{{ vault_mono_system_patch_login_group }}"
+    path: "{{ vault_mono_system_patch_homedir_login_user_result.home }}/.zshrc"
+    owner: "{{ vault_mono_system_patch_login_user }}"
     mode: "0644"
     state: touch
 
-- name: Vault Monorepo | Setup Vault Server | Patch System | Set authorized key for login user {{ vault_mono_server_login_user_username }}
+- name: Vault Monorepo | Setup Vault Server | Patch System | Set authorized key for login user {{ vault_mono_system_patch_login_user }}
   ansible.posix.authorized_key:
-    user: "{{ vault_mono_server_login_user_username }}"
+    user: "{{ vault_mono_system_patch_login_user }}"
     state: present
     key: "{{ item }}"
   with_items:
@@ -212,7 +212,7 @@
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Set a hostname
   ansible.builtin.hostname:
-    name: "{{ vault_mono_codified_system_patch_hostname }}"
+    name: "{{ vault_mono_system_patch_hostname }}"
     use: debian
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Set Hosts file
@@ -227,7 +227,7 @@
     - regexp: '^127\.0\.0\.1'
       line: "127.0.0.1    localhost"
     - regexp: '^127\.0\.1\.1'
-      line: "127.0.1.1    {{ vault_mono_codified_system_patch_hostname }}"
+      line: "127.0.1.1    {{ vault_mono_system_patch_hostname }}"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | Enable network services
   ansible.builtin.service:
