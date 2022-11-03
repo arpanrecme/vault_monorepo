@@ -54,10 +54,10 @@
         port: 22
         host: "{{ vault_mono_vault_server_public_ip }}"
         timeout: 3
-      register: vault_mono_server_ping_test
+      register: vault_mono_tmp_server_ping_test
       retries: 100
       delay: 3
-      until: 'vault_mono_server_ping_test.state is defined and vault_mono_server_ping_test.state == "started"'
+      until: 'vault_mono_tmp_server_ping_test.state is defined and vault_mono_tmp_server_ping_test.state == "started"'
 
     - name: Vault Monorepo | Get Server Information | Create Server | Linode | Adding dynamic host
       ansible.builtin.add_host:
@@ -73,7 +73,7 @@
       delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
       ansible.builtin.ping:
       ignore_unreachable: true
-      register: vault_mono_dynamic_host_ping
+      register: vault_mono_tmp_dynamic_host_ping
 
     - name: Vault Monorepo | Get Server Information | Create Server | Linode | Adding dynamic host with new user {{ vault_mono_system_patch_login_user }}
       ansible.builtin.add_host:
@@ -84,7 +84,7 @@
         ansible_user: "{{ vault_mono_system_patch_login_user }}"
         ansible_ssh_private_key_file: "{{ vault_mono_local_file_openssh_nopass_private_key }}"
         ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-      when: vault_mono_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_dynamic_host_ping.msg'
+      when: vault_mono_tmp_dynamic_host_ping.msg is defined and '"Permission denied (publickey)" in vault_mono_tmp_dynamic_host_ping.msg'
 
     - name: Vault Monorepo | Get Server Information | Create Server | Linode | Verify dynamic host with {{ vault_mono_system_patch_login_user }}
       delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
