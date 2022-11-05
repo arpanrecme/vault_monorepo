@@ -98,6 +98,7 @@
       tags:
         - vault_init_unseal
         - codified_vault
+        - downstream
 
     - name: Vault Monorepo | Configure Vault | Get Vault Initial Secret
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/550-get_vault_init_secret.yml"
