@@ -3,3 +3,5 @@
 *.pyc
 *.log
 secret.*
+collections/ansible_collections/*
+!collections/ansible_collections/arpanrecme/
