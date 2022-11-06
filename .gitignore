@@ -1,7 +1,11 @@
-.terraform*
-.tmp
 *.pyc
+
 *.log
-secret.*
+
 collections/ansible_collections/*
 !collections/ansible_collections/arpanrecme/
+
+codified_vault/secret.ansible_auto.backend.tf
+codified_vault/.terraform.lock.hcl
+codified_vault/.terraform
+.tmp

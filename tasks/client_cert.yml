@@ -1,4 +1,10 @@
 ---
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Create mandatory directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ vault_mono_mutual_tls_files_dir }}"
+    mode: "0750"
+
 - name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate an OpenSSL private key
   community.crypto.openssl_privatekey:
     path: "{{ vault_mono_local_file_client_private_key }}"

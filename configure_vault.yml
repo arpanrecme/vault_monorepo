@@ -1,0 +1,40 @@
+---
+- name: Configure Vault
+  hosts: localhost
+  gather_facts: false
+  become: false
+  vars_files:
+    - "{{ playbook_dir }}/vars/main.yml"
+  tasks:
+    - name: Vault Monorepo | Configure Vault | Setup Client Certificate
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/client_cert.yml"
+      tags:
+        - vault_init_unseal
+        - codified_vault
+        - downstream
+
+    - name: Vault Monorepo | Configure Vault | Get Vault Initial Secret
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/get_vault_init_secret.yml"
+      tags:
+        - vault_init_unseal
+        - codified_vault
+
+    - name: Vault Monorepo | Configure Vault | Initialize and Unseal
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/vault_init_unseal.yml"
+      tags:
+        - vault_init_unseal
+
+    - name: Vault Monorepo | Configure Vault | Update Vault initial secret
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/update_vault_init_secret.yml"
+      tags:
+        - vault_init_unseal
+
+    - name: Vault Monorepo | Configure Vault | Terraform Cloud Setup
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/tforg.yaml"
+      tags:
+        - codified_vault
+
+    - name: Vault Monorepo | Configure Vault | Terraform Codified Vault
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/codified_vault_gitlab.yml"
+      tags:
+        - codified_vault
