@@ -1,0 +1,5 @@
+collections:
+  # directory containing the collection
+  # - source: ./collections/ansible_collections/arpanrecme/vault_monorepo
+  #   type: dir
+  - name: community.general
