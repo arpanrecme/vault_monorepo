@@ -1,0 +1,11 @@
+namespace: arpanrecme
+name: vault_monorepo
+version: 1.0.0
+readme: README.md
+authors:
+  - Arpan Mandal <arpan.rec@gmail.com>
+description: "Utils for vault monorepo"
+license_file: LICENSE
+repository: https://github.com/arpanrecme/vault_monorepo
+documentation: https://github.com/arpanrecme/vault_monorepo
+homepage: https://github.com/arpanrecme/vault_monorepo
