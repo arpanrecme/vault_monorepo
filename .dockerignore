@@ -1,2 +1,4 @@
 ./*
 !requirements.txt
+!requirements.yml
+!ansible_collection

@@ -1,5 +1,5 @@
 ---
-image: arpanrecme/vaultmonorepo:8
+image: arpanrecme/vaultmonorepo:9
 stages:
   - vault-action
 

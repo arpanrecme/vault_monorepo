@@ -12,7 +12,7 @@ jobs:
   master_flow:
     runs-on: ubuntu-latest
     container:
-      image: arpanrecme/vaultmonorepo:8
+      image: arpanrecme/vaultmonorepo:9
     steps:
       - uses: actions/checkout@v3
       - name: Execute Script

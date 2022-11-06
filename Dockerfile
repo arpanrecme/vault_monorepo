@@ -1,4 +1,4 @@
-# docker build . -t arpanrecme/vaultmonorepo:8
+# docker build . -t arpanrecme/vaultmonorepo:9
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -14,6 +14,13 @@ COPY requirements.txt /tmp/requirements.txt
 
 RUN python3 -m pip install -r /tmp/requirements.txt --no-cache-dir --upgrade && \
     rm -rf /tmp/requirements.txt
+
+COPY requirements.yml requirements.yml
+
+COPY ansible_collection ansible_collection
+
+RUN ansible-galaxy install -r requirements.yml && \
+    rm -rf requirements.yml ansible_collection
 
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     gpg --dearmor | \
