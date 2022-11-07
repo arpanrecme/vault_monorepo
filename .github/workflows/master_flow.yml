@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Execute Script
         run: |
+          ansible-galaxy install -r requirements.yml
           bw login --apikey --quiet
           export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
           ansible-playbook site.yml
