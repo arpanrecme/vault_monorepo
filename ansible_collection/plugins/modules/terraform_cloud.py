@@ -140,7 +140,7 @@ def crud(hostname=None, token=None, organization=None, organization_attributes=N
         if organization_attributes and len(organization_attributes) > 0:
             _existing_attributes = _tfe_org_details["data"]["attributes"]
             for attribute in organization_attributes.keys():
-                if organization_attributes[attribute] != _existing_attributes[attribute]:
+                if attribute not in _existing_attributes.keys() or organization_attributes[attribute] != _existing_attributes[attribute]:
                     _org_update_data = {
                         "data": {
                             "type": "organizations",
@@ -213,7 +213,8 @@ if __name__ == "__main__":
         workspace_name="testmod1",
         organization_attributes={
             "email": "afasf@gmail.com",
-            "collaborator-auth-policy": "two_factor_mandatory"
+            "collaborator-auth-policy": "two_factor_mandatory",
+            "sfasfasf": "dfasfsa"
         }
     )
     print(json.dumps(res, indent=2))
