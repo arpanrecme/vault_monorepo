@@ -166,6 +166,7 @@ def crud(hostname=None, token=None, organization=None, organization_attributes=N
     if not workspace_name:
         return {"error": "workspace_name Can not be null", "result": result}
     result = tfe_org(headers=headers, organization=organization, organization_attributes=organization_attributes, hostname=hostname, result=result,)
+    return result
 
 
 def run_module():
