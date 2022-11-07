@@ -4,8 +4,6 @@
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
 from __future__ import (absolute_import, division, print_function)
 from ansible.module_utils.basic import AnsibleModule
-from base64 import b64encode
-from nacl import encoding, public
 import requests
 __metaclass__ = type
 
@@ -34,15 +32,10 @@ options:
         description: Name of terraform cloud organization
         required: true
         type: str
-    organization_mail:
-        description: Email of terraform cloud organization
+    organization_attributes:
+        description: Attributes of terraform cloud organization
         required: false
-        type: str
-    collaborator_auth_policy:
-        description: If two factor is Required
-        required: false
-        type: str
-        choices: ["password" , "two_factor_mandatory"]
+        type: dict
     workspace_name:
         description: Name of terraform workspace
         required: true
@@ -97,7 +90,7 @@ RETURN = r'''
 '''
 
 
-def crud(hostname=None, token=None, organization=None, organization_mail=None, collaborator_auth_policy=None, workspace_name=None, workspace_auto_apply=None, execution_mode=None) -> dict:
+def crud(hostname=None, token=None, organization=None, organization_attributes=None, workspace_name=None) -> dict:
     result = {"changed": False, "organization_updated": False, "organization_created": False}
     headers = {
         "Accept": "application/vnd.github+json",
@@ -110,81 +103,66 @@ def crud(hostname=None, token=None, organization=None, organization_mail=None, c
         return {"error": "organization Can not be null", "result": result}
     if not workspace_name:
         return {"error": "workspace_name Can not be null", "result": result}
-    if collaborator_auth_policy and collaborator_auth_policy not in ["password", "two_factor_mandatory"]:
-        return {"error": "collaborator_auth_policy should be in [password , two_factor_mandatory]", "result": result}
-    if execution_mode and execution_mode not in ["remote", "local", "agent"]:
-        return {"error": "execution_mode should be in [remote, local, agent]", "result": result}
 
     _tfe_org_ep = f"https://{hostname}/api/v2/organizations/{organization}"
-    _tfe_org_ep_response = requests.get(_tfe_org_ep, timeout=30, headers=headers)
+    _tfe_existing_org_details_response = requests.get(_tfe_org_ep, timeout=30, headers=headers)
 
-    if _tfe_org_ep_response.status_code == 200:
-        _tfe_org_details = _tfe_org_ep_response.json()
-    elif _tfe_org_ep_response.status_code == 404:
+    if _tfe_existing_org_details_response.status_code == 200:
+        _tfe_org_details = _tfe_existing_org_details_response.json()
+    elif _tfe_existing_org_details_response.status_code == 404:
         _org_create_data = {
             "data": {
                 "type": "organizations",
-                "attributes": {
-                    "name": organization
-                }
+                "attributes": {}
             }
         }
-        if organization_mail:
-            _org_create_data["data"]["attributes"]["email"] = organization_mail
-        if collaborator_auth_policy:
-            _org_create_data["data"]["attributes"]["collaborator-auth-policy"] = collaborator_auth_policy
+        if organization_attributes and len(organization_attributes) > 0:
+            _org_create_data["data"]["attributes"] = organization_attributes
+        _org_create_data["data"]["attributes"]["name"] = organization
         _tfe_org_create_response = requests.post(f"https://{hostname}/api/v2/organizations", timeout=30, headers=headers, json=_org_create_data)
         if _tfe_org_create_response.status_code == 201:
             result["changed"] = True
             result["organization_created"] = True
-            _tfe_org_ep_response = requests.get(_tfe_org_ep, timeout=30, headers=headers)
-            if _tfe_org_ep_response.status_code == 200:
-                _tfe_org_details = _tfe_org_ep_response.json()
+            _tfe_newly_created_org_details_response = requests.get(_tfe_org_ep, timeout=30, headers=headers)
+            if _tfe_newly_created_org_details_response.status_code == 200:
+                _tfe_org_details = _tfe_newly_created_org_details_response.json()
             else:
-                return {"error": {"status": _tfe_org_ep_response.status_code, "msg": _tfe_org_ep_response.json()}, "result": result}
+                result["error"] = {"status": _tfe_newly_created_org_details_response.status_code, "msg": _tfe_newly_created_org_details_response.json()}
+                return result
         else:
-            return {"error": {"status": _tfe_org_create_response.status_code, "msg": _tfe_org_create_response.json()}, "result": result}
+            result["error"] = {"status": _tfe_org_create_response.status_code, "msg": _tfe_org_create_response.json()}
+            return result
     else:
-        return {"error": {"status": _tfe_org_ep_response.status_code, "msg": _tfe_org_ep_response.json()}, "result": result}
+        result["error"] = {"status": _tfe_existing_org_details_response.status_code, "msg": _tfe_existing_org_details_response.json()}
+        return result
 
     if not result["organization_created"]:
-        if organization_mail and _tfe_org_details["data"]["attributes"]["email"] != organization_mail:
-            _org_email_update_data = {
-                "data": {
-                    "type": "organizations",
-                    "attributes": {
-                        "email": organization_mail
+        if organization_attributes and len(organization_attributes) > 0:
+            _existing_attributes = _tfe_org_details["data"]["attributes"]
+            for attribute in organization_attributes.keys():
+                if organization_attributes[attribute] != _existing_attributes[attribute]:
+                    _org_update_data = {
+                        "data": {
+                            "type": "organizations",
+                            "attributes": organization_attributes
+                        }
                     }
-                }
-            }
-            _org_email_update_response = requests.patch(_tfe_org_ep, timeout=30, headers=headers, json=_org_email_update_data)
-            if _org_email_update_response.status_code == 200:
-                result["organization_updated"] = True
-            else:
-                return {"error": {"status": _org_email_update_response.status_code, "msg": _org_email_update_response.json()}, "result": result}
+                    _org_update_response = requests.patch(_tfe_org_ep, timeout=30, headers=headers, json=_org_update_data)
+                    if _org_update_response.status_code == 200:
+                        result["changed"] = True
+                        result["organization_updated"] = True
+                        _tfe_org_updated_details_response = requests.get(_tfe_org_ep, timeout=30, headers=headers)
+                        if _tfe_org_updated_details_response.status_code == 200:
+                            _tfe_org_details = _tfe_org_updated_details_response.json()
+                        else:
+                            result["error"] = {"status": _tfe_org_updated_details_response.status_code, "msg": _tfe_org_updated_details_response.json()}
+                            return result
+                        break
 
-        if collaborator_auth_policy and _tfe_org_details["data"]["attributes"]["collaborator-auth-policy"] != collaborator_auth_policy:
-            _org_collaborator_auth_policy_update_data = {
-                "data": {
-                    "type": "organizations",
-                    "attributes": {
-                        "collaborator-auth-policy": collaborator_auth_policy
-                    }
-                }
-            }
-            _org_collaborator_auth_policy_update_response = requests.patch(_tfe_org_ep, timeout=30, headers=headers, json=_org_collaborator_auth_policy_update_data)
-            if _org_collaborator_auth_policy_update_response.status_code == 200:
-                result["organization_updated"] = True
-            else:
-                return {"error": {"status": _org_collaborator_auth_policy_update_response.status_code, "msg": _org_collaborator_auth_policy_update_response.json()}, "result": result}
-
-    _tfe_org_ep_response = requests.get(_tfe_org_ep, timeout=30, headers=headers)
-    if _tfe_org_ep_response.status_code == 200:
-        _tfe_org_details = _tfe_org_ep_response.json()
-    else:
-        return {"error": {"status": _tfe_org_ep_response.status_code, "msg": _tfe_org_ep_response.json()}, "result": result}
+                    result["error"] = {"status": _org_update_response.status_code, "msg": _org_update_response.json()}
+                    return result
     result["organization"] = _tfe_org_details
-    return {"result": result}
+    return result
 
 
 def run_module():
@@ -193,8 +171,7 @@ def run_module():
         hostname=dict(required=False, default="app.terraform.io"),
         token=dict(type="str", required=True, no_log=True),
         organization=dict(type='str', required=True),
-        organization_mail=dict(type='str', required=False),
-        collaborator_auth_policy=dict(type='str', required=False),
+        organization_attributes=dict(type='dict', required=False),
         workspace_name=dict(type="str", required=True),
         workspace_auto_apply=dict(type='str', required=False),
         execution_mode=dict(type="str", required=False),
@@ -208,11 +185,8 @@ def run_module():
     tfe_response = crud(hostname=module.params['hostname'],
                         token=module.params['token'],
                         organization=module.params['organization'],
-                        organization_mail=module.params['organization_mail'],
-                        collaborator_auth_policy=module.params['collaborator_auth_policy'],
+                        organization_attributes=module.params['organization_attributes'],
                         workspace_name=module.params['workspace_name'],
-                        workspace_auto_apply=module.params['workspace_auto_apply'],
-                        execution_mode=module.params['execution_mode'],
                         )
 
     if "error" in tfe_response.keys():
@@ -237,6 +211,9 @@ if __name__ == "__main__":
         token=os.getenv("TF_PROD_TOKEN"),
         organization="arpanrecme11",
         workspace_name="testmod1",
-        organization_mail="arpan.rec11@gmail.com",
+        organization_attributes={
+            "email": "afasf@gmail.com",
+            "collaborator-auth-policy": "two_factor_mandatory"
+        }
     )
     print(json.dumps(res, indent=2))
