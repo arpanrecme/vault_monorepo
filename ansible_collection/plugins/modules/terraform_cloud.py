@@ -90,20 +90,7 @@ RETURN = r'''
 '''
 
 
-def crud(hostname=None, token=None, organization=None, organization_attributes=None, workspace_name=None) -> dict:
-    result = {"changed": False, "organization_updated": False, "organization_created": False}
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "content-type": "application/vnd.api+json",
-        "Authorization": f"Bearer {token}"
-    }
-    if not hostname:
-        return {"error": "Hostname Can not be null", "result": result}
-    if not organization:
-        return {"error": "organization Can not be null", "result": result}
-    if not workspace_name:
-        return {"error": "workspace_name Can not be null", "result": result}
-
+def tfe_org(hostname=None, headers=None, organization=None, organization_attributes=None, result=None) -> dict:
     _tfe_org_ep = f"https://{hostname}/api/v2/organizations/{organization}"
     _tfe_existing_org_details_response = requests.get(_tfe_org_ep, timeout=30, headers=headers)
 
@@ -165,6 +152,22 @@ def crud(hostname=None, token=None, organization=None, organization_attributes=N
     return result
 
 
+def crud(hostname=None, token=None, organization=None, organization_attributes=None, workspace_name=None, workspace_attributes=None) -> dict:
+    result = {"changed": False, "organization_updated": False, "organization_created": False}
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "content-type": "application/vnd.api+json",
+        "Authorization": f"Bearer {token}"
+    }
+    if not hostname:
+        return {"error": "Hostname Can not be null", "result": result}
+    if not organization:
+        return {"error": "organization Can not be null", "result": result}
+    if not workspace_name:
+        return {"error": "workspace_name Can not be null", "result": result}
+    result = tfe_org(headers=headers, organization=organization, organization_attributes=organization_attributes, hostname=hostname, result=result,)
+
+
 def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
@@ -173,8 +176,7 @@ def run_module():
         organization=dict(type='str', required=True),
         organization_attributes=dict(type='dict', required=False),
         workspace_name=dict(type="str", required=True),
-        workspace_auto_apply=dict(type='str', required=False),
-        execution_mode=dict(type="str", required=False),
+        workspace_attributes=dict(type="dict", required=False),
     )
 
     module = AnsibleModule(
@@ -187,6 +189,7 @@ def run_module():
                         organization=module.params['organization'],
                         organization_attributes=module.params['organization_attributes'],
                         workspace_name=module.params['workspace_name'],
+                        workspace_attributes=module.params['workspace_attributes'],
                         )
 
     if "error" in tfe_response.keys():
