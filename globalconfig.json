@@ -1,5 +1,5 @@
 {
-  "_self": "https://raw.githubusercontent.com/arpanrecme/vault_monorepo/main/files/config.json",
+  "_self": "https://raw.githubusercontent.com/arpanrecme/vault_monorepo/main/globalconfig.json",
   "EMAIL": "arpan.rec@gmail.com",
   "VAULT": {
     "FQDN": "172-105-47-176.ip.linodeusercontent.com",
