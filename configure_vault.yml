@@ -30,6 +30,6 @@
         - vault_init_unseal
 
     - name: Vault Monorepo | Configure Vault | Terraform Codified Vault
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/codified_vault_gitlab.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/codified_vault.yml"
       tags:
         - codified_vault
