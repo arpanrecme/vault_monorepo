@@ -21,6 +21,8 @@ Terraform Cloud Setup -> Create Organization and Workspace
 
 Terraform Codified Vault
 
+Flow to downstream ->
+
 ## Prerequisite: Download the below resources from [bitwarden](tasks/011-get_prerequisite.yml)
 
 - OPENSSH KEY - SHA256:Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0
