@@ -1,10 +1,27 @@
 ---
-- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Set Backend config
-  no_log: "{{ vault_mono_debug_no_log }}"
-  ansible.builtin.template:
-    src: "{{ vault_mono_local_templates_dir }}/{{ vault_mono_codified_vault_remote_tfbackend_jinja_file }}"
-    dest: "{{ vault_mono_codified_vault_local_file_tfbackend }}"
-    mode: "0644"
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend config
+  ansible.builtin.set_fact:
+    vault_mono_codified_vault_tmp_backend:
+      "{{ lookup('arpanrecme.vault_monorepo.hcl2json', \
+      path=vault_mono_codified_vault_local_file_tfbackend) }}"
+
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend Workspace Name
+  ansible.builtin.set_fact:
+    vault_mono_codified_vault_tmp_workspace_backend: "{{ vault_mono_codified_vault_tmp_backend.terraform.backend.remote.workspaces.name }}"
+
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Create Remote Backend
+  arpanrecme.vault_monorepo.terraform_cloud_workspace:
+    token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
+    organization: "{{ vault_mono_tfe_org_name }}"
+    organization_attributes:
+      email: "{{ vault_mono_tfe_org_email }}"
+      "collaborator-auth-policy": "{{ vault_mono_tfe_org_collaborator_auth_policy }}"
+    workspace: "{{ vault_mono_codified_vault_tmp_workspace_backend }}"
+    workspace_attributes:
+      "allow-destroy-plan": True
+      "auto-apply": "{{ vault_mono_tfe_org_workspace_auto_apply }}"
+      "execution-mode": "{{ vault_mono_tfe_org_workspace_execution_mode }}"
+    hostname: "{{ vault_mono_tfe_hostname }}"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
@@ -26,6 +43,10 @@
     project_path: "{{ vault_mono_codified_vault_dir }}"
     state: present
     force_init: true
+    backend_config:
+      hostname: "{{ vault_mono_tfe_hostname }}"
+      organization: "{{ vault_mono_tfe_org_name }}"
+      token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
     # backend_config_files:
     #   - "{{ vault_mono_codified_vault_local_file_tfbackend }}"
   environment:

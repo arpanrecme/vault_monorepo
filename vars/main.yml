@@ -76,12 +76,10 @@ vault_mono_tfe_api_endpoint: "https://{{ vault_mono_tfe_hostname }}/api/v2"
 vault_mono_tfe_org_name: "{{ vault_mono_global_config.TERRAFORM_CLOUD.ORGANIZATION }}"
 vault_mono_tfe_org_email: "{{ vault_mono_global_config.EMAIL }}"
 vault_mono_tfe_org_collaborator_auth_policy: "{{ vault_mono_global_config.TERRAFORM_CLOUD.AUTH_POLICY }}"
-vault_mono_tfe_org_workspace_name: vault_mono_codified_vault
 vault_mono_tfe_org_workspace_auto_apply: true
 vault_mono_tfe_org_workspace_execution_mode: local
 vault_mono_codified_vault_dir: "{{ playbook_dir }}/codified_vault"
-vault_mono_codified_vault_local_file_tfbackend: "{{ vault_mono_codified_vault_dir }}/secret.ansible_auto.backend.tf"
-vault_mono_codified_vault_remote_tfbackend_jinja_file: config.remote.tfbackend.j2
+vault_mono_codified_vault_local_file_tfbackend: "{{ vault_mono_codified_vault_dir }}/backend.tf"
 # codified_vault
 
 # System Patch
