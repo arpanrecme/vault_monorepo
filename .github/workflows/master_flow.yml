@@ -28,6 +28,7 @@ jobs:
       - name: Bitwarden Login
         id: bitwarden_login
         run: |
+          bw --version
           bw login --apikey --quiet
           bw unlock "${BW_MASTERPASSWORD}" --raw > "${BW_LOCAL_FILE_SESSION_FILE}"
           echo "::add-mask::$(cat "${BW_LOCAL_FILE_SESSION_FILE}")"
@@ -39,8 +40,7 @@ jobs:
       - name: Run Ansible Playbook
         id: ansible_playbook_run
         run: |
-          skfasfafals
-          BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags codified_vault
+          BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml
 
       - name: Bitwarden Logout
         id: bitwarden_logout
