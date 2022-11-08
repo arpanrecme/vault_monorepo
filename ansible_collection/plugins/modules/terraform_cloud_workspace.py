@@ -38,7 +38,7 @@ options:
             - Find the list of attributes: `https://developer.hashicorp.com/terraform/cloud-docs/api-docs/organizations\#update-an-organization`
         required: false
         type: dict
-    workspace_name:
+    workspace:
         description: Name of terraform workspace
         required: true
         type: str
@@ -144,8 +144,8 @@ def tfe_org(hostname=None, headers=None, organization=None, organization_attribu
     return result
 
 
-def tfe_org_workspace(hostname=None, headers=None, organization=None, workspace_name=None, workspace_attributes=None, result=None) -> dict:
-    _tfe_ws_ep = f"https://{hostname}/api/v2/organizations/{organization}/workspaces/{workspace_name}"
+def tfe_org_workspace(hostname=None, headers=None, organization=None, workspace=None, workspace_attributes=None, result=None) -> dict:
+    _tfe_ws_ep = f"https://{hostname}/api/v2/organizations/{organization}/workspaces/{workspace}"
     _tfe_existing_ws_response = requests.get(_tfe_ws_ep, timeout=30, headers=headers)
     if _tfe_existing_ws_response.status_code == 200:
         _tfe_ws_details = _tfe_existing_ws_response.json()
@@ -158,7 +158,7 @@ def tfe_org_workspace(hostname=None, headers=None, organization=None, workspace_
         }
         if workspace_attributes and len(workspace_attributes) > 0:
             _ws_create_data["data"]["attributes"] = workspace_attributes
-        _ws_create_data["data"]["attributes"]["name"] = workspace_name
+        _ws_create_data["data"]["attributes"]["name"] = workspace
         _tfe_ws_create_response = requests.post(f"https://{hostname}/api/v2/organizations/{organization}/workspaces",
                                                 timeout=30,
                                                 headers=headers,
@@ -208,7 +208,7 @@ def tfe_org_workspace(hostname=None, headers=None, organization=None, workspace_
     return result
 
 
-def crud(hostname=None, token=None, organization=None, organization_attributes=None, workspace_name=None, workspace_attributes=None) -> dict:
+def crud(hostname=None, token=None, organization=None, organization_attributes=None, workspace=None, workspace_attributes=None) -> dict:
     result = {"changed": False,
               "organization_updated": False,
               "organization_created": False,
@@ -225,8 +225,8 @@ def crud(hostname=None, token=None, organization=None, organization_attributes=N
     if not organization:
         result["error"] = "organization Can not be null"
         return result
-    if not workspace_name:
-        result["error"] = "workspace_name Can not be null"
+    if not workspace:
+        result["error"] = "workspace Can not be null"
         return result
     result = tfe_org(headers=headers,
                      organization=organization,
@@ -239,7 +239,7 @@ def crud(hostname=None, token=None, organization=None, organization_attributes=N
                                organization=organization,
                                hostname=hostname,
                                result=result,
-                               workspace_name=workspace_name,
+                               workspace=workspace,
                                workspace_attributes=workspace_attributes,
                                )
     return result
@@ -252,7 +252,7 @@ def run_module():
         token=dict(type="str", required=True, no_log=True),
         organization=dict(type='str', required=True),
         organization_attributes=dict(type='dict', required=False),
-        workspace_name=dict(type="str", required=True),
+        workspace=dict(type="str", required=True),
         workspace_attributes=dict(type="dict", required=False),
     )
 
@@ -265,7 +265,7 @@ def run_module():
                         token=module.params['token'],
                         organization=module.params['organization'],
                         organization_attributes=module.params['organization_attributes'],
-                        workspace_name=module.params['workspace_name'],
+                        workspace=module.params['workspace'],
                         workspace_attributes=module.params['workspace_attributes'],
                         )
 
