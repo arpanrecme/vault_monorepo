@@ -264,3 +264,10 @@
     port: "{{ item }}"
   with_items:
     - 8088
+
+- name: Vault Monorepo | Setup Vault Server | Patch System | Install docker
+  ansible.builtin.import_role:
+    name: geerlingguy.docker
+  vars:
+    docker_users:
+      - "{{ vault_mono_system_patch_login_user }}"
