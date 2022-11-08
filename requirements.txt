@@ -8,3 +8,4 @@ prettytable
 jmespath
 PyNaCl
 requests
+pyhcl

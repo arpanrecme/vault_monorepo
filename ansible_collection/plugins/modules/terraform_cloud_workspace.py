@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
@@ -53,20 +53,19 @@ author:
 '''
 
 EXAMPLES = r'''
-# Pass in a message
+# Prepare Terraform cloud
 - name: Prepare Terraform cloud
-  terraform_cloud_workspace:
+    arpanrecme.vault_monorepo.terraform_cloud_workspace:
     token: "xxxxxxxxxxxxx"
     organization: testorg
     organization_attributes:
         email: user@email.com
         "collaborator-auth-policy": "two_factor_mandatory"
-    workspace: "vault_client_auth.key"
+    workspace: "vault_client_auth"
     workspace_attributes:
-        "allow-destroy-plan": True,
-        "auto-apply": True,
+        "allow-destroy-plan": True
+        "auto-apply": True
         "execution-mode": "local"
-
 '''
 
 RETURN = r'''
