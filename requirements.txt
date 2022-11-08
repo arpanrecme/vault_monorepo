@@ -7,3 +7,4 @@ hvac
 prettytable
 jmespath
 PyNaCl
+requests

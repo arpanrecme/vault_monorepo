@@ -10,13 +10,13 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: github_action_secret
+module: terraform_cloud_workspace
 
-short_description: Create Update Delete Github Action Secret
+short_description: Create Update terraform cloud workspace
 
 version_added: "1.0.0"
 
-description: Create Update Delete Github Action Secret.
+description: Create Update terraform cloud workspace.
 
 options:
     hostname:
@@ -33,60 +33,52 @@ options:
         required: true
         type: str
     organization_attributes:
-        description: Attributes of terraform cloud organization
+        description:
+            - Attributes of terraform cloud organization
+            - Find the list of attributes: `https://developer.hashicorp.com/terraform/cloud-docs/api-docs/organizations\#update-an-organization`
         required: false
         type: dict
     workspace_name:
         description: Name of terraform workspace
         required: true
         type: str
-    workspace_auto_apply:
-        description: If -auto-approve is applied then state will be applied via the remote
+    workspace_attributes:
+        description:
+            - Attributes of terraform cloud organization
+            - Find the list of attributes: `https://developer.hashicorp.com/terraform/cloud-docs/api-docs/workspaces\#update-a-workspace`
         required: false
         type: bool
-    execution_mode:
-        description:
-            - Which execution mode to use.
-            - Valid values are remote, local, and agent.
-            - When set to local, the workspace will be used for state storage only.
-            - This value must not be specified if operations is specified.
-        required: false
-        type: str
-        choices: ["remote", "local", "agent"]
 author:
     - Arpan Mandal (mailto:arpan.rec@gmail.com)
 '''
 
 EXAMPLES = r'''
 # Pass in a message
-- name: Create or Update a secret
-  github_action_secret:
-    pat:
-        [
-        "xxxxx",
-        "yyyyy",
-        "zzzzz",
-        ]
-    owner: https://vault.com:8200
-    unencrypted_secret: "vault_client_auth.crt"
-    repository: "vault_client_auth.key"
-    vault_capath: "root_ca_certificate.crt"
+- name: Prepare Terraform cloud
+  terraform_cloud_workspace:
+    token: "xxxxxxxxxxxxx"
+    organization: testorg
+    organization_attributes:
+        email: user@email.com
+        "collaborator-auth-policy": "two_factor_mandatory"
+    workspace: "vault_client_auth.key"
+    workspace_attributes:
+        "allow-destroy-plan": True,
+        "auto-apply": True,
+        "execution-mode": "local"
+
 '''
 
 RETURN = r'''
-# These are examples of possible return values, and in general should use other names for return values.
-# encoded_root_token:
-#     description: Base64 ascii encoded root token
-#     type: str
-#     returned: always
-# otp:
-#     description: OTP
-#     type: str
-#     returned: always
-# new_root:
-#     description: ((OTP bytes) XOR (base64 ascii decode of encoded_root_token))
-#     type: str
-#     returned: if calculate_new_root
+These are examples of possible return values, and in general should use other names for return values.
+organization:
+    description: Details of terraform cloud organization.
+    type: dict
+    returned: always
+workspace:
+    description: Details of terraform cloud workspace.
+    type: dict
+    returned: always
 '''
 
 
@@ -152,20 +144,104 @@ def tfe_org(hostname=None, headers=None, organization=None, organization_attribu
     return result
 
 
+def tfe_org_workspace(hostname=None, headers=None, organization=None, workspace_name=None, workspace_attributes=None, result=None) -> dict:
+    _tfe_ws_ep = f"https://{hostname}/api/v2/organizations/{organization}/workspaces/{workspace_name}"
+    _tfe_existing_ws_response = requests.get(_tfe_ws_ep, timeout=30, headers=headers)
+    if _tfe_existing_ws_response.status_code == 200:
+        _tfe_ws_details = _tfe_existing_ws_response.json()
+    elif _tfe_existing_ws_response.status_code == 404:
+        _ws_create_data = {
+            "data": {
+                "type": "workspaces",
+                "attributes": {}
+            }
+        }
+        if workspace_attributes and len(workspace_attributes) > 0:
+            _ws_create_data["data"]["attributes"] = workspace_attributes
+        _ws_create_data["data"]["attributes"]["name"] = workspace_name
+        _tfe_ws_create_response = requests.post(f"https://{hostname}/api/v2/organizations/{organization}/workspaces",
+                                                timeout=30,
+                                                headers=headers,
+                                                json=_ws_create_data)
+        if _tfe_ws_create_response.status_code == 201:
+            result["changed"] = True
+            result["workspace_created"] = True
+            _tfe_newly_created_ws_details_response = requests.get(_tfe_ws_ep, timeout=30, headers=headers)
+            if _tfe_newly_created_ws_details_response.status_code == 200:
+                _tfe_ws_details = _tfe_newly_created_ws_details_response.json()
+            else:
+                result["error"] = {"status": _tfe_newly_created_ws_details_response.status_code, "msg": _tfe_newly_created_ws_details_response.json()}
+                return result
+        else:
+            result["error"] = {"status": _tfe_ws_create_response.status_code, "msg": _tfe_ws_create_response.json()}
+            return result
+    else:
+        result["error"] = {"status": _tfe_existing_ws_response.status_code, "msg": _tfe_existing_ws_response.json()}
+        return result
+
+    if not result["workspace_created"]:
+        if workspace_attributes and len(workspace_attributes) > 0:
+            _existing_attributes = _tfe_ws_details["data"]["attributes"]
+            for attribute in workspace_attributes.keys():
+                if attribute not in _existing_attributes.keys() or workspace_attributes[attribute] != _existing_attributes[attribute]:
+                    _ws_update_data = {
+                        "data": {
+                            "type": "workspaces",
+                            "attributes": workspace_attributes
+                        }
+                    }
+                    _ws_update_response = requests.patch(_tfe_ws_ep, timeout=30, headers=headers, json=_ws_update_data)
+                    if _ws_update_response.status_code == 200:
+                        result["changed"] = True
+                        result["workspace_updated"] = True
+                        _tfe_ws_updated_details_response = requests.get(_tfe_ws_ep, timeout=30, headers=headers)
+                        if _tfe_ws_updated_details_response.status_code == 200:
+                            _tfe_ws_details = _tfe_ws_updated_details_response.json()
+                        else:
+                            result["error"] = {"status": _tfe_ws_updated_details_response.status_code, "msg": _tfe_ws_updated_details_response.json()}
+                            return result
+                        break
+
+                    result["error"] = {"status": _ws_update_response.status_code, "msg": _ws_update_response.json()}
+                    return result
+    result["workspace"] = _tfe_ws_details
+    return result
+
+
 def crud(hostname=None, token=None, organization=None, organization_attributes=None, workspace_name=None, workspace_attributes=None) -> dict:
-    result = {"changed": False, "organization_updated": False, "organization_created": False}
+    result = {"changed": False,
+              "organization_updated": False,
+              "organization_created": False,
+              "workspace_created": False,
+              "workspace_updated": False}
     headers = {
         "Accept": "application/vnd.github+json",
         "content-type": "application/vnd.api+json",
         "Authorization": f"Bearer {token}"
     }
     if not hostname:
-        return {"error": "Hostname Can not be null", "result": result}
+        result["error"] = "Hostname Can not be null"
+        return result
     if not organization:
-        return {"error": "organization Can not be null", "result": result}
+        result["error"] = "organization Can not be null"
+        return result
     if not workspace_name:
-        return {"error": "workspace_name Can not be null", "result": result}
-    result = tfe_org(headers=headers, organization=organization, organization_attributes=organization_attributes, hostname=hostname, result=result,)
+        result["error"] = "workspace_name Can not be null"
+        return result
+    result = tfe_org(headers=headers,
+                     organization=organization,
+                     organization_attributes=organization_attributes,
+                     hostname=hostname,
+                     result=result,)
+    if "error" in result.keys():
+        return result
+    result = tfe_org_workspace(headers=headers,
+                               organization=organization,
+                               hostname=hostname,
+                               result=result,
+                               workspace_name=workspace_name,
+                               workspace_attributes=workspace_attributes,
+                               )
     return result
 
 
@@ -204,21 +280,5 @@ def main():
     run_module()
 
 
-# if __name__ == '__main__':
-#     main()
-
-if __name__ == "__main__":
-    import os
-    import json
-    res = crud(
-        hostname="app.terraform.io",
-        token=os.getenv("TF_PROD_TOKEN"),
-        organization="arpanrecme11",
-        workspace_name="testmod1",
-        organization_attributes={
-            "email": "afasf@gmail.com",
-            "collaborator-auth-policy": "two_factor_mandatory",
-            "sfasfasf": "dfasfsa"
-        }
-    )
-    print(json.dumps(res, indent=2))
+if __name__ == '__main__':
+    main()
