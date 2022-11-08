@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/vault"
       version = "3.9.1"
     }
+    http = {
+      source  = "hashicorp/http"
+      version = "3.1.0"
+    }
   }
 }
 

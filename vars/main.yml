@@ -6,14 +6,9 @@ vault_mono_debug_no_log: "{{ not global_debug }}"
 vault_mono_local_templates_dir: "{{ playbook_dir }}/templates"
 # Template Files Directory
 
-# Local Files Directory
-vault_mono_local_files_dir: "{{ playbook_dir }}/files"
-# Local Files Directory
-
 # Global Configuration
-vault_mono_local_file_global_config: "{{ vault_mono_local_files_dir }}/config.json"
-
-vault_mono_global_config: "{{ lookup('ansible.builtin.file', vault_mono_local_file_global_config) | from_json }}"
+vault_mono_endpoint_global_config: "https://raw.githubusercontent.com/arpanrecme/vault_monorepo/main/globalconfig.json"
+vault_mono_global_config: "{{ lookup('ansible.builtin.url', vault_mono_endpoint_global_config) | from_json }}"
 # Global Configuration
 
 # Temporary Files Directory
