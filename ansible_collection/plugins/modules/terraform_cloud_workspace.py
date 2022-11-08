@@ -271,9 +271,9 @@ def run_module():
 
     if "error" in tfe_response.keys():
         return module.fail_json(msg=tfe_response["error"],
-                                **tfe_response["result"])
+                                **tfe_response)
 
-    module.exit_json(**tfe_response['result'])
+    module.exit_json(**tfe_response)
 
 
 def main():
