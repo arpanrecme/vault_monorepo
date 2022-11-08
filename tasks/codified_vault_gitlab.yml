@@ -8,7 +8,7 @@
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
-  vault_sys_generate_root:
+  arpanrecme.vault_monorepo.vault_sys_generate_root:
     unseal_keys: "{{ vault_mono_init_unseal_fact_init_secrets['keys'] }}"
     vault_addr:
       "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
@@ -54,8 +54,7 @@
     TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token }}"
     ## Terraform Cloud
     ## GSUITE OIDC
-    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN:
-      "{{ vault_mono_prerequisite_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN: "{{ vault_mono_prerequisite_local_file_vault_jwt_auth_backend_oidc_gsuite_admin }}"
     ## GSUITE OIDC
   register: vault_mono_codified_vault_tmp_output
   ignore_errors: true

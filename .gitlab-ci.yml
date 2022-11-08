@@ -1,5 +1,5 @@
 ---
-image: arpanrecme/vaultmonorepo:8
+image: arpanrecme/vaultmonorepo:9
 stages:
   - vault-action
 
@@ -26,6 +26,7 @@ terraform_apply:
     - export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
     - chmod 750 -R "${PWD}"
   script:
+    - ansible-galaxy install -r requirements.yml
     - ansible-playbook site.yml
   after_script:
     - bw logout

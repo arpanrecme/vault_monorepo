@@ -1,0 +1,14 @@
+collections:
+  - source: ./ansible_collection
+    type: dir
+    name: arpanrecme.vault_monorepo
+  - name: community.general
+    type: git
+    source: https://github.com/ansible-collections/community.general
+  - name: community.crypto
+    type: git
+    source: https://github.com/ansible-collections/community.crypto.git
+roles:
+  - name: geerlingguy.docker
+    scm: git
+    src: https://github.com/geerlingguy/ansible-role-docker.git

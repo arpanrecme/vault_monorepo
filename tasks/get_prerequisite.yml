@@ -1,4 +1,10 @@
 ---
+- name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Create mandatory directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ vault_mono_prerequisite_files_dir }}"
+    mode: "0750"
+
 - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden
   block:
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | OPENSSH PRIVATE KEY
