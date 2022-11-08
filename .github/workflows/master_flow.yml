@@ -8,22 +8,43 @@ name: Master Application Flow
 permissions:
   contents: read
 
+env:
+  BW_LOCAL_FILE_SESSION_FILE: .bw_session_id
+
 jobs:
   master_flow:
     runs-on: ubuntu-latest
     container:
       image: arpanrecme/vaultmonorepo:9
     steps:
-      - uses: actions/checkout@v3
-      - name: Execute Script
+      - name: Checkout Code
+        id: checkout_code
+        uses: actions/checkout@v3
+
+      - name: Install galaxy dependencies
+        id: install_galaxy_dependencies
+        run: ansible-galaxy install -r requirements.yml
+
+      - name: Bitwarden Login
+        id: bitwarden_login
         run: |
-          ansible-galaxy install -r requirements.yml
+          bw --version
           bw login --apikey --quiet
-          export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
-          ansible-playbook site.yml
-          bw logout
-          bw status
+          bw unlock "${BW_MASTERPASSWORD}" --raw > "${BW_LOCAL_FILE_SESSION_FILE}"
+          echo "::add-mask::$(cat "${BW_LOCAL_FILE_SESSION_FILE}")"
         env:
           BW_CLIENTID: ${{ secrets.BW_CLIENTID }}
           BW_CLIENTSECRET: ${{ secrets.BW_CLIENTSECRET }}
           BW_MASTERPASSWORD: ${{ secrets.BW_MASTERPASSWORD }}
+
+      - name: Run Ansible Playbook
+        id: ansible_playbook_run
+        run: |
+          BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml
+
+      - name: Bitwarden Logout
+        id: bitwarden_logout
+        if: ${{ always() }}
+        run: |
+          bw logout
+          bw status

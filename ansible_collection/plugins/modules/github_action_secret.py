@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
@@ -45,10 +45,6 @@ options:
         description: Plain text action secret
         required: false
         type: str
-    secret:
-        description: libsodiam encrypted action secret
-        required: false
-        type: str
     name:
         description: Name of the secret
         required: true
@@ -60,49 +56,63 @@ options:
     state:
         description: State of the secret.
         required: false
-        type: enum[present, absent]
+        type: str
+        choices: ["present", "absent"]
         default: present
     visibility:
         description:
             - Required for organization secrets
             - `private`, `all`, `selected`
-        type: enum[private, all, selected]
-        default: "all"
+            - Mandatory for organization secrets
+        choices: ["private", "all", "selected"]
+        type: str
         required: false
 author:
     - Arpan Mandal (mailto:arpan.rec@gmail.com)
 '''
 
 EXAMPLES = r'''
-# Pass in a message
-- name: Create or Update a secret
-  github_action_secret:
-    pat:
-        [
-        "xxxxx",
-        "yyyyy",
-        "zzzzz",
-        ]
-    owner: https://vault.com:8200
-    unencrypted_secret: "vault_client_auth.crt"
-    repository: "vault_client_auth.key"
-    vault_capath: "root_ca_certificate.crt"
+- name: Create or Update a repository secret
+    arpanrecme.vault_monorepo.github_action_secret:
+    api_ep: "https://api.github.com"
+    pat: "{{ lookup('ansible.builtin.env', 'GH_PROD_API_TOKEN') }}"
+    unencrypted_secret: "supersecret"
+    repository: "github_master_controller"
+    name: "ENV_SECRET1"
+
+- name: Create or Update a organization secret
+    arpanrecme.vault_monorepo.github_action_secret:
+    api_ep: "https://api.github.com"
+    pat: "{{ lookup('ansible.builtin.env', 'GH_PROD_API_TOKEN') }}"
+    unencrypted_secret: "supersecret"
+    name: "ENV_SECRET"
+    organization: arpanrec
+    state: present
+    visibility: all
+
+- name: Delete a repository secret
+    arpanrecme.vault_monorepo.github_action_secret:
+    api_ep: "https://api.github.com"
+    pat: "{{ lookup('ansible.builtin.env', 'GH_PROD_API_TOKEN') }}"
+    repository: "github_master_controller"
+    name: "ENV_SECRET"
+    state: absent
 '''
 
 RETURN = r'''
-# These are examples of possible return values, and in general should use other names for return values.
-# encoded_root_token:
-#     description: Base64 ascii encoded root token
-#     type: str
-#     returned: always
-# otp:
-#     description: OTP
-#     type: str
-#     returned: always
-# new_root:
-#     description: ((OTP bytes) XOR (base64 ascii decode of encoded_root_token))
-#     type: str
-#     returned: if calculate_new_root
+These are examples of possible return values, and in general should use other names for return values.
+public_key:
+    description: Public Key of the repository
+    type: str
+    returned: if state == present
+public_key_id:
+    description: Public Key id of the repository
+    type: str
+    returned: if state == present
+secret:
+    description: Encrypted secret
+    type: str
+    returned: if state == present
 '''
 
 
@@ -114,7 +124,15 @@ def encrypt(public_key: str, secret_value: str) -> str:
     return b64encode(encrypted).decode("utf-8")
 
 
-def crud(pat=None, owner=None, unencrypted_secret=None, name=None, repository=None, api_ep=None, secret=None, organization=None, state=None, visibility=None) -> dict:
+def crud(pat=None,
+         owner=None,
+         unencrypted_secret=None,
+         name=None,
+         repository=None,
+         api_ep=None,
+         organization=None,
+         state=None,
+         visibility=None) -> dict:
     result = {"changed": False, "updated": False, "created": False, "deleted": False}
     create_update_data = {}
     headers = {
@@ -122,15 +140,17 @@ def crud(pat=None, owner=None, unencrypted_secret=None, name=None, repository=No
         "Authorization": f"token {pat}"
     }
     if owner and not repository:
-        return {"error": "'repository' is mandatory when 'owner' is set", "result": result}
+        result["error"] = "'repository' is mandatory when 'owner' is set"
+        return result
 
-    if state not in ["present", "absent"]:
-        return {"error": "state should be either present or absent", "result": result}
+    if state not in ("present", "absent"):
+        result["error"] = f"state should be either present or absent, {state}"
+        return result
 
     if (not owner) and (not repository) and (organization) \
             and visibility not in ['private', 'all', 'selected']:
-        return {"error": "visibility should in 'private', 'all', 'selected'",
-                "result": result}
+        result["error"] = "visibility should in 'private', 'all', 'selected'"
+        return result
 
     if owner and repository:
         public_key_ep = f"{api_ep}/repos/{owner}/{repository}/actions/secrets/public-key"
@@ -148,9 +168,15 @@ def crud(pat=None, owner=None, unencrypted_secret=None, name=None, repository=No
         secret_ep = f"{api_ep}/repos/{organization}/{repository}/actions/secrets/{name}"
 
     if state == 'present':
-        public_key_ep_res = requests.get(public_key_ep, headers=headers, timeout=30).json()
-        result["public_key"] = public_key_ep_res.get("key")
-        result["public_key_id"] = public_key_ep_res.get("key_id")
+        public_key_ep_res = requests.get(public_key_ep, headers=headers, timeout=30)
+        if public_key_ep_res.status_code == 200:
+            result["public_key"] = public_key_ep_res.json().get("key")
+            result["public_key_id"] = public_key_ep_res.json().get("key_id")
+        else:
+            result["error"] = {"response": public_key_ep_res.json(),
+                               "status": public_key_ep_res.status_code}
+            return result
+
         if unencrypted_secret:
             secret = encrypt(public_key=result["public_key"], secret_value=unencrypted_secret)
         result["secret"] = secret
@@ -167,9 +193,9 @@ def crud(pat=None, owner=None, unencrypted_secret=None, name=None, repository=No
             result["changed"] = True
             result["created"] = True
         else:
-            return {"error": {"response": secret_ep_response.json(),
-                              "status": secret_ep_response.status_code},
-                    "result": result}
+            result["error"] = {"response": secret_ep_response.json(),
+                               "status": secret_ep_response.status_code}
+            return result
     if state == 'absent':
         delete_response = requests.delete(secret_ep, headers=headers, timeout=30)
         if delete_response.status_code == 204:
@@ -178,10 +204,10 @@ def crud(pat=None, owner=None, unencrypted_secret=None, name=None, repository=No
         elif delete_response.status_code == 404:
             pass
         else:
-            return {"error": {"response": delete_response.json(),
-                              "status": delete_response.status_code},
-                    "result": result}
-    return {"result": result}
+            result["error"] = {"response": delete_response.json(),
+                               "status": delete_response.status_code},
+            return result
+    return result
 
 
 def run_module():
@@ -192,11 +218,10 @@ def run_module():
         owner=dict(type='str', required=False),
         organization=dict(type='str', required=False),
         unencrypted_secret=dict(type='str', required=False, no_log=True),
-        secret=dict(type="str", required=False, no_log=True),
         name=dict(type='str', required=True),
         repository=dict(type='str', required=False),
-        state=dict(type="str", required=False, default="present"),
-        visibility=dict(type="str", required=False, default="all")
+        state=dict(type="str", required=False, default="present", choices=["present", "absent"]),
+        visibility=dict(type="str", required=False, choices=["private", "all", "selected"])
     )
 
     module = AnsibleModule(
@@ -204,13 +229,14 @@ def run_module():
         supports_check_mode=False,
         mutually_exclusive=[
             ('owner', 'organization'),
-            ('unencrypted_secret', 'secret')
+            ('unencrypted_secret', 'secret'),
+            ('owner', 'visibility'),
         ],
         required_one_of=[
             ('repository', 'organization'),
         ],
         required_if=[
-            ('state', 'present', ('unencrypted_secret', 'secret'), True),
+            ('state', 'present', (['unencrypted_secret']), False),
         ],
     )
 
@@ -220,13 +246,16 @@ def run_module():
                                   unencrypted_secret=module.params['unencrypted_secret'],
                                   name=module.params['name'],
                                   repository=module.params['repository'],
+                                  organization=module.params["organization"],
+                                  state=module.params["state"],
+                                  visibility=module.params["visibility"],
                                   )
 
     if "error" in github_update_response.keys():
         return module.fail_json(msg=github_update_response["error"],
-                                **github_update_response["result"])
+                                **github_update_response)
 
-    module.exit_json(**github_update_response['result'])
+    module.exit_json(**github_update_response)
 
 
 def main():
