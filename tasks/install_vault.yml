@@ -32,7 +32,7 @@
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Create UFW Vault application rules
   ansible.builtin.template:
-    src: "{{ vault_mono_local_templates_dir }}/ufw-vault.j2"
+    src: "{{ vault_mono_local_templates_dir }}/ufw-{{ vault_mono_install_ufw_rule_name }}.j2"
     dest: /etc/ufw/applications.d/ufw-vault
     mode: "0644"
 

@@ -14,7 +14,7 @@ vault_mono_install_zip_url: "https://releases.hashicorp.com/vault\
 vault_mono_install_checksum_file_url: "https://releases.hashicorp.com/\
   vault/{{ vault_mono_install_version }}\
   /vault_{{ vault_mono_install_version }}_SHA256SUMS"
-vault_mono_install_systemd_user: vaultssot
+vault_mono_install_systemd_user: vault
 vault_mono_install_systemd_group: "{{ vault_mono_install_systemd_user }}"
 vault_mono_install_ufw_rule_name: "{{ vault_mono_install_systemd_user }}"
 
