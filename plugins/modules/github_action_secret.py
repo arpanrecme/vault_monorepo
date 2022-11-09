@@ -3,8 +3,8 @@
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
 from __future__ import (absolute_import, division, print_function)
-from ansible.module_utils.basic import AnsibleModule
 from base64 import b64encode
+from ansible.module_utils.basic import AnsibleModule
 from nacl import encoding, public
 import requests
 __metaclass__ = type
@@ -73,7 +73,7 @@ author:
 
 EXAMPLES = r'''
 - name: Create or Update a repository secret
-    arpanrecme.vault_monorepo.github_action_secret:
+    github_action_secret:
     api_ep: "https://api.github.com"
     pat: "{{ lookup('ansible.builtin.env', 'GH_PROD_API_TOKEN') }}"
     unencrypted_secret: "supersecret"
@@ -81,7 +81,7 @@ EXAMPLES = r'''
     name: "ENV_SECRET1"
 
 - name: Create or Update a organization secret
-    arpanrecme.vault_monorepo.github_action_secret:
+    github_action_secret:
     api_ep: "https://api.github.com"
     pat: "{{ lookup('ansible.builtin.env', 'GH_PROD_API_TOKEN') }}"
     unencrypted_secret: "supersecret"
@@ -91,7 +91,7 @@ EXAMPLES = r'''
     visibility: all
 
 - name: Delete a repository secret
-    arpanrecme.vault_monorepo.github_action_secret:
+    github_action_secret:
     api_ep: "https://api.github.com"
     pat: "{{ lookup('ansible.builtin.env', 'GH_PROD_API_TOKEN') }}"
     repository: "github_master_controller"

@@ -2,7 +2,7 @@
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend config
   ansible.builtin.set_fact:
     vault_mono_codified_vault_tmp_backend:
-      "{{ lookup('arpanrecme.vault_monorepo.hcl2json', \
+      "{{ lookup('hcl2json', \
       path=vault_mono_codified_vault_local_file_tfbackend) }}"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend Workspace Name
@@ -10,7 +10,7 @@
     vault_mono_codified_vault_tmp_workspace_backend: "{{ vault_mono_codified_vault_tmp_backend.terraform.backend.remote.workspaces.name }}"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Create Remote Backend
-  arpanrecme.vault_monorepo.terraform_cloud_workspace:
+  terraform_cloud_workspace:
     token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
     organization: "{{ vault_mono_tfe_org_name }}"
     organization_attributes:
@@ -25,7 +25,7 @@
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
-  arpanrecme.vault_monorepo.vault_sys_generate_root:
+  vault_sys_generate_root:
     unseal_keys: "{{ vault_mono_init_unseal_fact_init_secrets['keys'] }}"
     vault_addr:
       "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
