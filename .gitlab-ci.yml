@@ -1,10 +1,10 @@
 ---
 image: arpanrecme/vaultmonorepo:9
 stages:
-  - vault-action
+  - master_flow
 
-terraform_apply:
-  stage: vault-action
+master_flow:
+  stage: master_flow
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       changes:
