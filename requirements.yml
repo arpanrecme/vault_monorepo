@@ -1,7 +1,4 @@
 collections:
-  - source: ./ansible_collection
-    type: dir
-    name: arpanrecme.vault_monorepo
   - name: community.general
     type: git
     source: https://github.com/ansible-collections/community.general

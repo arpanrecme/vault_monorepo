@@ -55,7 +55,7 @@ author:
 EXAMPLES = r'''
 # Prepare Terraform cloud
 - name: Prepare Terraform cloud
-    arpanrecme.vault_monorepo.terraform_cloud_workspace:
+    terraform_cloud_workspace:
     token: "xxxxxxxxxxxxx"
     organization: testorg
     organization_attributes:
