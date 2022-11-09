@@ -38,27 +38,27 @@ jobs:
           BW_MASTERPASSWORD: ${{ secrets.BW_MASTERPASSWORD }}
 
       - name: Run Ansible Playbook Patch Server
-        id: ansible_playbook_run
+        id: patch_server
         run: |
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags patch_server
 
       - name: Run Ansible Playbook Install Vault
-        id: ansible_playbook_run
+        id: install_vault
         run: |
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags install_vault
 
       - name: Run Ansible Playbook Vault TLS
-        id: ansible_playbook_run
+        id: vault_tls
         run: |
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags vault_tls
 
       - name: Run Ansible Playbook Init and Unseal
-        id: ansible_playbook_run
+        id: vault_init_unseal
         run: |
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags vault_init_unseal
 
       - name: Run Ansible Playbook Configure Vault
-        id: ansible_playbook_run
+        id: codified_vault
         run: |
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags codified_vault
 
