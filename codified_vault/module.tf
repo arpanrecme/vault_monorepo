@@ -30,7 +30,6 @@ module "auth" {
   ADMIN_POLICY_NAME                                                           = module.policy.admin
   SCM_CICD_POLICY_NAME                                                        = module.policy.scm_cicd
   DEFAULT_LOGIN_POLICY_NAME                                                   = module.policy.default_login
-  VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_VAULT_JWT_AUTH_BACKEND_OIDC_GSUITE_ADMIN
 }
 
 module "kv2" {

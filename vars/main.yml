@@ -55,9 +55,6 @@ vault_mono_prerequisite_local_file_ansible_galaxy_api_key: "{{ vault_mono_prereq
 vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token: "{{ vault_mono_prerequisite_files_dir }}/terraform_cloud_tf_prod_token.txt"
 ## HashiCorp Terraform cloud
 
-## Gsuite Auth
-vault_mono_prerequisite_local_file_vault_jwt_auth_backend_oidc_gsuite_admin: "{{ vault_mono_prerequisite_files_dir }}/vault_gsuite_oidc_conf.json"
-## Gsuite Auth
 # Prerequisite
 
 # Mutual TLS
