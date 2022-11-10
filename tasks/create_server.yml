@@ -10,7 +10,7 @@
         region: ap-west
         image: linode/debian11
         authorized_keys:
-          - "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_openssh_public_key) }}"
+          - "{{ vault_mono_global_config.OPENSSH_PUBLIC_KEY }}"
         state: present
         tags:
           - vault

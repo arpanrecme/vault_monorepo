@@ -24,7 +24,6 @@ vault_mono_prerequisite_files_dir: "{{ vault_mono_local_tmp_files_dir }}/prerequ
 
 ## OPENSSH
 vault_mono_prerequisite_local_file_openssh_private_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_rsa_id.key"
-vault_mono_prerequisite_local_file_openssh_public_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_rsa_id.key.pub"
 vault_mono_prerequisite_local_file_openssh_passphrase_private_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_passphrase_rsa_id.txt"
 vault_mono_prerequisite_local_file_openssh_nopass_private_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_nopass_rsa_id.key"
 ## OPENSSH

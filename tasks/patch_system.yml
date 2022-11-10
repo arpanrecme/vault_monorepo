@@ -156,7 +156,7 @@
     state: present
     key: "{{ item }}"
   with_items:
-    - "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_openssh_public_key) }}"
+    - "{{ vault_mono_global_config.OPENSSH_PUBLIC_KEY }}"
 
 - name: Vault Monorepo | Setup Vault Server | Patch System | SSHD Hardening Disable Password Authentication
   ansible.builtin.lineinfile:
