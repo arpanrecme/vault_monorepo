@@ -6,9 +6,13 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y python3-pip \
-    npm jq gnupg software-properties-common wget curl git openssh-client && \
+RUN apt-get update
+RUN apt-get install -y apt-utils
+RUN apt-get upgrade -y
+RUN apt-get install -y python3-pip \
+    npm jq gnupg software-properties-common wget curl git openssh-client
+
+RUN apt-get autopurge -y && \
     apt-get clean all && rm -rf /var/cache/apt
 
 RUN npm install -g @bitwarden/cli
