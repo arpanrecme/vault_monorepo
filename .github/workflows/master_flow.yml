@@ -1,9 +1,9 @@
 name: Master Application Flow
 
 "on":
-  push:
+  pull_request:
     branches:
-      - "feature/**"
+      - main
 
 permissions:
   contents: read
