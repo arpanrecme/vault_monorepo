@@ -8,7 +8,7 @@ vault_mono_local_templates_dir: "{{ playbook_dir }}/templates"
 
 # Global Configuration
 vault_mono_endpoint_global_config: "https://raw.githubusercontent.com/arpanrecme/dotfiles/main/.config/global.json"
-vault_mono_global_config: "{{ lookup('ansible.builtin.url', vault_mono_endpoint_global_config) | from_json }}"
+vault_mono_global_config: "{{ lookup('ansible.builtin.url', vault_mono_endpoint_global_config, split_lines=False) | from_json }}"
 # Global Configuration
 
 # Temporary Files Directory
