@@ -1,25 +1,26 @@
 # Vault Monolithic Repository
 
 Flow:
+
 Create Server ->
 
-Patch System ->
+Patch System -> `patch_server`
 
-Install Hashicorp Vault ->
+Install Hashicorp Vault -> `install_vault`
 
-Server TLS Certificate ->
+Server TLS Certificate -> `vault_tls`
 
 Setup Client Certificate ->
 
 Get Vault Initial Secret ->
 
-Initialize and Unseal ->
+Initialize and Unseal -> `vault_init_unseal`
 
 Update Vault initial secret ->
 
 Terraform Cloud Setup -> Create Organization and Workspace
 
-Terraform Codified Vault
+Terraform Codified Vault -> `codified_vault`
 
 Flow to downstream ->
 
