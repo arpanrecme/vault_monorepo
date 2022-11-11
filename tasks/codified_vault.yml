@@ -1,4 +1,17 @@
 ---
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Create ROOT CA temporary file
+  changed_when: false
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: vault_mono_codified_vault_tmp_file_root_ca
+
+- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Write CA Certificate to temporary file
+  changed_when: false
+  ansible.builtin.copy:
+    content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
+    dest: "{{ vault_mono_codified_vault_tmp_file_root_ca.path }}"
+
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend config
   ansible.builtin.set_fact:
     vault_mono_codified_vault_tmp_backend:
@@ -32,7 +45,7 @@
       {{ vault_mono_global_config.VAULT.PORT }}"
     vault_client_cert: "{{ vault_mono_local_file_client_certificate }}"
     vault_client_key: "{{ vault_mono_local_file_client_private_key }}"
-    vault_capath: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    vault_capath: "{{ vault_mono_codified_vault_tmp_file_root_ca.path }}"
     cancel_root_generation: true
     calculate_new_root: true
   register: vault_mono_codified_vault_tmp_root_token
@@ -80,7 +93,7 @@
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Revoke Root Token
   no_log: "{{ vault_mono_debug_no_log }}"
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
-    SSL_CERT_FILE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    SSL_CERT_FILE: "{{ vault_mono_codified_vault_tmp_file_root_ca.path }}"
   ansible.builtin.uri:
     url:
       "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
