@@ -7,6 +7,10 @@
 
 - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden
   block:
+    - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | pipefail set
+      ansible.builtin.set_fact:
+        vault_mono_prerequisite_tmp_pipefail_set: "" #"set -eo pipefail"
+
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | OPENSSH PRIVATE KEY
       no_log: "{{ vault_mono_debug_no_log }}"
       block:
@@ -16,7 +20,7 @@
 
         - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | OPENSSH PRIVATE KEY | Download Private key
           ansible.builtin.shell: |+
-            set -eo pipefail
+            {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
             bw get attachment id_rsa \
             --itemid $(bw get item '{{ vault_mono_prerequisite_tmp_openssh_private_key_id }}' \
@@ -29,7 +33,7 @@
 
         - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | OPENSSH PRIVATE KEY | Get private key passphrase
           ansible.builtin.shell: |+
-            set -eo pipefail
+            {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
             bw get password '{{ vault_mono_prerequisite_tmp_openssh_private_key_id }}' > {{ vault_mono_prerequisite_local_file_openssh_passphrase_private_key }}
           args:
@@ -38,7 +42,7 @@
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Linode api token
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.shell: |+
-        set -eo pipefail
+        {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
         bw get item 'Linode' --raw | \
         jq '.fields |
@@ -57,7 +61,7 @@
 
         - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | ROOT CA | Download Private Key
           ansible.builtin.shell: |+
-            set -eo pipefail
+            {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
             bw get attachment key.pem \
             --itemid $(bw get item '{{ vault_mono_prerequisite_tmp_rootca_rsa_private_key_sha256 }}' --raw | jq .id -r) \
@@ -67,7 +71,7 @@
 
         - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | ROOT CA | Get private key passphrase
           ansible.builtin.shell: |+
-            set -eo pipefail
+            {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
             bw get password \
              '{{ vault_mono_prerequisite_tmp_rootca_rsa_private_key_sha256 }}' > {{ vault_mono_prerequisite_local_file_root_ca_passphrase_private_key }}
@@ -77,7 +81,7 @@
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Gitlab GL_PROD_API_KEY
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.shell: |+
-        set -eo pipefail
+        {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
         bw get item 'Gitlab' --raw | \
         jq '.fields |
@@ -90,7 +94,7 @@
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Github GH_PROD_API_TOKEN
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.shell: |+
-        set -eo pipefail
+        {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
         bw get item 'Github' --raw | \
         jq '.fields |
@@ -103,7 +107,7 @@
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Ansible Galaxy API Key
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.shell: |+
-        set -eo pipefail
+        {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
         bw get item 'Ansible galaxy' --raw | \
         jq '.fields |
@@ -116,7 +120,7 @@
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | HashiCorp Terraform Cloud API Token
       no_log: "{{ vault_mono_debug_no_log }}"
       ansible.builtin.shell: |+
-        set -eo pipefail
+        {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
         bw get item 'HashiCorp Terraform cloud' --raw | \
         jq '.fields |
