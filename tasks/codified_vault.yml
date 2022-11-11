@@ -99,7 +99,6 @@
       "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
       {{ vault_mono_global_config.VAULT.PORT }}/v1/auth/token/revoke-self"
     method: POST
-    # ca_path: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     status_code: [204, 403]
