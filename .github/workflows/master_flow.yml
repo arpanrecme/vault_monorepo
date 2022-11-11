@@ -19,7 +19,6 @@ jobs:
     container:
       image: arpanrecme/vaultmonorepo:9
     steps:
-      - run: env
       - name: Checkout Code
         id: checkout_code
         uses: actions/checkout@v3
@@ -43,7 +42,6 @@ jobs:
       - name: Run Ansible Playbook Patch Server
         id: patch_server
         run: |
-          BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") bw status
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags patch_server
 
       - name: Run Ansible Playbook Install Vault
