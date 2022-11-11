@@ -1,7 +1,20 @@
 ---
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Create ROOT CA temporary file
+  changed_when: false
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: vault_mono_init_unseal_tmp_file_root_ca
+
+- name: Vault Monorepo | Configure Vault | Initialize and Unseal | Write CA Certificate to temporary file
+  changed_when: false
+  ansible.builtin.copy:
+    content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
+    dest: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
+
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Get Vault Health Status
-  environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
-    SSL_CERT_FILE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+  environment:
+    SSL_CERT_FILE: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
   ansible.builtin.uri:
     url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/health"
     method: GET
@@ -16,11 +29,11 @@
   when: not vault_mono_init_unseal_tmp_health.json.initialized
   no_log: "{{ vault_mono_debug_no_log }}"
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
-    SSL_CERT_FILE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    SSL_CERT_FILE: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
   ansible.builtin.uri:
     url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/init"
     method: POST
-    # ca_path: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    # ca_path: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     validate_certs: true
@@ -57,12 +70,12 @@
       vault_mono_init_unseal_tmp_health.json.initialized and vault_mono_init_unseal_tmp_health.json.sealed
     )
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
-    SSL_CERT_FILE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    SSL_CERT_FILE: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
   no_log: "{{ vault_mono_debug_no_log }}"
   ansible.builtin.uri:
     url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/unseal"
     method: POST
-    # ca_path: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    # ca_path: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     validate_certs: true
@@ -78,11 +91,11 @@
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Fail if not active
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
-    SSL_CERT_FILE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    SSL_CERT_FILE: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
   ansible.builtin.uri:
     url: "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:{{ vault_mono_global_config.VAULT.PORT }}/v1/sys/health"
     method: GET
-    # ca_path: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    # ca_path: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     status_code: 200
@@ -90,13 +103,13 @@
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Revoke Root Token
   environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
-    SSL_CERT_FILE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    SSL_CERT_FILE: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
   ansible.builtin.uri:
     url:
       "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
       {{ vault_mono_global_config.VAULT.PORT }}/v1/auth/token/revoke-self"
     method: POST
-    # ca_path: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
+    # ca_path: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
     client_cert: "{{ vault_mono_local_file_client_certificate }}"
     client_key: "{{ vault_mono_local_file_client_private_key }}"
     status_code: [204, 403]

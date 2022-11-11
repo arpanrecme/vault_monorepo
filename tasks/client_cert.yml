@@ -90,11 +90,18 @@
     dest: "{{ vault_mono_local_file_client_chain_certificate }}"
     mode: "0600"
 
-- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Write CA Certificate to tmp file
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Create ROOT CA temporary file
+  changed_when: false
   ansible.builtin.tempfile:
     state: file
     suffix: temp
   register: vault_mono_server_vault_tmp_file_client_root_ca
+
+- name: Vault Monorepo | Configure Vault | Setup Client Certificate | Write CA Certificate to temporary file
+  changed_when: false
+  ansible.builtin.copy:
+    content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
+    dest: "{{ vault_mono_server_vault_tmp_file_client_root_ca.path }}"
 
 - name: Vault Monorepo | Configure Vault | Setup Client Certificate | Generate PKCS#12 file
   community.crypto.openssl_pkcs12:
@@ -103,7 +110,7 @@
     passphrase: "{{ vault_mono_client_passphrase_pkcs12_certificate | default(omit, true) }}"
     friendly_name: "{{ vault_mono_global_config.VAULT.FQDN }}"
     privatekey_path: "{{ vault_mono_local_file_client_private_key }}"
-    certificate_path: "{{ vault_mono_local_file_client_certificate }}"
+    certificate_path: "{{ vault_mono_local_file_client_chain_certificate }}"
     other_certificates_parse_all: true
     other_certificates:
       - "{{ vault_mono_server_vault_tmp_file_client_root_ca.path }}"
