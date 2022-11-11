@@ -17,6 +17,7 @@ jobs:
     container:
       image: arpanrecme/vaultmonorepo:9
     steps:
+      - run: env
       - name: Checkout Code
         id: checkout_code
         uses: actions/checkout@v3
