@@ -4,7 +4,7 @@ resource "vault_pki_secret_backend_role" "vault_client_certificate" {
   ttl                      = (0.25 * 365 * 24 * 3600) # Years * Days * Hours * Seconds
   max_ttl                  = (1 * 365 * 24 * 3600)    # Years * Days * Hours * Seconds
   allow_localhost          = true
-  allowed_domains          = [var.vault_mono_global_config.VAULT.FQDN]
+  allowed_domains          = [var.vault_mono_global_config_vault_fqdn]
   allow_subdomains         = true
   allow_bare_domains       = true
   allow_glob_domains       = true

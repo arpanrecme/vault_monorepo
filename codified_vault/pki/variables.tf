@@ -26,11 +26,11 @@ variable "VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
   }
 }
 
-variable "vault_mono_global_config" {
+variable "vault_mono_global_config_vault_fqdn" {
   type    = any
   default = null
   validation {
-    condition     = length(var.vault_mono_global_config) > 1
+    condition     = length(var.vault_mono_global_config_vault_fqdn) > 1
     error_message = "Vault Global Configuration"
   }
 }
