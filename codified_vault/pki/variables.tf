@@ -1,8 +1,8 @@
-variable "vault_mono_vault_addr" {
+variable "vault_mono_global_config_vault_addr" {
   type    = string
   default = null
   validation {
-    condition     = length(var.vault_mono_vault_addr) > 1
+    condition     = length(var.vault_mono_global_config_vault_addr) > 1
     error_message = "missing vault address"
   }
 }
@@ -17,11 +17,11 @@ variable "VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY" {
   }
 }
 
-variable "VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
+variable "vault_mono_global_config_root_ca_certificate" {
   type    = string
   default = null
   validation {
-    condition     = length(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE) > 1
+    condition     = length(var.vault_mono_global_config_root_ca_certificate) > 1
     error_message = "Missing root CA certificate file path"
   }
 }

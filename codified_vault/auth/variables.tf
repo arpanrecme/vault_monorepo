@@ -25,11 +25,11 @@ variable "ADMIN_POLICY_NAME" {
   }
 }
 
-variable "vault_mono_vault_addr" {
+variable "vault_mono_global_config_vault_addr" {
   type    = string
   default = null
   validation {
-    condition     = length(var.vault_mono_vault_addr) > 1
+    condition     = length(var.vault_mono_global_config_vault_addr) > 1
     error_message = "missing vault address"
   }
 }

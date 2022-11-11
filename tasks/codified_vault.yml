@@ -73,7 +73,6 @@
     ## Linode
     ## ROOT CA
     TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY: "{{ vault_mono_prerequisite_local_file_root_ca_no_pass_private_key }}"
-    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_prerequisite_local_file_root_ca_certificate }}"
     ## ROOT CA
     ## GITLAB
     TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_GITLAB_GL_PROD_API_KEY: "{{ vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key }}"

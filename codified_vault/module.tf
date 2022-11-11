@@ -5,10 +5,10 @@ module "pki" {
     vault = vault
   }
 
-  vault_mono_vault_addr                                          = local.vault_mono_vault_addr
-  vault_mono_global_config                                       = local.vault_mono_global_config
+  vault_mono_global_config_vault_addr                            = local.vault_mono_global_config_vault_addr
+  vault_mono_global_config_vault_fqdn                            = local.vault_mono_global_config_vault_fqdn
   VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY
-  VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE         = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_CERTIFICATE
+  vault_mono_global_config_root_ca_certificate                   = local.vault_mono_global_config_root_ca_certificate
 }
 
 module "policy" {
@@ -26,10 +26,10 @@ module "auth" {
     vault = vault
   }
 
-  vault_mono_vault_addr     = local.vault_mono_vault_addr
-  ADMIN_POLICY_NAME         = module.policy.admin
-  SCM_CICD_POLICY_NAME      = module.policy.scm_cicd
-  DEFAULT_LOGIN_POLICY_NAME = module.policy.default_login
+  vault_mono_global_config_vault_addr = local.vault_mono_global_config_vault_addr
+  ADMIN_POLICY_NAME                   = module.policy.admin
+  SCM_CICD_POLICY_NAME                = module.policy.scm_cicd
+  DEFAULT_LOGIN_POLICY_NAME           = module.policy.default_login
 }
 
 module "kv2" {
