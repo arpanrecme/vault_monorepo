@@ -1,4 +1,7 @@
 {
+  "terminal.integrated.env.linux": {
+    "DEBUG": "true"
+  },
   "cSpell.words": [
     "aarch",
     "apikey",
