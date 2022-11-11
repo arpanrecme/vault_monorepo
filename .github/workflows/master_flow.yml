@@ -11,7 +11,7 @@ permissions:
 
 env:
   BW_LOCAL_FILE_SESSION_FILE: .bw_session_id
-  DEBUG: ${{ env.RUNNER_DEBUG }}
+  DEBUG: true
 
 jobs:
   master_flow:
