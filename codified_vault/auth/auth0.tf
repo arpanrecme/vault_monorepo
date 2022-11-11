@@ -64,7 +64,7 @@ resource "vault_identity_group_alias" "auth0_admin_vault_ad_group_alias" {
   depends_on = [
     vault_identity_group.auth0_admin_vault_ad_group
   ]
-  name           = "Auth0 Vault Admin"
+  name           = "kv-mgr"
   mount_accessor = vault_jwt_auth_backend.auth0.accessor
   canonical_id   = vault_identity_group.auth0_admin_vault_ad_group.id
 }
