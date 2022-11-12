@@ -33,3 +33,13 @@ variable "vault_mono_global_config_vault_addr" {
     error_message = "missing vault address"
   }
 }
+
+variable "VAULT_MONO_AUTH0_CONFIG" {
+  type      = string
+  default   = null
+  sensitive = true
+  validation {
+    condition     = length(var.VAULT_MONO_AUTH0_CONFIG) > 1
+    error_message = "missing vault address"
+  }
+}

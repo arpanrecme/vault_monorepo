@@ -14,14 +14,14 @@ resource "vault_jwt_auth_backend" "auth0" {
   }
 }
 
-resource "vault_jwt_auth_backend_role" "auth0_default_role" {
+resource "vault_jwt_auth_backend_role" "auth0_default" {
   depends_on = [
     vault_jwt_auth_backend.auth0
   ]
   bound_audiences = ["oLapiQO0f4dXRaVS88b4gc3PZR1sWe5R"]
   backend         = vault_jwt_auth_backend.auth0.path
   role_name       = vault_jwt_auth_backend.auth0.default_role
-  token_policies  = ["default"]
+  token_policies  = [var.DEFAULT_LOGIN_POLICY_NAME]
   user_claim      = "sub"
   role_type       = "oidc"
   allowed_redirect_uris = [
@@ -30,41 +30,41 @@ resource "vault_jwt_auth_backend_role" "auth0_default_role" {
   ]
 }
 
-resource "vault_jwt_auth_backend_role" "auth0_admin_role" {
+resource "vault_jwt_auth_backend_role" "auth0_vault_admin" {
   depends_on = [
     vault_jwt_auth_backend.auth0
   ]
   bound_audiences = ["oLapiQO0f4dXRaVS88b4gc3PZR1sWe5R"]
   backend         = vault_jwt_auth_backend.auth0.path
-  role_name       = "admin_role"
-  token_policies  = ["default"]
+  role_name       = "auth0_vault_admin"
+  token_policies  = [var.DEFAULT_LOGIN_POLICY_NAME]
   user_claim      = "sub"
   role_type       = "oidc"
   allowed_redirect_uris = [
     "${var.vault_mono_global_config_vault_addr}/ui/vault/auth/${vault_jwt_auth_backend.auth0.path}/oidc/callback",
     "http://localhost:8250/oidc/callback"
   ]
-  groups_claim = "hashicorp_vault_auth0_roles"
+  groups_claim = "https://example.com/roles"
 }
 
-resource "vault_identity_group" "auth0_admin_vault_ad_group" {
+resource "vault_identity_group" "auth0_admin" {
   depends_on = [
     vault_jwt_auth_backend.auth0
   ]
-  name     = "Auth0 Vault Admin"
+  name     = "auth0_admin"
   type     = "external"
   policies = [var.ADMIN_POLICY_NAME]
 
   metadata = {
-    responsibility = "Vault Admin"
+    responsibility = "Auth0 Vault Admin"
   }
 }
 
-resource "vault_identity_group_alias" "auth0_admin_vault_ad_group_alias" {
+resource "vault_identity_group_alias" "auth0_vault_admin" {
   depends_on = [
-    vault_identity_group.auth0_admin_vault_ad_group
+    vault_identity_group.auth0_admin
   ]
-  name           = "kv-mgr"
+  name           = "auth0_vault_admin"
   mount_accessor = vault_jwt_auth_backend.auth0.accessor
-  canonical_id   = vault_identity_group.auth0_admin_vault_ad_group.id
+  canonical_id   = vault_identity_group.auth0_admin.id
 }
