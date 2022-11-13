@@ -1,0 +1,15 @@
+---
+- name: Annihilation
+  hosts: localhost
+  gather_facts: false
+  become: false
+  vars:
+    vault_mono_server_ansible_inventory_name: vault_mono_server_ansible_inventory
+  vars_files:
+    - "{{ playbook_dir }}/vars/main.yml"
+  tasks:
+    - name: Vault Monorepo | Annihilation
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/annihilation.yml"
+      tags:
+        - annihilation
+        - never

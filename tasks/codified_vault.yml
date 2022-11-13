@@ -17,10 +17,6 @@
     vault_mono_codified_vault_tmp_backend: "{{ lookup('hcl2json', \
       path=vault_mono_codified_vault_local_file_tfbackend) }}"
 
-- name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend Workspace Name
-  ansible.builtin.set_fact:
-    vault_mono_codified_vault_tmp_workspace_backend: "{{ vault_mono_codified_vault_tmp_backend.terraform.backend.remote.workspaces.name }}"
-
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Create Remote Backend
   terraform_cloud_workspace:
     token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
@@ -28,7 +24,7 @@
     organization_attributes:
       email: "{{ vault_mono_tfe_org_email }}"
       "collaborator-auth-policy": "{{ vault_mono_tfe_org_collaborator_auth_policy }}"
-    workspace: "{{ vault_mono_codified_vault_tmp_workspace_backend }}"
+    workspace: "{{ vault_mono_codified_vault_tmp_backend.terraform.backend.remote.workspaces.name }}"
     workspace_attributes:
       "allow-destroy-plan": True
       "auto-apply": "{{ vault_mono_tfe_org_workspace_auto_apply }}"

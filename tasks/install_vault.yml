@@ -33,7 +33,7 @@
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Create UFW Vault application rules
   ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/ufw-{{ vault_mono_install_ufw_rule_name }}.j2"
-    dest: /etc/ufw/applications.d/ufw-vault
+    dest: "{{ vault_mono_install_ufw_application_rule_file_path }}"
     mode: "0644"
 
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Enable Vault Application Port
@@ -115,7 +115,7 @@
 - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault | Add Systemd Service File
   ansible.builtin.template:
     src: "{{ vault_mono_local_templates_dir }}/vault.service.j2"
-    dest: "/etc/systemd/system/{{ vault_mono_install_systemd_service_name }}.service"
+    dest: "{{ vault_mono_install_systemd_service_file_loc }}"
     mode: "0644"
     group: root
     owner: root
