@@ -5,29 +5,16 @@ stages:
 
 master_flow:
   stage: master_flow
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      changes:
-        - terraform/**/*
-        - codified_vault/**/*
-        - files/**/*
-        - plugins/**/*
-        - tasks/**/*
-        - templates/**/*
-        - vars/**/*
-        - .gitlab-ci.yml
-        - ansible.cfg
-        - Dockerfile
-        - inventory.yml
-        - requirements.txt
-        - site.yml
   before_script:
     - bw login --apikey --quiet
     - export BW_SESSION=$(bw unlock "${BW_MASTERPASSWORD}" --raw)
     - chmod 750 -R "${PWD}"
   script:
     - ansible-galaxy install -r requirements.yml
-    - ansible-playbook site.yml
+    - ansible-playbook site.yml --tags patch_server
+    - ansible-playbook site.yml --tags install_vault
+    - ansible-playbook site.yml --tags vault_init_unseal
+    - ansible-playbook site.yml --tags codified_vault
   after_script:
     - bw logout
     - bw status
