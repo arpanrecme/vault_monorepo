@@ -8,7 +8,7 @@ Patch System -> `patch_server`
 
 Install Hashicorp Vault -> `install_vault`
 
-Server TLS Certificate -> `vault_tls`
+Server TLS Certificate -> `install_vault`
 
 Setup Client Certificate ->
 

@@ -1,7 +1,4 @@
 ---
-- name: Cleanup Vault
-  ansible.builtin.import_playbook: playbook_annihilation.yml
-
 - name: Get Server Information
   ansible.builtin.import_playbook: playbook_create_server.yml
 
@@ -10,3 +7,6 @@
 
 - name: Configure Vault
   ansible.builtin.import_playbook: playbook_configure_vault.yml
+
+- name: Cleanup Vault
+  ansible.builtin.import_playbook: playbook_annihilation.yml

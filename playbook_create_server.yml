@@ -31,5 +31,4 @@
       tags:
         - patch_server
         - install_vault
-        - vault_tls
         - annihilation
