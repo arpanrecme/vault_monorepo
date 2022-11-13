@@ -87,14 +87,15 @@ new_root:
 '''
 
 
-def root_gen(unseal_keys=None,
-             vault_addr=None,
-             vault_client_cert=None,
-             vault_client_key=None,
-             vault_capath=None,
-             cancel_root_generation: bool = False,
-             calculate_new_root: bool = False,
-             ):
+def root_gen(
+    unseal_keys=None,
+    vault_addr=None,
+    vault_client_cert=None,
+    vault_client_key=None,
+    vault_capath=None,
+    cancel_root_generation: bool = False,
+    calculate_new_root: bool = False,
+):
 
     result = {}
 

@@ -1,7 +1,7 @@
 resource "vault_mount" "pki" {
   type                      = "pki"
   path                      = "pki"
-  description               = "Arpanrec Vault CA V1"
+  description               = "arpanrecme vault intermediate certificate authority"
   default_lease_ttl_seconds = (90 * 24 * 3600)       # 3 months
   max_lease_ttl_seconds     = (365 * 10 * 24 * 3600) # 10 year
 }
@@ -22,6 +22,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "pki_csr" {
   depends_on  = [vault_mount.pki]
   backend     = vault_mount.pki.path
   type        = "internal"
+  common_name = "root ca v2 - vault intermediate ca"
 }
 
 resource "tls_locally_signed_cert" "pki_intermediate_cert" {

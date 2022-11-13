@@ -14,8 +14,7 @@
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend config
   ansible.builtin.set_fact:
-    vault_mono_codified_vault_tmp_backend:
-      "{{ lookup('hcl2json', \
+    vault_mono_codified_vault_tmp_backend: "{{ lookup('hcl2json', \
       path=vault_mono_codified_vault_local_file_tfbackend) }}"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend Workspace Name
