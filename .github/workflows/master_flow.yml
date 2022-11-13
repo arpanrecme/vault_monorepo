@@ -50,9 +50,9 @@ jobs:
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags install_vault
 
       - name: Run Ansible Playbook Init and Unseal
-        id: vault_init_unseal
+        id: init_unseal
         run: |
-          BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags vault_init_unseal
+          BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags init_unseal
 
       - name: Run Ansible Playbook Configure Vault
         id: codified_vault

@@ -14,7 +14,7 @@ Setup Client Certificate ->
 
 Get Vault Initial Secret ->
 
-Initialize and Unseal -> `vault_init_unseal`
+Initialize and Unseal -> `init_unseal`
 
 Update Vault initial secret ->
 

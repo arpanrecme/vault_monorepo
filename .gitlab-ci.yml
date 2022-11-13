@@ -13,7 +13,7 @@ master_flow:
     - ansible-galaxy install -r requirements.yml
     - ansible-playbook site.yml --tags patch_server
     - ansible-playbook site.yml --tags install_vault
-    - ansible-playbook site.yml --tags vault_init_unseal
+    - ansible-playbook site.yml --tags init_unseal
     - ansible-playbook site.yml --tags codified_vault
   after_script:
     - bw logout
