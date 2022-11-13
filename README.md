@@ -24,9 +24,9 @@ Terraform Codified Vault -> `codified_vault`
 
 Flow to downstream ->
 
-## Prerequisite: Download the below resources from [bitwarden](tasks/011-get_prerequisite.yml)
+## Prerequisite: Download the below resources from [bitwarden](tasks/get_prerequisite.yml)
 
-- OPENSSH KEY - SHA256:Nu4xUoniFGACilNjH9RB+3M1p4UoX8S71DVpPhZOBJ0
+- OPENSSH KEY
   - Private Key: `id_rsa`
   - Private Key Passphrase
 - CA ROOT - RSA PRIVATE KEY and CERTIFICATE - 16:73:5a:f9:ed:ae:aa:98:26:cb:cc:0c:f2:9b:29:ec:88:4c:4b:e9
@@ -38,7 +38,7 @@ Flow to downstream ->
 - GITHUB: `GH_PROD_API_TOKEN`
 - Ansible Galaxy: `GALAXY_API_KEY`
 - HashiCorp Terraform Cloud: `TF_PROD_TOKEN`
-- Auth0 Client Details
+- Auth0 Client Details: `auth0_vault_admin.json`
   - Auth0 Domain
   - Client ID
   - Secret ID

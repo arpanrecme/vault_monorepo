@@ -130,6 +130,18 @@
       args:
         creates: "{{ vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token }}"
 
+    - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Get Auth0 Details
+      ansible.builtin.shell: |+
+        {{ vault_mono_prerequisite_tmp_pipefail_set }}
+
+        bw get attachment auth0_vault_admin.json \
+        --itemid $(bw get item 'Auth0' \
+        --raw | jq .id -r) \
+        --output "{{ vault_mono_prerequisite_local_file_auth0_client_details }}"
+
+      args:
+        creates: "{{ vault_mono_prerequisite_local_file_auth0_client_details }}"
+
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files | Bitwarden | Remove empty lines from files
       ansible.builtin.replace:
         path: "{{ item }}"

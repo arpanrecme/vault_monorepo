@@ -30,6 +30,8 @@ module "auth" {
   ADMIN_POLICY_NAME                   = module.policy.admin
   SCM_CICD_POLICY_NAME                = module.policy.scm_cicd
   DEFAULT_LOGIN_POLICY_NAME           = module.policy.default_login
+
+  VAULT_MONO_PREREQUISITE_LOCAL_FILE_AUTH0_CLIENT_DETAILS = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_AUTH0_CLIENT_DETAILS
 }
 
 module "kv2" {

@@ -22,12 +22,12 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "pki_csr" {
   depends_on  = [vault_mount.pki]
   backend     = vault_mount.pki.path
   type        = "internal"
-  common_name = "Arpan Vault Intermittent CA V1"
-  alt_names   = ["*.arpanrec.com", "arpanrec.com"]
 }
 
 resource "tls_locally_signed_cert" "pki_intermediate_cert" {
-  depends_on         = [vault_pki_secret_backend_intermediate_cert_request.pki_csr]
+  depends_on = [
+    vault_pki_secret_backend_intermediate_cert_request.pki_csr
+  ]
   cert_request_pem   = vault_pki_secret_backend_intermediate_cert_request.pki_csr.csr
   ca_private_key_pem = file(var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY)
   ca_cert_pem        = var.vault_mono_global_config_root_ca_certificate

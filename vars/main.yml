@@ -54,6 +54,10 @@ vault_mono_prerequisite_local_file_ansible_galaxy_api_key: "{{ vault_mono_prereq
 vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token: "{{ vault_mono_prerequisite_files_dir }}/terraform_cloud_tf_prod_token.txt"
 ## HashiCorp Terraform cloud
 
+## Auth0
+vault_mono_prerequisite_local_file_auth0_client_details: "{{ vault_mono_prerequisite_files_dir }}/auth0_client_details.json"
+## Auth0
+
 # Prerequisite
 
 # Mutual TLS
