@@ -174,14 +174,15 @@ def run_module():
         supports_check_mode=False
     )
 
-    root_gen_result = root_gen(unseal_keys=module.params['unseal_keys'],
-                               vault_addr=module.params['vault_addr'],
-                               vault_client_cert=module.params['vault_client_cert'],
-                               vault_client_key=module.params['vault_client_key'],
-                               vault_capath=module.params['vault_capath'],
-                               cancel_root_generation=module.params['cancel_root_generation'],
-                               calculate_new_root=module.params['calculate_new_root']
-                               )
+    root_gen_result = root_gen(
+        unseal_keys=module.params['unseal_keys'],
+        vault_addr=module.params['vault_addr'],
+        vault_client_cert=module.params['vault_client_cert'],
+        vault_client_key=module.params['vault_client_key'],
+        vault_capath=module.params['vault_capath'],
+        cancel_root_generation=module.params['cancel_root_generation'],
+        calculate_new_root=module.params['calculate_new_root']
+    )
 
     if "error" in root_gen_result.keys():
         return module.fail_json(msg=root_gen_result["error"], **root_gen_result["result"])
