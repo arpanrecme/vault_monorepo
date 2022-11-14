@@ -1,0 +1,77 @@
+- name: Vault Monorepo | Downstream | Create ROOT CA temporary file
+  changed_when: false
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: vault_mono_downstream_tmp_file_root_ca
+
+- name: Vault Monorepo | Downstream | Write CA Certificate to temporary file
+  changed_when: false
+  ansible.builtin.copy:
+    content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
+    dest: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
+
+- name: Vault Monorepo | Downstream | Github | Generate Root
+  no_log: "{{ vault_mono_debug_no_log }}"
+  vault_sys_generate_root:
+    unseal_keys: "{{ vault_mono_init_unseal_fact_init_secrets['keys'] }}"
+    vault_addr:
+      "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
+      {{ vault_mono_global_config.VAULT.PORT }}"
+    vault_client_cert: "{{ vault_mono_local_file_client_certificate }}"
+    vault_client_key: "{{ vault_mono_local_file_client_private_key }}"
+    vault_capath: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
+    cancel_root_generation: true
+    calculate_new_root: true
+  register: vault_mono_downstream_tmp_root_token
+
+- name: Vault Monorepo | Downstream | Github | Create approle secret id
+  environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
+    SSL_CERT_FILE: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
+  ansible.builtin.uri:
+    url:
+      "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
+      {{ vault_mono_global_config.VAULT.PORT }}/v1/auth/approle/role/scm_cicd/secret-id"
+    method: POST
+    client_cert: "{{ vault_mono_local_file_client_chain_certificate }}"
+    client_key: "{{ vault_mono_local_file_client_private_key }}"
+    status_code: [200]
+    validate_certs: true
+    return_content: true
+    headers:
+      "X-Vault-Token": "{{ vault_mono_downstream_tmp_root_token.new_root }}"
+  register: vault_mono_downstream_tmp_approle_secret
+  changed_when: vault_mono_downstream_tmp_approle_secret.status == 200
+
+- name: Vault Monorepo | Downstream | Github
+  block:
+    - name: Vault Monorepo | Downstream | Github | Repo
+      community.general.github_repo:
+        access_token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_github_gh_prod_api_token) }}"
+        name: github_master_controller
+        description: "Github master Controller"
+        private: false
+        state: present
+        force_defaults: true
+
+    - name: Vault Monorepo | Downstream | Github | Create or Update a repository secret
+      no_log: "{{ vault_mono_debug_no_log }}"
+      github_action_secret:
+        api_ep: "https://api.github.com"
+        pat: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_github_gh_prod_api_token) }}"
+        unencrypted_secret: "{{ item.unencrypted_secret }}"
+        repository: github_master_controller
+        name: "{{ item.name }}"
+      loop:
+        - name: ENDPOINT_GLOBAL_CONFIG
+          unencrypted_secret: "{{ vault_mono_endpoint_global_config }}"
+        - name: VAULT_APPROLE_AUTH_MOUNT
+          unencrypted_secret: approle
+        - name: VAULT_APPROLE_ID
+          unencrypted_secret: scm_cicd
+        - name: VAULT_APPROLE_SECRET_ID
+          unencrypted_secret: "{{ vault_mono_downstream_tmp_approle_secret.json.data.secret_id }}"
+        - name: CLIENT_PRIVATE_KEY
+          unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_private_key) }}"
+        - name: CLIENT_CHAIN_CERTIFICATE
+          unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"

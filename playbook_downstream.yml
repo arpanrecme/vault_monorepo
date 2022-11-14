@@ -1,0 +1,10 @@
+---
+- name: Downstream
+  hosts: localhost
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Vault Monorepo | Downstream
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/downstream.yml"
+      tags:
+        - downstream
