@@ -3,10 +3,6 @@
   hosts: localhost
   gather_facts: false
   become: false
-  vars:
-    vault_mono_server_ansible_inventory_name: vault_mono_server_ansible_inventory
-  vars_files:
-    - "{{ playbook_dir }}/vars/main.yml"
   tasks:
     - name: Vault Monorepo | Get Server Information | Check for tools
       run_once: true

@@ -3,8 +3,6 @@
   hosts: localhost
   gather_facts: false
   become: false
-  vars_files:
-    - "{{ playbook_dir }}/vars/main.yml"
   tasks:
     - name: Vault Monorepo | Configure Vault | Setup Client Certificate
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/client_cert.yml"

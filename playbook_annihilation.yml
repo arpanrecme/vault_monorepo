@@ -1,15 +1,22 @@
 ---
+- name: Annihilate | Vault Install
+  hosts: vault
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Vault Monorepo | Annihilation | Vault Install
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/annihilate_vault_install.yml"
+      tags:
+        - annihilation
+        - never
+
 - name: Annihilation
   hosts: localhost
   gather_facts: false
   become: false
-  vars:
-    vault_mono_server_ansible_inventory_name: vault_mono_server_ansible_inventory
-  vars_files:
-    - "{{ playbook_dir }}/vars/main.yml"
   tasks:
     - name: Vault Monorepo | Annihilation
-      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/annihilation.yml"
+      ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/annihilate_others.yml"
       tags:
         - annihilation
         - never

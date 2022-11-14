@@ -1,10 +1,8 @@
 ---
 - name: Setup Vault Server
-  hosts: vault_mono_server_ansible_inventory
+  hosts: vault
   gather_facts: true
   become: true
-  vars_files:
-    - "{{ playbook_dir }}/vars/main.yml"
   tasks:
     - name: Vault Monorepo | Setup Vault Server | Fail
       ansible.builtin.fail:
@@ -14,7 +12,8 @@
         or
         ansible_facts['service_mgr'] | lower != 'systemd'
       tags:
-        - always
+        - patch_server
+        - install_vault
 
     - name: Vault Monorepo | Setup Vault Server | Patch System
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/patch_system.yml"

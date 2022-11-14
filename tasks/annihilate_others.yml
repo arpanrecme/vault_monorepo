@@ -34,66 +34,12 @@
         url:
           "https://{{ vault_mono_tfe_hostname }}/api/v2/organizations/{{ vault_mono_tfe_org_name }}\
           /workspaces/{{ vault_mono_annihilation_tmp_backend.terraform.backend.remote.workspaces.name }}"
-        status_code: 200, 404
+        status_code: 204, 404
         headers:
           Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_annihilation_tmp_tfe_cloud_delete
       changed_when: vault_mono_annihilation_tmp_tfe_cloud_delete.status == 200
-
-- name: Vault Monorepo | Annihilation | Vault Install
-  become: true
-  delegate_to: "{{ vault_mono_server_ansible_inventory_name }}"
-  block:
-    - name: Vault Monorepo | Annihilation | Vault Install | Populate service facts
-      ansible.builtin.service_facts:
-
-    - name: Vault Monorepo | Annihilation | Vault Install | Stop Service
-      ansible.builtin.service:
-        name: "{{ vault_mono_install_systemd_service_name }}"
-        state: stopped
-        enabled: false
-      when: >
-        ansible_facts.services[vault_mono_install_systemd_service_name + '.service'] is defined
-        and
-        ansible_facts.services[vault_mono_install_systemd_service_name + '.service'] | length > 0
-
-    - name: Vault Monorepo | Annihilation | Vault Install | Disable Vault Application Port
-      community.general.ufw:
-        rule: deny
-        name: "{{ vault_mono_install_ufw_rule_name }}"
-        state: enabled
-        delete: true
-
-    - name: Vault Monorepo | Annihilation | Vault Install | Delete User
-      ansible.builtin.user:
-        name: "{{ vault_mono_install_systemd_user }}"
-        state: absent
-
-    - name: Vault Monorepo | Annihilation | Vault Install | Delete Group
-      ansible.builtin.user:
-        name: "{{ vault_mono_install_systemd_group }}"
-        state: absent
-
-    - name: Vault Monorepo | Annihilation | Vault Install | Delete Files
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - "{{ vault_mono_install_systemd_service_file_loc }}"
-        - "{{ vault_mono_install_ufw_application_rule_file_path }}"
-        - "{{ vault_mono_tls_client_ca_file }}"
-        - "{{ vault_mono_tls_key_file }}"
-        - "{{ vault_mono_tls_cert_file }}"
-        - "{{ vault_mono_tls_dir_path }}"
-        - "{{ vault_mono_install_bin_file_path }}"
-        - "{{ vault_mono_install_bin_dir_path }}"
-        - "{{ vault_mono_install_env_file_path }}"
-        - "{{ vault_mono_install_config_file_path }}"
-        - "{{ vault_mono_install_config_dir_path }}"
-        - "{{ vault_mono_install_data_dir_path }}"
-        - "{{ vault_mono_install_tmp_dir_path }}"
-        - "{{ vault_mono_install_path }}"
 
 - name: Vault Monorepo | Annihilation | Delete Local Files
   ansible.builtin.file:

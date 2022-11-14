@@ -1,5 +1,144 @@
 ---
 all:
+  vars:
+    global_debug: "{{ lookup('ansible.builtin.env', 'DEBUG') | default(false, true) | bool }}"
+    vault_mono_debug_no_log: "{{ not global_debug }}"
+
+    # Template Files Directory
+    vault_mono_local_templates_dir: "{{ playbook_dir }}/templates"
+    # Template Files Directory
+
+    # Global Configuration
+    vault_mono_endpoint_global_config: "https://raw.githubusercontent.com/arpanrecme/dotfiles/main/.config/global.json"
+
+    vault_mono_global_config: "{{ lookup('ansible.builtin.url', \
+      vault_mono_endpoint_global_config, \
+      split_lines=False, \
+      headers={'Content-Type':'application/json', 'Accept':'application/json'}) | from_json }}"
+    # Global Configuration
+
+    # Temporary Files Directory
+    vault_mono_local_tmp_files_dir: "{{ playbook_dir }}/.tmp"
+    # Temporary Files Directory
+
+    # Vault Init and Unseal
+    vault_mono_local_file_vault_init_secrets: "{{ vault_mono_local_tmp_files_dir }}/vault_init_json.json"
+    # Vault Init and Unseal
+
+    # Prerequisite
+    vault_mono_prerequisite_files_dir: "{{ vault_mono_local_tmp_files_dir }}/prerequisite"
+
+    ## OPENSSH
+    vault_mono_prerequisite_local_file_openssh_private_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_rsa_id.key"
+    vault_mono_prerequisite_local_file_openssh_passphrase_private_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_passphrase_rsa_id.txt"
+    vault_mono_prerequisite_local_file_openssh_nopass_private_key: "{{ vault_mono_prerequisite_files_dir }}/openssh_nopass_rsa_id.key"
+    ## OPENSSH
+
+    ## Linode
+    vault_mono_prerequisite_local_file_linode_cli_prod_token: "{{ vault_mono_prerequisite_files_dir }}/linode_cli_prod_token.txt"
+    ## Linode
+
+    ## ROOT CA
+    vault_mono_prerequisite_local_file_root_ca_private_key: "{{ vault_mono_prerequisite_files_dir }}/root_ca_private_key.pem"
+    vault_mono_prerequisite_local_file_root_ca_passphrase_private_key: "{{ vault_mono_prerequisite_files_dir }}/root_ca_private_key_passphrase.txt"
+    vault_mono_prerequisite_local_file_root_ca_no_pass_private_key: "{{ vault_mono_prerequisite_files_dir }}/root_ca_no_pass_private_key.pem"
+    ## ROOT CA
+
+    ## GITLAB
+    vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key: "{{ vault_mono_prerequisite_files_dir }}/gitlab_gl_prod_api_key.txt"
+    ## GITLAB
+
+    ## GITHUB
+    vault_mono_prerequisite_local_file_github_gh_prod_api_token: "{{ vault_mono_prerequisite_files_dir }}/github_gh_prod_api_token.txt"
+    ## GITHUB
+
+    ## Ansible Galaxy
+    vault_mono_prerequisite_local_file_ansible_galaxy_api_key: "{{ vault_mono_prerequisite_files_dir }}/ansible_galaxy_api_key.txt"
+    ## Ansible Galaxy
+
+    ## HashiCorp Terraform cloud
+    vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token: "{{ vault_mono_prerequisite_files_dir }}/terraform_cloud_tf_prod_token.txt"
+    ## HashiCorp Terraform cloud
+
+    ## Auth0
+    vault_mono_prerequisite_local_file_auth0_client_details: "{{ vault_mono_prerequisite_files_dir }}/auth0_client_details.json"
+    ## Auth0
+
+    # Prerequisite
+
+    # Mutual TLS
+    vault_mono_mutual_tls_files_dir: "{{ vault_mono_local_tmp_files_dir }}/mutual_tls_certs"
+    vault_mono_local_file_client_private_key: "{{ vault_mono_mutual_tls_files_dir }}/vault_client_key.pem"
+    vault_mono_local_file_client_certificate: "{{ vault_mono_mutual_tls_files_dir }}/vault_client_cert.pem"
+    vault_mono_local_file_client_chain_certificate: "{{ vault_mono_mutual_tls_files_dir }}/vault_client_cert_chain.pem"
+    vault_mono_local_file_client_chain_pkcs12_certificate: "{{ vault_mono_mutual_tls_files_dir }}/vault_client_cert_chain.p12"
+    vault_mono_client_passphrase_pkcs12_certificate: password
+    # Mutual TLS
+
+    # codified_vault
+    vault_mono_tfe_hostname: "{{ vault_mono_global_config.TERRAFORM_CLOUD.HOSTNAME }}"
+    vault_mono_tfe_api_endpoint: "https://{{ vault_mono_tfe_hostname }}/api/v2"
+    vault_mono_tfe_org_name: "{{ vault_mono_global_config.TERRAFORM_CLOUD.ORGANIZATION }}"
+    vault_mono_tfe_org_email: "{{ vault_mono_global_config.EMAIL }}"
+    vault_mono_tfe_org_collaborator_auth_policy: "{{ vault_mono_global_config.TERRAFORM_CLOUD.AUTH_POLICY }}"
+    vault_mono_tfe_org_workspace_auto_apply: true
+    vault_mono_tfe_org_workspace_execution_mode: local
+    vault_mono_codified_vault_dir: "{{ playbook_dir }}/codified_vault"
+    vault_mono_codified_vault_local_file_tfbackend: "{{ vault_mono_codified_vault_dir }}/backend.tf"
+    # codified_vault
+
+    # System Patch
+    vault_mono_system_patch_hostname: vaultssothost
+    vault_mono_system_patch_login_user: vault_mono
+    vault_mono_system_patch_login_group: "{{ vault_mono_system_patch_login_user }}"
+    vault_mono_system_patch_homedir_login_user: "/home/{{ vault_mono_system_patch_login_user }}"
+    # System Patch
+
+    # Vault Install
+    vault_mono_install_version: 1.12.0
+    vault_mono_install_architecture_map:
+      amd64: amd64
+      x86_64: amd64
+      armv7l: arm
+      aarch64: arm64
+    vault_mono_install_select_architecture: "{{ vault_mono_install_architecture_map[ansible_architecture] }}"
+    vault_mono_install_os: "{{ ansible_system | lower }}"
+    vault_mono_install_package: "vault_{{ vault_mono_install_version }}_{{ vault_mono_install_os }}_{{ vault_mono_install_select_architecture }}.zip"
+    vault_mono_install_shasums: "vault_{{ vault_mono_install_version }}_SHA256SUMS"
+    vault_mono_install_zip_url: "https://releases.hashicorp.com/vault\
+      /{{ vault_mono_install_version }}\
+      /vault_{{ vault_mono_install_version }}_{{ vault_mono_install_os }}_{{ vault_mono_install_select_architecture }}.zip"
+    vault_mono_install_checksum_file_url: "https://releases.hashicorp.com/\
+      vault/{{ vault_mono_install_version }}\
+      /vault_{{ vault_mono_install_version }}_SHA256SUMS"
+    vault_mono_install_systemd_user: vault
+    vault_mono_install_systemd_group: "{{ vault_mono_install_systemd_user }}"
+    vault_mono_install_ufw_rule_name: "{{ vault_mono_install_systemd_user }}"
+    vault_mono_install_ufw_application_rule_file_path: /etc/ufw/applications.d/ufw-vault
+
+    vault_mono_install_path: "/opt/{{ vault_mono_install_systemd_user }}"
+
+    vault_mono_install_tmp_dir_path: "{{ vault_mono_install_path }}/tmp"
+
+    vault_mono_install_data_dir_path: "{{ vault_mono_install_path }}/data"
+
+    vault_mono_install_config_dir_path: "{{ vault_mono_install_path }}/etc"
+    vault_mono_install_config_file_path: "{{ vault_mono_install_config_dir_path }}/vault.hcl"
+    vault_mono_install_env_file_path: "{{ vault_mono_install_config_dir_path }}/vault.env"
+
+    vault_mono_install_bin_dir_path: "{{ vault_mono_install_path }}/bin"
+    vault_mono_install_bin_file_path: "{{ vault_mono_install_bin_dir_path }}/vault"
+    vault_mono_install_systemd_service_name: "{{ vault_mono_install_systemd_user }}"
+    vault_mono_install_systemd_service_file_loc: "/etc/systemd/system/{{ vault_mono_install_systemd_service_name }}.service"
+
+    ## TLS
+    vault_mono_tls_dir_path: "{{ vault_mono_install_path }}/tls"
+    vault_mono_tls_cert_file: "{{ vault_mono_tls_dir_path }}/tls_cert_file_chain.crt"
+    vault_mono_tls_key_file: "{{ vault_mono_tls_dir_path }}/tls_key_file.key"
+    vault_mono_tls_client_ca_file: "{{ vault_mono_tls_dir_path }}/tls_client_ca_file.crt"
+    ## TLS
+
+    # Vault Install
   hosts:
     localhost:
       ansible_connection: local
