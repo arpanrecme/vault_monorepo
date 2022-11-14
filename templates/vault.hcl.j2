@@ -10,7 +10,7 @@ listener "tcp" {
   tls_disable                         = false
   tls_cert_file                       = "{{ vault_mono_tls_cert_file }}"
   tls_key_file                        = "{{ vault_mono_tls_key_file }}"
-  tls_require_and_verify_client_cert  = true
+  tls_require_and_verify_client_cert  = {{ vault_mono_global_config.VAULT.REQUIRE_CLIENT_CERT | string | lower }}
   tls_client_ca_file                  = "{{ vault_mono_tls_client_ca_file }}"
 }
 
