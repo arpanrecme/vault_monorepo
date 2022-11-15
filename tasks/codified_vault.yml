@@ -58,7 +58,7 @@
     # backend_config_files:
     #   - "{{ vault_mono_codified_vault_local_file_tfbackend }}"
   environment:
-    TF_VAR_VAULT_MONO_ENDPOINT_GLOBAL_CONFIG: "{{ vault_mono_endpoint_global_config }}"
+    TF_VAR_VAULT_MONO_GLOBAL_CONFIG_ENDPOINT: "{{ vault_mono_endpoint_global_config }}"
     TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_tmp_root_token.new_root }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CHAIN_CERTIFICATE: "{{ vault_mono_local_file_client_chain_certificate }}"

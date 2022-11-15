@@ -9,7 +9,3 @@ resource "vault_policy" "admin" {
   name   = "admin"
   policy = data.vault_policy_document.admin.hcl
 }
-
-output "admin" {
-  value = vault_policy.admin.name
-}

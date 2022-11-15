@@ -28,7 +28,3 @@ resource "vault_policy" "default_login" {
   name   = "default_login"
   policy = data.vault_policy_document.default_login.hcl
 }
-
-output "default_login" {
-  value = vault_policy.default_login.name
-}

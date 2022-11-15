@@ -1,5 +1,5 @@
 data "http" "global_config" {
-  url = var.VAULT_MONO_ENDPOINT_GLOBAL_CONFIG
+  url = var.VAULT_MONO_GLOBAL_CONFIG_ENDPOINT
   # Optional request headers
   request_headers = {
     Content-Type = "application/json"

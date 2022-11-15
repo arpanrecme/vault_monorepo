@@ -50,7 +50,8 @@ options:
         required: true
         type: str
     repository:
-        description: Plain text action secret
+        description:
+            - Name of the github repository.
         required: false
         type: str
     state:
@@ -60,10 +61,7 @@ options:
         choices: ["present", "absent"]
         default: present
     visibility:
-        description:
-            - Required for organization secrets
-            - `private`, `all`, `selected`
-            - Mandatory for organization secrets
+        description: Mandatory for organization secrets
         choices: ["private", "all", "selected"]
         type: str
         required: false

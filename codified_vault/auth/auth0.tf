@@ -30,7 +30,7 @@ resource "vault_jwt_auth_backend_role" "auth0_default" {
   bound_audiences = [local.vault_mono_prerequisite_auth0_oidc_client_id]
   backend         = vault_jwt_auth_backend.auth0.path
   role_name       = vault_jwt_auth_backend.auth0.default_role
-  token_policies  = [var.DEFAULT_LOGIN_POLICY_NAME]
+  token_policies  = ["default", "default_login"]
   user_claim      = "sub"
   role_type       = "oidc"
   allowed_redirect_uris = [
@@ -46,7 +46,7 @@ resource "vault_jwt_auth_backend_role" "auth0_vault_admin" {
   bound_audiences = [local.vault_mono_prerequisite_auth0_oidc_client_id]
   backend         = vault_jwt_auth_backend.auth0.path
   role_name       = local.vault_mono_prerequisite_auth0_admin_role_name
-  token_policies  = [var.DEFAULT_LOGIN_POLICY_NAME]
+  token_policies  = ["default", "default_login"]
   user_claim      = "sub"
   role_type       = "oidc"
   allowed_redirect_uris = [
@@ -62,7 +62,7 @@ resource "vault_identity_group" "auth0_admin" {
   ]
   name     = local.vault_mono_prerequisite_auth0_admin_role_name
   type     = "external"
-  policies = [var.ADMIN_POLICY_NAME]
+  policies = ["auth0_vault_admin"]
 
   metadata = {
     responsibility = "Auth0 Vault Admin"
