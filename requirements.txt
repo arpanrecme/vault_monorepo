@@ -9,3 +9,4 @@ jmespath
 PyNaCl
 requests
 pyhcl
+PyGithub

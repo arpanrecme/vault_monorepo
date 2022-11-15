@@ -1,4 +1,4 @@
-# docker build . -t arpanrecme/vaultmonorepo:9
+# docker build . -t arpanrecme/vaultmonorepo:10
 FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive

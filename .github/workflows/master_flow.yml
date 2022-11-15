@@ -17,7 +17,7 @@ jobs:
   master_flow:
     runs-on: ubuntu-latest
     container:
-      image: arpanrecme/vaultmonorepo:9
+      image: arpanrecme/vaultmonorepo:10
     steps:
       - name: Checkout Code
         id: checkout_code
