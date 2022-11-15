@@ -238,16 +238,17 @@ def run_module():
         ],
     )
 
-    github_update_response = crud(api_ep=module.params['api_ep'],
-                                  pat=module.params['pat'],
-                                  owner=module.params['owner'],
-                                  unencrypted_secret=module.params['unencrypted_secret'],
-                                  name=module.params['name'],
-                                  repository=module.params['repository'],
-                                  organization=module.params["organization"],
-                                  state=module.params["state"],
-                                  visibility=module.params["visibility"],
-                                  )
+    github_update_response = crud(
+        api_ep=module.params['api_ep'],
+        pat=module.params['pat'],
+        owner=module.params['owner'],
+        unencrypted_secret=module.params['unencrypted_secret'],
+        name=module.params['name'],
+        repository=module.params['repository'],
+        organization=module.params["organization"],
+        state=module.params["state"],
+        visibility=module.params["visibility"],
+    )
 
     if "error" in github_update_response.keys():
         return module.fail_json(msg=github_update_response["error"],
