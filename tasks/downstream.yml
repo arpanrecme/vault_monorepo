@@ -27,7 +27,7 @@
 
 - name: Vault Monorepo | Downstream | Github
   block:
-    - name: Vault Monorepo | Downstream | Github | Repo
+    - name: Vault Monorepo | Downstream | Github | Create Repository
       community.general.github_repo:
         access_token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_github_gh_prod_api_token) }}"
         name: github_master_controller
@@ -35,6 +35,12 @@
         private: false
         state: present
         force_defaults: true
+      register: vault_mono_downstream_tmp_github_repo
+
+    - name: Vault Monorepo | Downstream | Github | Fail if user is not {{ vault_mono_global_config.GITHUB.USER }}
+      ansible.builtin.fail:
+        msg: "{{ vault_mono_downstream_tmp_github_repo.repo.owner.login }}"
+      when: vault_mono_downstream_tmp_github_repo.repo.owner.login != vault_mono_global_config.GITHUB.USER
 
     - name: Vault Monorepo | Downstream | Github | Create approle secret id
       environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
@@ -62,7 +68,6 @@
         unencrypted_secret: "{{ item.unencrypted_secret }}"
         repository: github_master_controller
         name: "{{ item.name }}"
-        visibility:
       loop:
         - name: GLOBAL_CONFIG_ENDPOINT
           unencrypted_secret: "{{ vault_mono_endpoint_global_config }}"
