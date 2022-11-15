@@ -2,6 +2,8 @@ name: Master Application Flow
 
 "on":
   workflow_dispatch:
+  repository_dispatch:
+    types: ["api"]
   pull_request:
     branches:
       - main
