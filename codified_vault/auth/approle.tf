@@ -32,3 +32,15 @@ resource "vault_approle_auth_backend_role" "github_master_controller" {
   role_id            = "github_master_controller"
   secret_id_num_uses = 0
 }
+
+resource "vault_approle_auth_backend_role" "gitlab_master_controller" {
+  depends_on = [
+    vault_auth_backend.approle
+  ]
+  backend            = vault_auth_backend.approle.path
+  role_name          = "gitlab_master_controller"
+  token_policies     = ["default", "gitlab_master_controller", "default_login"]
+  secret_id_ttl      = 0
+  role_id            = "gitlab_master_controller"
+  secret_id_num_uses = 0
+}

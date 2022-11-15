@@ -57,8 +57,8 @@
         return_content: true
         headers:
           "X-Vault-Token": "{{ vault_mono_downstream_tmp_root_token.new_root }}"
-      register: vault_mono_downstream_tmp_approle_secret
-      changed_when: vault_mono_downstream_tmp_approle_secret.status == 200
+      register: vault_mono_downstream_tmp_github_master_controller_approle_secret
+      changed_when: vault_mono_downstream_tmp_github_master_controller_approle_secret.status == 200
 
     - name: Vault Monorepo | Downstream | Github | Create or Update a repository secret
       no_log: "{{ vault_mono_debug_no_log }}"
@@ -76,8 +76,92 @@
         - name: VAULT_APPROLE_ID
           unencrypted_secret: github_master_controller
         - name: VAULT_APPROLE_SECRET_ID
-          unencrypted_secret: "{{ vault_mono_downstream_tmp_approle_secret.json.data.secret_id }}"
+          unencrypted_secret: "{{ vault_mono_downstream_tmp_github_master_controller_approle_secret.json.data.secret_id }}"
         - name: CLIENT_PRIVATE_KEY
           unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_private_key) }}"
         - name: CLIENT_CHAIN_CERTIFICATE
           unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
+
+- name: Vault Monorepo | Downstream | Gitlab
+  block:
+    - name: Vault Monorepo | Downstream | Gitlab | Create Repository
+      community.general.gitlab_project:
+        api_token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key) }}"
+        initialize_with_readme: false
+        issues_enabled: false
+        lfs_enabled: false
+        merge_method: merge
+        allow_merge_on_skipped_pipeline: false
+        merge_requests_enabled: true
+        only_allow_merge_if_all_discussions_are_resolved: true
+        only_allow_merge_if_pipeline_succeeds: true
+        packages_enabled: false
+        remove_source_branch_after_merge: false
+        shared_runners_enabled: true
+        snippets_enabled: false
+        squash_option: never
+        state: present
+        username: "{{ vault_mono_global_config.GITLAB.USER }}"
+        validate_certs: true
+        visibility: public
+        wiki_enabled: false
+        description: "Gitlab master controller"
+        name: "Gitlab Master Controller"
+        path: "gitlab_master_controller"
+      register: vault_mono_downstream_tmp_gitlab_repo
+
+    - name: Vault Monorepo | Downstream | Gitlab | Create approle secret id
+      environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
+        SSL_CERT_FILE: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
+      ansible.builtin.uri:
+        url:
+          "{{ vault_mono_global_config.VAULT.PROTOCOL }}://{{ vault_mono_global_config.VAULT.FQDN }}:\
+          {{ vault_mono_global_config.VAULT.PORT }}/v1/auth/approle/role/gitlab_master_controller/secret-id"
+        method: POST
+        client_cert: "{{ vault_mono_local_file_client_chain_certificate }}"
+        client_key: "{{ vault_mono_local_file_client_private_key }}"
+        status_code: [200]
+        validate_certs: true
+        return_content: true
+        headers:
+          "X-Vault-Token": "{{ vault_mono_downstream_tmp_root_token.new_root }}"
+      register: vault_mono_downstream_tmp_gitlab_master_controller_approle_secret
+      changed_when: vault_mono_downstream_tmp_gitlab_master_controller_approle_secret.status == 200
+
+    - name: Vault Monorepo | Downstream | Gitlab | Create or Update a repository secret
+      community.general.gitlab_project_variable:
+        api_token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key) }}"
+        project: "{{ vault_mono_downstream_tmp_gitlab_repo.project.path_with_namespace }}"
+        purge: false
+        validate_certs: true
+        variables:
+          - name: GLOBAL_CONFIG_ENDPOINT
+            value: "{{ vault_mono_endpoint_global_config }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+          - name: VAULT_APPROLE_AUTH_MOUNT
+            value: approle
+            masked: false
+            protected: false
+            variable_type: env_var
+          - name: VAULT_APPROLE_ID
+            value: gitlab_master_controller
+            masked: false
+            protected: false
+            variable_type: env_var
+          - name: VAULT_APPROLE_SECRET_ID
+            value: "{{ vault_mono_downstream_tmp_gitlab_master_controller_approle_secret.json.data.secret_id }}"
+            masked: true
+            protected: false
+            variable_type: env_var
+          - name: CLIENT_PRIVATE_KEY
+            value: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_private_key) }}"
+            masked: false
+            protected: false
+            variable_type: file
+          - name: CLIENT_CHAIN_CERTIFICATE
+            value: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
+            masked: false
+            protected: false
+            variable_type: file
