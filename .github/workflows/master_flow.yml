@@ -59,6 +59,11 @@ jobs:
         run: |
           BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags codified_vault
 
+      - name: Run Ansible Playbook Setup Downstream Controllers
+        id: downstream
+        run: |
+          BW_SESSION=$(cat "${BW_LOCAL_FILE_SESSION_FILE}") ansible-playbook site.yml --tags downstream
+
       - name: Bitwarden Logout
         id: bitwarden_logout
         if: ${{ always() }}

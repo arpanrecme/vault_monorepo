@@ -15,6 +15,7 @@ master_flow:
     - ansible-playbook site.yml --tags install_vault
     - ansible-playbook site.yml --tags init_unseal
     - ansible-playbook site.yml --tags codified_vault
+    - ansible-playbook site.yml --tags downstream
   after_script:
     - bw logout
     - bw status

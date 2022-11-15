@@ -22,7 +22,7 @@ Terraform Cloud Setup -> Create Organization and Workspace
 
 Terraform Codified Vault -> `codified_vault`
 
-Flow to downstream ->
+Flow to downstream -> `downstream`
 
 ## Prerequisite: Download the below resources from [bitwarden](tasks/get_prerequisite.yml)
 
