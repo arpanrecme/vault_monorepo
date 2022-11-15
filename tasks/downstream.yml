@@ -82,6 +82,22 @@
         - name: CLIENT_CHAIN_CERTIFICATE
           unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
 
+    - name: Vault Monorepo | Downstream | Github | Run Github Actions
+      ansible.builtin.uri:
+        url: "{{ vault_mono_downstream_tmp_github_repo.repo.url }}/dispatches"
+        method: POST
+        status_code: [204]
+        validate_certs: true
+        return_content: true
+        body_format: json
+        body:
+          event_type: api
+        headers:
+          "Accept": "application/vnd.github+json"
+          "authorization": "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_github_gh_prod_api_token) }}"
+      register: vault_mono_downstream_tmp_gitlab_master_controller_repo_dispatch
+      changed_when: vault_mono_downstream_tmp_gitlab_master_controller_repo_dispatch.status == 204
+
 - name: Vault Monorepo | Downstream | Gitlab
   block:
     - name: Vault Monorepo | Downstream | Gitlab | Create Repository
