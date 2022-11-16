@@ -11,6 +11,7 @@
   ansible.builtin.copy:
     content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
     dest: "{{ vault_mono_codified_vault_tmp_file_root_ca.path }}"
+    mode: "0700"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend config
   ansible.builtin.set_fact:
@@ -26,7 +27,7 @@
       "collaborator-auth-policy": "{{ vault_mono_tfe_org_collaborator_auth_policy }}"
     workspace: "{{ vault_mono_codified_vault_tmp_backend.terraform.backend.remote.workspaces.name }}"
     workspace_attributes:
-      "allow-destroy-plan": True
+      "allow-destroy-plan": true
       "auto-apply": "{{ vault_mono_tfe_org_workspace_auto_apply }}"
       "execution-mode": "{{ vault_mono_tfe_org_workspace_execution_mode }}"
     hostname: "{{ vault_mono_tfe_hostname }}"

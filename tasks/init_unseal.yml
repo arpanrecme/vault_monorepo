@@ -11,6 +11,7 @@
   ansible.builtin.copy:
     content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
     dest: "{{ vault_mono_init_unseal_tmp_file_root_ca.path }}"
+    mode: "0644"
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Get Vault Health Status
   environment:

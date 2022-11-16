@@ -5,7 +5,6 @@
   become: false
   tasks:
     - name: Vault Monorepo | Get Server Information | Check for tools
-      run_once: true
       ansible.builtin.shell: "command -v {{ item }} >/dev/null 2>&1"
       changed_when: false
       with_items:
