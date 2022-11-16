@@ -10,3 +10,4 @@ PyNaCl
 requests
 pyhcl
 PyGithub
+ansible-lint
