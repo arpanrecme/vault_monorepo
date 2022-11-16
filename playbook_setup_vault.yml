@@ -1,9 +1,15 @@
 ---
 - name: Setup Vault Server
   hosts: vault
-  gather_facts: true
-  become: true
+  gather_facts: false
+  become: false
   tasks:
+    - name: Vault Monorepo | Setup Vault Server | Gather Fact
+      ansible.builtin.setup:
+      tags:
+        - patch_server
+        - install_vault
+
     - name: Vault Monorepo | Setup Vault Server | Fail
       ansible.builtin.fail:
         msg: Required Debian Bullseye Systemd
@@ -16,25 +22,32 @@
         - install_vault
 
     - name: Vault Monorepo | Setup Vault Server | Patch System
+      become: true
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/patch_system.yml"
       tags:
         - patch_server
 
     - name: Vault Monorepo | Setup Vault Server | Install Hashicorp Vault
+      become: true
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/install_vault.yml"
       tags:
         - install_vault
 
     - name: Vault Monorepo | Setup Vault Server | Server TLS Certificate
+      become: true
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/vault_tls.yml"
       tags:
         - install_vault
 
   handlers:
     - name: Vault Monorepo | Setup Vault Server | Handlers | Restart Vault
+      become: true
       ansible.builtin.service:
         name: "{{ vault_mono_install_systemd_service_name }}"
         state: "{{ item }}"
       with_items:
         - reloaded
         - restarted
+      tags:
+        - patch_server
+        - install_vault

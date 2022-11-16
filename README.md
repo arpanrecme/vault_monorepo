@@ -72,7 +72,7 @@ Backend state is stored in [Terraform Cloud](https://app.terraform.io/app/arpanr
 
 [GitLab info](vars/gitlab_artifacts.yml)
 
-- Terraform state stored in gitlab
+- Init secrets stored in gitlab
 
 ## Vault Authentication - Auth0 Client Details
 

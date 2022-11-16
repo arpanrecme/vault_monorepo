@@ -10,6 +10,7 @@
   ansible.builtin.copy:
     content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
     dest: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
+    mode: "0644"
 
 - name: Vault Monorepo | Downstream | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
@@ -77,9 +78,9 @@
           unencrypted_secret: github_master_controller
         - name: VAULT_APPROLE_SECRET_ID
           unencrypted_secret: "{{ vault_mono_downstream_tmp_github_master_controller_approle_secret.json.data.secret_id }}"
-        - name: CLIENT_PRIVATE_KEY
+        - name: VAULT_CLIENT_PRIVATE_KEY
           unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_private_key) }}"
-        - name: CLIENT_CHAIN_CERTIFICATE
+        - name: VAULT_CLIENT_CHAIN_CERTIFICATE
           unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
 
     - name: Vault Monorepo | Downstream | Github | Run Github Actions
@@ -171,16 +172,16 @@
             masked: true
             protected: false
             variable_type: env_var
-          - name: CLIENT_PRIVATE_KEY
+          - name: VAULT_CLIENT_PRIVATE_KEY
             value: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_private_key) }}"
             masked: false
             protected: false
-            variable_type: file
-          - name: CLIENT_CHAIN_CERTIFICATE
+            variable_type: env_var
+          - name: VAULT_CLIENT_CHAIN_CERTIFICATE
             value: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
             masked: false
             protected: false
-            variable_type: file
+            variable_type: env_var
 
     - name: Vault Monorepo | Downstream | Gitlab | Run Gitlab Pipeline
       gitlab_trigger_pipeline:

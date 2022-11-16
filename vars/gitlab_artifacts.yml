@@ -1,3 +1,3 @@
 ---
-vault_mono_gitlab_artifacts_project_id: 39779402
+vault_mono_gitlab_artifacts_user_project_path: "{{ vault_mono_global_config.GITLAB.USER }}/vault_monorepo"
 vault_mono_gitlab_artifacts_vault_cicd_variable_key_init_file: VAULT_INIT_SECRET_FILE
