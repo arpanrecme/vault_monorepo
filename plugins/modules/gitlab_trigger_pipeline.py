@@ -50,6 +50,28 @@ author:
 '''
 
 
+EXAMPLES = r'''
+- name: Trigger pipeline with private token
+  gitlab_trigger_pipeline:
+    private_token: xxxxxxxxxxx
+    project_id: arpanrecme/test
+
+- name: Trigger pipeline with ref
+  gitlab_trigger_pipeline:
+    token: xxxxxxxxxxx
+    project_id: arpanrecme/test
+    ref: feature/something
+'''
+
+RETURN = r'''
+These are examples of possible return values, and in general should use other names for return values.
+run_details:
+    description: Newly created pipeline run details
+    type: dict
+    returned: always
+'''
+
+
 def crud(
         api_ep=None,
         private_token=None,
@@ -187,21 +209,10 @@ def run_module() -> None:
             project_id=module.params['project_id'],
             ref=module.params['ref'],
         )
+        module.exit_json(**gitlab_pipe_response)
     except BaseException as ex:
-        module.fail_json(msg=ex)
-    module.exit_json(**gitlab_pipe_response)
+        module.fail_json(msg=str(ex))
 
-
-# if __name__ == '__main__':
-#     import os
-#     import json
-#     res = crud(
-#         api_ep="https://gitlab.com",
-#         private_token=os.getenv("GL_PROD_API_KEY"),
-#         project_id="arpanrecme/test",
-#     )
-
-#     print(json.dumps(res, indent=4))
 
 def main():
     run_module()
