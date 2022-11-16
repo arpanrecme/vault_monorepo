@@ -10,6 +10,8 @@ from __future__ import absolute_import, division, print_function
 import urllib.parse
 import requests
 from ansible.module_utils.basic import AnsibleModule
+from ansible.errors import AnsibleError
+from ansible.module_utils.common.text.converters import to_native
 __metaclass__ = type
 
 
@@ -86,19 +88,24 @@ def crud(
     _token_description = "gitlab_trigger_pipeline_tmp"
 
     if not api_ep:
-        raise Exception("Missing API Endpoint")
+        result["error"] = "Missing API Endpoint"
+        return result
 
     if not private_token and not token:
-        raise Exception("private_token or token is required")
+        result["error"] = "private_token or token is required"
+        return result
 
     if private_token and token and ref:
-        raise Exception("private_token and token are mutually exclusive when ref is present")
+        result["error"] = "private_token and token are mutually exclusive when ref is present"
+        return result
 
     if not project_id:
-        raise Exception("project_id is mandatory")
+        result["error"] = "project_id is mandatory"
+        return result
 
     if not private_token and not ref:
-        raise Exception("private_token is mandatory when ref is not present")
+        result["error"] = "private_token is mandatory when ref is not present"
+        return result
 
     project_id = urllib.parse.quote(project_id.encode("utf-8"),  safe='').strip()
 
@@ -130,15 +137,17 @@ def crud(
                     result["token_created"] = True
                     _token_details = (new_trigger_token_response.json())
                 else:
-                    raise Exception({
+                    result["error"] = {
                         "msg": new_trigger_token_response.json(),
                         "status_code": new_trigger_token_response.status_code
-                    })
+                    }
+                    return result
         else:
-            raise Exception({
+            result["error"] = {
                 "msg": list_of_trigger_token_response.json(),
                 "status_code": list_of_trigger_token_response.status_code
-            })
+            }
+            return result
         token = _token_details["token"]
     result["token"] = token
 
@@ -151,10 +160,11 @@ def crud(
         if ref_details_res.status_code == 200:
             ref = ref_details_res.json().get("default_branch")
         else:
-            raise Exception({
+            result["error"] = {
                 "msg": ref_details_res.json(),
                 "status_code": ref_details_res.status_code
-            })
+            }
+            return result
 
     result["ref"] = ref
 
@@ -172,15 +182,17 @@ def crud(
         if _ci_missing["message"]["base"][0] == "Missing CI config file":
             result["run_details"] = _ci_missing["message"]
         else:
-            raise Exception({
+            result["error"] = {
                 "msg": _ci_missing,
                 "status_code": 400
-            })
+            }
+        return result
     else:
-        raise Exception({
+        result["error"] = {
             "msg": trigger_pipeline_details_res.json(),
             "status_code": trigger_pipeline_details_res.status_code
-        })
+        }
+        return result
     return result
 
 
@@ -209,9 +221,14 @@ def run_module() -> None:
             project_id=module.params['project_id'],
             ref=module.params['ref'],
         )
-        module.exit_json(**gitlab_pipe_response)
+
     except BaseException as ex:
-        module.fail_json(msg=str(ex))
+        raise AnsibleError(f"Something when wrong {to_native(ex)}") from ex
+
+    if "error" in gitlab_pipe_response.keys():
+        module.fail_json(msg=gitlab_pipe_response["error"],
+                         **gitlab_pipe_response)
+    module.exit_json(**gitlab_pipe_response)
 
 
 def main():

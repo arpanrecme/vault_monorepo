@@ -11,7 +11,7 @@
     content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
     dest: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
 
-- name: Vault Monorepo | Downstream | Github | Generate Root
+- name: Vault Monorepo | Downstream | Generate Root
   no_log: "{{ vault_mono_debug_no_log }}"
   vault_sys_generate_root:
     unseal_keys: "{{ vault_mono_init_unseal_fact_init_secrets['keys'] }}"
@@ -181,3 +181,8 @@
             masked: false
             protected: false
             variable_type: file
+
+    - name: Vault Monorepo | Downstream | Gitlab | Run Gitlab Pipeline
+      gitlab_trigger_pipeline:
+        project_id: "{{ vault_mono_downstream_tmp_gitlab_repo.project.path_with_namespace }}"
+        private_token: "{{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_gitlab_gl_prod_api_key) }}"
