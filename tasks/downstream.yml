@@ -175,12 +175,12 @@
             value: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_private_key) }}"
             masked: false
             protected: false
-            variable_type: file
+            variable_type: env_var
           - name: VAULT_CLIENT_CHAIN_CERTIFICATE
             value: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
             masked: false
             protected: false
-            variable_type: file
+            variable_type: env_var
 
     - name: Vault Monorepo | Downstream | Gitlab | Run Gitlab Pipeline
       gitlab_trigger_pipeline:
