@@ -39,7 +39,7 @@
           Authorization: "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token) }}"
           content-type: "application/vnd.api+json"
       register: vault_mono_annihilation_tmp_tfe_cloud_delete
-      changed_when: vault_mono_annihilation_tmp_tfe_cloud_delete.status == 200
+      changed_when: vault_mono_annihilation_tmp_tfe_cloud_delete.status == 204
 
 - name: Vault Monorepo | Annihilation | Delete Local Files
   ansible.builtin.file:

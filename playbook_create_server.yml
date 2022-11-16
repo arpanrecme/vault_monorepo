@@ -15,12 +15,22 @@
         - gpg
         - ssh-keygen
       tags:
-        - always
+        - patch_server
+        - install_vault
+        - init_unseal
+        - codified_vault
+        - downstream
+        - annihilation
 
     - name: Vault Monorepo | Get Server Information | Get Prerequisite Files
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/get_prerequisite.yml"
       tags:
-        - always
+        - patch_server
+        - install_vault
+        - init_unseal
+        - codified_vault
+        - downstream
+        - annihilation
 
     - name: Vault Monorepo | Get Server Information | Create Server
       ansible.builtin.import_tasks: "{{ playbook_dir }}/tasks/create_server.yml"
