@@ -1,8 +1,13 @@
 data "vault_policy_document" "gitlab_master_controller" {
   rule {
     path         = "pki/issue/vault_client_certificate"
-    capabilities = ["create", "update", "read"]
+    capabilities = ["update", "read"]
     description  = "Allow to create TLS client certificats for vault server"
+  }
+  rule {
+    path         = "prerequisite/data/gitlab"
+    capabilities = ["read"]
+    description  = "read gitlab credentials"
   }
 }
 
