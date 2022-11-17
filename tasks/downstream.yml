@@ -82,6 +82,8 @@
           unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_private_key) }}"
         - name: VAULT_CLIENT_CHAIN_CERTIFICATE
           unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
+        - name: ROOT_CA_CERTIFICATE
+          unencrypted_secret: "{{ lookup('ansible.builtin.file', vault_mono_downstream_tmp_file_root_ca.path) }}"
 
     - name: Vault Monorepo | Downstream | Github | Run Github Actions
       ansible.builtin.uri:
@@ -179,6 +181,11 @@
             variable_type: env_var
           - name: VAULT_CLIENT_CHAIN_CERTIFICATE
             value: "{{ lookup('ansible.builtin.file', vault_mono_local_file_client_chain_certificate) }}"
+            masked: false
+            protected: false
+            variable_type: env_var
+          - name: ROOT_CA_CERTIFICATE
+            value: "{{ lookup('ansible.builtin.file', vault_mono_downstream_tmp_file_root_ca.path) }}"
             masked: false
             protected: false
             variable_type: env_var
