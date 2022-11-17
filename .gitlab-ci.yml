@@ -1,5 +1,5 @@
 ---
-image: arpanrecme/vaultmonorepo:10
+image: arpanrecme/vaultmonorepo:11
 stages:
   - master_flow
 
