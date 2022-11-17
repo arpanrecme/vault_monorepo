@@ -17,11 +17,12 @@ variable "VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY" {
   }
 }
 
-variable "vault_mono_global_config_root_ca_certificate" {
-  type    = string
-  default = null
+variable "VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE" {
+  type      = string
+  default   = null
+  sensitive = false
   validation {
-    condition     = length(var.vault_mono_global_config_root_ca_certificate) > 1
+    condition     = length(var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE) > 1
     error_message = "Missing root CA certificate file path"
   }
 }

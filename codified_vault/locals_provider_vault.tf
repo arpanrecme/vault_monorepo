@@ -15,7 +15,4 @@ locals {
     local.vault_mono_global_config.VAULT.PROTOCOL,
     local.vault_mono_global_config_vault_fqdn,
   local.vault_mono_global_config.VAULT.PORT)
-
-  vault_mono_global_config_root_ca_certificate = local.vault_mono_global_config.ROOT_CA.CERTIFICATE
-
 }

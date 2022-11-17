@@ -11,7 +11,7 @@
   ansible.builtin.copy:
     content: "{{ vault_mono_global_config.ROOT_CA.CERTIFICATE }}"
     dest: "{{ vault_mono_codified_vault_tmp_file_root_ca.path }}"
-    mode: "0700"
+    mode: "0644"
 
 - name: Vault Monorepo | Configure Vault | Terraform Codified Vault | Terraform Cloud Backend | Get Backend config
   ansible.builtin.set_fact:
@@ -61,6 +61,7 @@
   environment:
     TF_VAR_VAULT_MONO_GLOBAL_CONFIG_ENDPOINT: "{{ vault_mono_endpoint_global_config }}"
     TF_VAR_VAULT_MONO_VAULT_ROOT_TOKEN: "{{ vault_mono_codified_vault_tmp_root_token.new_root }}"
+    TF_VAR_VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE: "{{ vault_mono_codified_vault_tmp_file_root_ca.path }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_PRIVATE_KEY: "{{ vault_mono_local_file_client_private_key }}"
     TF_VAR_VAULT_MONO_LOCAL_FILE_CLIENT_CHAIN_CERTIFICATE: "{{ vault_mono_local_file_client_chain_certificate }}"
     # prerequisite
@@ -82,6 +83,10 @@
     ## Terraform Cloud
     TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_TERRAFORM_CLOUD_TF_PROD_TOKEN: "{{ vault_mono_prerequisite_local_file_terraform_cloud_tf_prod_token }}"
     ## Terraform Cloud
+    ## Auth0
+    TF_VAR_VAULT_MONO_PREREQUISITE_LOCAL_FILE_AUTH0_CLIENT_DETAILS: "{{ vault_mono_prerequisite_local_file_auth0_client_details }}"
+    ## Auth0
+    # prerequisite
   register: vault_mono_codified_vault_tmp_output
   ignore_errors: true
 

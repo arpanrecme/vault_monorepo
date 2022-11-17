@@ -8,7 +8,7 @@ module "pki" {
   vault_mono_global_config_vault_addr                            = local.vault_mono_global_config_vault_addr
   vault_mono_global_config_vault_fqdn                            = local.vault_mono_global_config_vault_fqdn
   VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY = var.VAULT_MONO_PREREQUISITE_LOCAL_FILE_ROOT_CA_NO_PASS_PRIVATE_KEY
-  vault_mono_global_config_root_ca_certificate                   = local.vault_mono_global_config_root_ca_certificate
+  VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE                      = var.VAULT_MONO_LOCAL_FILE_ROOT_CA_CERTIFICATE
 }
 
 module "policy" {

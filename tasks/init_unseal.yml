@@ -58,7 +58,7 @@
     content: |
       {{ vault_mono_init_unseal_tmp_sys_init.json | to_nice_json(indent=2) }}
     dest: "{{ vault_mono_local_file_vault_init_secrets }}"
-    mode: "0400"
+    mode: "0644"
 
 - name: Vault Monorepo | Configure Vault | Initialize and Unseal | Unseal
   when: >
