@@ -15,7 +15,8 @@ def tfe_resource(
     _resource_details_response = requests.get(
         _resource_url_name, timeout=30, headers=headers
     )
-
+    result[f"{resource_type}_{resource_name}_created"] = False
+    result[f"{resource_type}_{resource_name}_updated"] = False
     if _resource_details_response.status_code == 200:
         _resource_details = _resource_details_response.json()
     elif _resource_details_response.status_code == 404:
@@ -31,7 +32,7 @@ def tfe_resource(
         )
         if _tfe_resource_create_response.status_code == 201:
             result["changed"] = True
-            result[f"{resource_type}_created"] = True
+            result[f"{resource_type}_{resource_name}_created"] = True
             _tfe_newly_created_resource_details_response = requests.get(
                 _resource_url_name, timeout=30, headers=headers
             )
@@ -56,7 +57,7 @@ def tfe_resource(
         }
         return result
 
-    if not result[f"{resource_type}_created"]:
+    if not result[f"{resource_type}_{resource_name}_created"]:
         if resource_attributes and len(resource_attributes) > 0:
             _existing_attributes = _resource_details["data"]["attributes"]
             for attribute in resource_attributes.keys():
@@ -76,7 +77,7 @@ def tfe_resource(
                     )
                     if _org_update_response.status_code == 200:
                         result["changed"] = True
-                        result[f"{resource_type}_updated"] = True
+                        result[f"{resource_type}_{resource_name}_updated"] = True
                         _tfe_org_updated_details_response = requests.get(
                             _resource_url_name, timeout=30, headers=headers
                         )
@@ -126,7 +127,7 @@ def crud(
         result["error"] = "workspace Can not be null"
         return result
     result_organization = tfe_resource(
-        resource_url=f"https://{hostname}/api/v2/organizations/{organization}",
+        resource_url=f"https://{hostname}/api/v2/organizations",
         resource_name=organization,
         headers=headers,
         resource_type="organizations",
@@ -136,7 +137,7 @@ def crud(
     if "error" in result_organization.keys():
         return result_organization
     result_workspace = tfe_resource(
-        resource_url=f"https://{hostname}/api/v2/organizations/{organization}/workspaces/{workspace}",
+        resource_url=f"https://{hostname}/api/v2/organizations/{organization}/workspaces",
         resource_name=workspace,
         headers=headers,
         resource_type="workspaces",
