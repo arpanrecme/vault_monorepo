@@ -44,6 +44,7 @@
       when: vault_mono_downstream_tmp_github_repo.repo.owner.login != vault_mono_global_config.GITHUB.USER
 
     - name: Vault Monorepo | Downstream | Github | Create approle secret id
+      no_log: "{{ vault_mono_debug_no_log }}"
       environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
         SSL_CERT_FILE: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
       ansible.builtin.uri:
@@ -130,6 +131,7 @@
       register: vault_mono_downstream_tmp_gitlab_repo
 
     - name: Vault Monorepo | Downstream | Gitlab | Create approle secret id
+      no_log: "{{ vault_mono_debug_no_log }}"
       environment: # https://stackoverflow.com/questions/47890394/ansible-uri-module-with-cacert-option
         SSL_CERT_FILE: "{{ vault_mono_downstream_tmp_file_root_ca.path }}"
       ansible.builtin.uri:
