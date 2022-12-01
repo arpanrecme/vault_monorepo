@@ -2,13 +2,14 @@
 
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.hashicorp_tfe_core import crud
+
 __metaclass__ = type
 
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: terraform_cloud_workspace
 
@@ -50,9 +51,9 @@ options:
         type: bool
 author:
     - Arpan Mandal (mailto:arpan.rec@gmail.com)
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Prepare Terraform cloud
 - name: Prepare Terraform cloud
     terraform_cloud_workspace:
@@ -66,9 +67,9 @@ EXAMPLES = r'''
         "allow-destroy-plan": true
         "auto-apply": true
         "execution-mode": "local"
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 These are examples of possible return values, and in general should use other names for return values.
 organization:
     description: Details of terraform cloud organization.
@@ -78,7 +79,7 @@ workspace:
     description: Details of terraform cloud workspace.
     type: dict
     returned: always
-'''
+"""
 
 
 def run_module():
@@ -86,8 +87,8 @@ def run_module():
     module_args = dict(
         hostname=dict(required=False, default="app.terraform.io"),
         token=dict(type="str", required=True, no_log=True),
-        organization=dict(type='str', required=True),
-        organization_attributes=dict(type='dict', required=False),
+        organization=dict(type="str", required=True),
+        organization_attributes=dict(type="dict", required=False),
         workspace=dict(type="str", required=True),
         workspace_attributes=dict(type="dict", required=False),
     )
@@ -98,17 +99,16 @@ def run_module():
     )
 
     tfe_response = crud(
-        hostname=module.params['hostname'],
-        token=module.params['token'],
-        organization=module.params['organization'],
-        organization_attributes=module.params['organization_attributes'],
-        workspace=module.params['workspace'],
-        workspace_attributes=module.params['workspace_attributes'],
+        hostname=module.params["hostname"],
+        token=module.params["token"],
+        organization=module.params["organization"],
+        organization_attributes=module.params["organization_attributes"],
+        workspace=module.params["workspace"],
+        workspace_attributes=module.params["workspace_attributes"],
     )
 
     if "error" in tfe_response.keys():
-        return module.fail_json(msg=tfe_response["error"],
-                                **tfe_response)
+        return module.fail_json(msg=tfe_response["error"], **tfe_response)
 
     module.exit_json(**tfe_response)
 
@@ -117,5 +117,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 from ansible.utils.display import Display
 from ansible.plugins.lookup import LookupBase
 import base64
 from ansible.errors import AnsibleError
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -30,17 +31,18 @@ display = Display()
 
 
 class LookupModule(LookupBase):
-
     def run(self, terms, variables=None, **kwargs):
         self.set_options(var_options=variables, direct=kwargs)
         display.debug("Recreating Vault root token")
-        __encoded_root_token = self.get_option('encoded_root_token')
+        __encoded_root_token = self.get_option("encoded_root_token")
         display.vvvv(f"Encoded root token {__encoded_root_token}")
-        __otp = self.get_option('otp')
+        __otp = self.get_option("otp")
         display.vvvv(f"OTP {__otp}")
 
         try:
-            _root_token = base64.b64decode(bytearray(__encoded_root_token, "ascii") + b'==')
+            _root_token = base64.b64decode(
+                bytearray(__encoded_root_token, "ascii") + b"=="
+            )
             _otp_bytes = bytearray(__otp, "ascii")
             _final_root_token_bytes = bytearray()
             for i, j in zip(_root_token, _otp_bytes):
