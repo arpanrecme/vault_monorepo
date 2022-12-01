@@ -2,15 +2,16 @@
 
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 from base64 import b64encode
 from ansible.module_utils.basic import AnsibleModule
 from nacl import encoding, public
 import requests
+
 __metaclass__ = type
 
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: github_action_secret
 
@@ -67,9 +68,9 @@ options:
         required: false
 author:
     - Arpan Mandal (mailto:arpan.rec@gmail.com)
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create or Update a repository secret
     github_action_secret:
     api_ep: "https://api.github.com"
@@ -95,9 +96,9 @@ EXAMPLES = r'''
     repository: "github_master_controller"
     name: "ENV_SECRET"
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 These are examples of possible return values, and in general should use other names for return values.
 public_key:
     description: Public Key of the repository
@@ -111,7 +112,7 @@ secret:
     description: Encrypted secret
     type: str
     returned: if state == present
-'''
+"""
 
 
 def encrypt(public_key: str, secret_value: str) -> str:
@@ -122,21 +123,20 @@ def encrypt(public_key: str, secret_value: str) -> str:
     return b64encode(encrypted).decode("utf-8")
 
 
-def crud(pat=None,
-         owner=None,
-         unencrypted_secret=None,
-         name=None,
-         repository=None,
-         api_ep=None,
-         organization=None,
-         state=None,
-         visibility=None) -> dict:
+def crud(
+    pat=None,
+    owner=None,
+    unencrypted_secret=None,
+    name=None,
+    repository=None,
+    api_ep=None,
+    organization=None,
+    state=None,
+    visibility=None,
+) -> dict:
     result = {"changed": False, "updated": False, "created": False, "deleted": False}
     create_update_data = {}
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "Authorization": f"token {pat}"
-    }
+    headers = {"Accept": "application/vnd.github+json", "Authorization": f"token {pat}"}
     if owner and not repository:
         result["error"] = "'repository' is mandatory when 'owner' is set"
         return result
@@ -145,45 +145,60 @@ def crud(pat=None,
         result["error"] = f"state should be either present or absent, {state}"
         return result
 
-    if (not owner) and (not repository) and (organization) \
-            and visibility not in ['private', 'all', 'selected']:
+    if (
+        (not owner)
+        and (not repository)
+        and (organization)
+        and visibility not in ["private", "all", "selected"]
+    ):
         result["error"] = "visibility should in 'private', 'all', 'selected'"
         return result
 
     if owner and repository:
-        public_key_ep = f"{api_ep}/repos/{owner}/{repository}/actions/secrets/public-key"
+        public_key_ep = (
+            f"{api_ep}/repos/{owner}/{repository}/actions/secrets/public-key"
+        )
         secret_ep = f"{api_ep}/repos/{owner}/{repository}/actions/secrets/{name}"
     elif (not owner) and (repository) and (not organization):
-        owner = requests.get(f"{api_ep}/user", headers=headers, timeout=30).json()['login']
-        public_key_ep = f"{api_ep}/repos/{owner}/{repository}/actions/secrets/public-key"
+        owner = requests.get(f"{api_ep}/user", headers=headers, timeout=30).json()[
+            "login"
+        ]
+        public_key_ep = (
+            f"{api_ep}/repos/{owner}/{repository}/actions/secrets/public-key"
+        )
         secret_ep = f"{api_ep}/repos/{owner}/{repository}/actions/secrets/{name}"
     elif (not owner) and (not repository) and (organization):
         public_key_ep = f"{api_ep}/orgs/{organization}/actions/secrets/public-key"
         secret_ep = f"{api_ep}/orgs/{organization}/actions/secrets/{name}"
         create_update_data["visibility"] = visibility
     elif (not owner) and (repository) and (organization):
-        public_key_ep = f"{api_ep}/repos/{organization}/{repository}/actions/secrets/public-key"
+        public_key_ep = (
+            f"{api_ep}/repos/{organization}/{repository}/actions/secrets/public-key"
+        )
         secret_ep = f"{api_ep}/repos/{organization}/{repository}/actions/secrets/{name}"
 
-    if state == 'present':
+    if state == "present":
         public_key_ep_res = requests.get(public_key_ep, headers=headers, timeout=30)
         if public_key_ep_res.status_code == 200:
             result["public_key"] = public_key_ep_res.json().get("key")
             result["public_key_id"] = public_key_ep_res.json().get("key_id")
         else:
-            result["error"] = {"response": public_key_ep_res.json(),
-                               "status": public_key_ep_res.status_code}
+            result["error"] = {
+                "response": public_key_ep_res.json(),
+                "status": public_key_ep_res.status_code,
+            }
             return result
 
         if unencrypted_secret:
-            secret = encrypt(public_key=result["public_key"], secret_value=unencrypted_secret)
+            secret = encrypt(
+                public_key=result["public_key"], secret_value=unencrypted_secret
+            )
         result["secret"] = secret
         create_update_data["encrypted_value"] = secret
         create_update_data["key_id"] = result["public_key_id"]
-        secret_ep_response = requests.put(secret_ep,
-                                          headers=headers,
-                                          timeout=30,
-                                          json=create_update_data)
+        secret_ep_response = requests.put(
+            secret_ep, headers=headers, timeout=30, json=create_update_data
+        )
         if secret_ep_response.status_code == 204:
             result["updated"] = True
             result["changed"] = True
@@ -191,10 +206,12 @@ def crud(pat=None,
             result["changed"] = True
             result["created"] = True
         else:
-            result["error"] = {"response": secret_ep_response.json(),
-                               "status": secret_ep_response.status_code}
+            result["error"] = {
+                "response": secret_ep_response.json(),
+                "status": secret_ep_response.status_code,
+            }
             return result
-    if state == 'absent':
+    if state == "absent":
         delete_response = requests.delete(secret_ep, headers=headers, timeout=30)
         if delete_response.status_code == 204:
             result["changed"] = True
@@ -202,8 +219,12 @@ def crud(pat=None,
         elif delete_response.status_code == 404:
             pass
         else:
-            result["error"] = {"response": delete_response.json(),
-                               "status": delete_response.status_code},
+            result["error"] = (
+                {
+                    "response": delete_response.json(),
+                    "status": delete_response.status_code,
+                },
+            )
             return result
     return result
 
@@ -212,47 +233,52 @@ def run_module():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
         api_ep=dict(type="str", required=False, default="https://api.github.com"),
-        pat=dict(type='str', required=True, no_log=True),
-        owner=dict(type='str', required=False),
-        organization=dict(type='str', required=False),
-        unencrypted_secret=dict(type='str', required=False, no_log=True),
-        name=dict(type='str', required=True),
-        repository=dict(type='str', required=False),
-        state=dict(type="str", required=False, default="present", choices=["present", "absent"]),
-        visibility=dict(type="str", required=False, choices=["private", "all", "selected"])
+        pat=dict(type="str", required=True, no_log=True),
+        owner=dict(type="str", required=False),
+        organization=dict(type="str", required=False),
+        unencrypted_secret=dict(type="str", required=False, no_log=True),
+        name=dict(type="str", required=True),
+        repository=dict(type="str", required=False),
+        state=dict(
+            type="str", required=False, default="present", choices=["present", "absent"]
+        ),
+        visibility=dict(
+            type="str", required=False, choices=["private", "all", "selected"]
+        ),
     )
 
     module = AnsibleModule(
         argument_spec=module_args,
         supports_check_mode=False,
         mutually_exclusive=[
-            ('owner', 'organization'),
-            ('unencrypted_secret', 'secret'),
-            ('owner', 'visibility'),
+            ("owner", "organization"),
+            ("unencrypted_secret", "secret"),
+            ("owner", "visibility"),
         ],
         required_one_of=[
-            ('repository', 'organization'),
+            ("repository", "organization"),
         ],
         required_if=[
-            ('state', 'present', (['unencrypted_secret']), False),
+            ("state", "present", (["unencrypted_secret"]), False),
         ],
     )
 
     github_update_response = crud(
-        api_ep=module.params['api_ep'],
-        pat=module.params['pat'],
-        owner=module.params['owner'],
-        unencrypted_secret=module.params['unencrypted_secret'],
-        name=module.params['name'],
-        repository=module.params['repository'],
+        api_ep=module.params["api_ep"],
+        pat=module.params["pat"],
+        owner=module.params["owner"],
+        unencrypted_secret=module.params["unencrypted_secret"],
+        name=module.params["name"],
+        repository=module.params["repository"],
         organization=module.params["organization"],
         state=module.params["state"],
         visibility=module.params["visibility"],
     )
 
     if "error" in github_update_response.keys():
-        return module.fail_json(msg=github_update_response["error"],
-                                **github_update_response)
+        return module.fail_json(
+            msg=github_update_response["error"], **github_update_response
+        )
 
     module.exit_json(**github_update_response)
 
@@ -261,5 +287,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

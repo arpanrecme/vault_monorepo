@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 from ansible.plugins.lookup import LookupBase
 from ansible.errors import AnsibleError
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -24,17 +25,17 @@ DOCUMENTATION = """
 
 
 class LookupModule(LookupBase):
-
     def run(self, terms, variables=None, **kwargs):
         self.set_options(var_options=variables, direct=kwargs)
-        __hcl_path = self.get_option('path')
-        __hcl_content = self.get_option('content')
+        __hcl_path = self.get_option("path")
+        __hcl_content = self.get_option("content")
         try:
             import hcl
+
             if __hcl_path and __hcl_content:
                 raise AnsibleError("path and content is mutually exclusive")
             if __hcl_path:
-                with open(__hcl_path, 'r', encoding="utf-8") as fp:
+                with open(__hcl_path, "r", encoding="utf-8") as fp:
                     obj = hcl.load(fp)
             elif __hcl_content:
                 obj = hcl.loads(__hcl_content)

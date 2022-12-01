@@ -63,8 +63,7 @@ def tfe_resource(
             for attribute in resource_attributes.keys():
                 if (
                     attribute not in _existing_attributes.keys()
-                    or resource_attributes[attribute]
-                    != _existing_attributes[attribute]
+                    or resource_attributes[attribute] != _existing_attributes[attribute]
                 ):
                     _org_update_data = {
                         "data": {
@@ -73,7 +72,10 @@ def tfe_resource(
                         }
                     }
                     _org_update_response = requests.patch(
-                        _resource_url_name, timeout=30, headers=headers, json=_org_update_data
+                        _resource_url_name,
+                        timeout=30,
+                        headers=headers,
+                        json=_org_update_data,
                     )
                     if _org_update_response.status_code == 200:
                         result["changed"] = True

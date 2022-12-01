@@ -55,7 +55,7 @@ Flow to downstream -> `downstream`
 }
 ```
 
-## [Create the server in Linode](tasks/100-create_server.yml)
+## [Create the server in Linode](tasks/create_server.yml)
 
 ## [Vault Configuration using Terraform](codified_vault/)
 
