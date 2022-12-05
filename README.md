@@ -82,17 +82,15 @@ Backend state is stored in [Terraform Cloud](https://app.terraform.io/app/arpanr
 - Update the callback URLs
   - `${var.vault_mono_global_config_vault_addr}/ui/vault/auth/${vault_jwt_auth_backend.auth0.path}/oidc/callback`
   - `http://localhost:8250/oidc/callback`
-- Edit user's `app_metadata`
+- Edit Auth0 user's `app_metadata`
 
 ```json
 {
-  "roles": [
-    "auth0_vault_admin"
-  ]
+  "roles": ["auth0_vault_admin"]
 }
 ```
 
-- `Auth Pipeline` -> `Rules` -> `Create` -> `Empty rule`
+- `Auth0` -> `Auth Pipeline` -> `Rules` -> `Create` -> `Empty rule`
 
 ```js
 function (user, context, callback) {

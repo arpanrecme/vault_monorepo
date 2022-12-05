@@ -44,7 +44,7 @@
       ansible.builtin.shell: |+
         {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
-        bw get item 'Linode' --raw | \
+        bw get item 'Linode - arpanrecme' --raw | \
         jq '.fields |
         .[] |
         select(.name == "LINODE_CLI_PROD_TOKEN") |
@@ -84,7 +84,7 @@
       ansible.builtin.shell: |+
         {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
-        bw get item 'Gitlab' --raw | \
+        bw get item 'Gitlab - arpanrecme' --raw | \
         jq '.fields |
         .[] |
         select(.name == "GL_PROD_API_KEY") |
@@ -97,7 +97,7 @@
       ansible.builtin.shell: |+
         {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
-        bw get item 'Github' --raw | \
+        bw get item 'GitHub - arpanrecme' --raw | \
         jq '.fields |
         .[] |
         select(.name == "GH_PROD_API_TOKEN") |
@@ -110,7 +110,7 @@
       ansible.builtin.shell: |+
         {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
-        bw get item 'Ansible galaxy' --raw | \
+        bw get item 'Ansible Galaxy - arpanrec' --raw | \
         jq '.fields |
         .[] |
         select(.name == "GALAXY_API_KEY") |
@@ -123,7 +123,7 @@
       ansible.builtin.shell: |+
         {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
-        bw get item 'HashiCorp Terraform cloud' --raw | \
+        bw get item 'HashiCorp Terraform cloud - arpanrecme' --raw | \
         jq '.fields |
         .[] |
         select(.name == "TF_PROD_TOKEN") |
@@ -136,7 +136,7 @@
         {{ vault_mono_prerequisite_tmp_pipefail_set }}
 
         bw get attachment auth0_vault_admin.json \
-        --itemid $(bw get item 'Auth0' \
+        --itemid $(bw get item 'Auth0 Tenant Admin - arpanrecme' \
         --raw | jq .id -r) \
         --output "{{ vault_mono_prerequisite_local_file_auth0_client_details }}"
 
