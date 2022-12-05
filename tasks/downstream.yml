@@ -96,6 +96,8 @@
         body_format: json
         body:
           event_type: api
+          client_payload:
+            github_release: false
         headers:
           "Accept": "application/vnd.github+json"
           "authorization": "Bearer {{ lookup('ansible.builtin.file', vault_mono_prerequisite_local_file_github_gh_prod_api_token) }}"
