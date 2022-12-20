@@ -3,10 +3,12 @@
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
 # MIT (see LICENSE or https://en.wikipedia.org/wiki/MIT_License)
 from __future__ import absolute_import, division, print_function
+
 from base64 import b64encode
+
+import requests
 from ansible.module_utils.basic import AnsibleModule
 from nacl import encoding, public
-import requests
 
 __metaclass__ = type
 

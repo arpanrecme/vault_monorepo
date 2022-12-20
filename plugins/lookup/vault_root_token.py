@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import absolute_import, division, print_function
-from ansible.utils.display import Display
-from ansible.plugins.lookup import LookupBase
+
 import base64
+
 from ansible.errors import AnsibleError
+from ansible.plugins.lookup import LookupBase
+from ansible.utils.display import Display
 
 __metaclass__ = type
 

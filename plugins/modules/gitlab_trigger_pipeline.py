@@ -8,9 +8,10 @@ Ansible Plugin Script
 from __future__ import absolute_import, division, print_function
 
 import urllib.parse
+
 import requests
-from ansible.module_utils.basic import AnsibleModule
 from ansible.errors import AnsibleError
+from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
 
 __metaclass__ = type
