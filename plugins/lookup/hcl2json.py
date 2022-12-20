@@ -36,8 +36,8 @@ class LookupModule(LookupBase):
             if __hcl_path and __hcl_content:
                 raise AnsibleError("path and content is mutually exclusive")
             if __hcl_path:
-                with open(__hcl_path, "r", encoding="utf-8") as fp:
-                    obj = hcl.load(fp)
+                with open(__hcl_path, "r", encoding="utf-8") as hcl_file_open:
+                    obj = hcl.load(hcl_file_open)
             elif __hcl_content:
                 obj = hcl.loads(__hcl_content)
             else:
