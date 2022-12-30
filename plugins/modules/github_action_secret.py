@@ -1,3 +1,6 @@
+"""
+Ansible Module for adding github action secret
+"""
 #!/usr/bin/env python3
 
 # Copyright: (c) 2022, Arpan Mandal <arpan.rec@gmail.com>
@@ -10,6 +13,7 @@ import requests
 from ansible.module_utils.basic import AnsibleModule
 from nacl import encoding, public
 
+# pylint: disable-next=invalid-name
 __metaclass__ = type
 
 
@@ -125,6 +129,7 @@ def encrypt(public_key: str, secret_value: str) -> str:
     return b64encode(encrypted).decode("utf-8")
 
 
+# pylint: disable-next=missing-function-docstring,too-many-arguments,too-many-locals,too-many-return-statements,too-many-branches,too-many-statements
 def crud(
     pat=None,
     owner=None,
@@ -136,6 +141,7 @@ def crud(
     state=None,
     visibility=None,
 ) -> dict:
+
     result = {"changed": False, "updated": False, "created": False, "deleted": False}
     create_update_data = {}
     headers = {"Accept": "application/vnd.github+json", "Authorization": f"token {pat}"}
@@ -231,7 +237,13 @@ def crud(
     return result
 
 
+# pylint: disable-next=inconsistent-return-statements
+
+
 def run_module():
+    """
+    Ansible main module
+    """
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
         api_ep=dict(type="str", required=False, default="https://api.github.com"),
@@ -277,6 +289,7 @@ def run_module():
         visibility=module.params["visibility"],
     )
 
+    # pylint: disable-next=consider-iterating-dictionary
     if "error" in github_update_response.keys():
         return module.fail_json(
             msg=github_update_response["error"], **github_update_response
@@ -286,6 +299,9 @@ def run_module():
 
 
 def main():
+    """
+    Python Main Module
+    """
     run_module()
 
 
